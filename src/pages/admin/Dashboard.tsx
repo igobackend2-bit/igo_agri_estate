@@ -772,50 +772,35 @@ const AdminDashboard: React.FC = () => {
 
         {/* SETTINGS */}
         {tab === 'settings' && (
-          <div className="grid lg:grid-cols-2 gap-8">
-            <div className="bg-white rounded-[32px] border border-black/5 p-8 space-y-5">
-              <div className="flex items-center gap-3 mb-2"><Globe size={18} /><h3 className="font-black text-primary text-lg">Site Identity</h3></div>
-              {['siteName', 'contactPhone', 'contactEmail', 'whatsappNumber'].map(k => (
-                <div key={k}><label className="block text-[10px] font-black text-text-muted uppercase mb-2">{k}</label><input value={(settings as any)[k]} onChange={e => setSettings(s => ({ ...s, [k]: e.target.value }))} className="w-full bg-gray-50 border border-black/5 rounded-2xl py-3 px-5 text-sm font-bold" /></div>
-              ))}
-            </div>
-            <div className="space-y-6">
-              <div className="bg-white rounded-[32px] border border-black/5 p-8 space-y-5">
-                <div className="flex items-center gap-3 mb-2"><Lock size={18} /><h3 className="font-black text-primary text-lg">Security</h3></div>
-                <div><label className="block text-[10px] font-black uppercase mb-2">Admin Password</label><input type="password" value={settings.adminPassword} onChange={e => setSettings(s => ({ ...s, adminPassword: e.target.value }))} className="w-full bg-gray-50 border border-black/5 rounded-2xl py-3 px-5 text-sm font-bold" /></div>
-              </div>
-              <button onClick={() => { saveLocalSettings(settings); setSaved(true); setTimeout(() => setSaved(false), 2500); }} className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl">
-                {saved ? 'Settings Saved!' : 'Save Configuration'}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {tab === 'settings' && (
           <div className="space-y-8">
-            <section className="bg-white rounded-[40px] p-10 border border-black/5 shadow-xl">
-               <div className="flex items-center gap-3 mb-8">
-                 <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
-                   <ShieldCheck size={24} />
+            {/* 1. CLOUD INTEGRITY (High Priority) */}
+            <section className="bg-white rounded-[40px] p-10 border-2 border-blue-100 shadow-xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0 opacity-50"></div>
+               <div className="relative z-10">
+                 <div className="flex items-center gap-3 mb-8">
+                   <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
+                     <ShieldCheck size={24} />
+                   </div>
+                   <div>
+                     <h3 className="text-2xl font-black text-primary uppercase tracking-tighter">Database Cloud Repair</h3>
+                     <p className="text-sm text-text-muted font-medium">Fix permissions and sync issues in 10 seconds.</p>
+                   </div>
                  </div>
-                 <div>
-                   <h3 className="text-2xl font-black text-primary uppercase tracking-tighter">Cloud Integrity Check</h3>
-                   <p className="text-sm text-text-muted">Verify your institutional database connectivity and permissions.</p>
-                 </div>
-               </div>
 
-               <div className="space-y-4">
-                 <div className="grid md:grid-cols-2 gap-4">
+                 <div className="grid md:grid-cols-2 gap-4 mb-8">
                    <button 
                      onClick={async () => {
                        const { error } = await supabase.from('leads').select('count', { count: 'exact', head: true });
                        if (error) alert(`Leads Table Error: ${error.message}\n\nHint: Check if 'leads' table exists and has RLS policies.`);
                        else alert('Leads Table: Connection Successful ✅');
                      }}
-                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left"
+                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left flex items-center gap-4"
                    >
-                     <p className="font-bold text-primary mb-1">Check Leads Table</p>
-                     <p className="text-xs text-text-muted">Verifies if site visit requests can be saved.</p>
+                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-blue-600"><Users size={20} /></div>
+                     <div>
+                       <p className="font-bold text-primary text-sm">Test Leads Sync</p>
+                       <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Verify Site Visits</p>
+                     </div>
                    </button>
 
                    <button 
@@ -824,69 +809,57 @@ const AdminDashboard: React.FC = () => {
                        if (error) alert(`Properties Table Error: ${error.message}\n\nHint: Check if 'properties' table exists.`);
                        else alert('Properties Table: Connection Successful ✅');
                      }}
-                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left"
+                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left flex items-center gap-4"
                    >
-                     <p className="font-bold text-primary mb-1">Check Properties Table</p>
-                     <p className="text-xs text-text-muted">Verifies if status changes can be saved.</p>
+                     <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-green-600"><LayoutDashboard size={20} /></div>
+                     <div>
+                       <p className="font-bold text-primary text-sm">Test Status Sync</p>
+                       <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Verify Cloud Updates</p>
+                     </div>
                    </button>
+                 </div>
 
-                   <button 
-                     onClick={async () => {
-                        // Test insert for visitor
-                        const { error } = await supabase.from('visitors').select('count', { count: 'exact', head: true });
-                        if (error) alert(`Visitors Table Error: ${error.message}\n\nHint: Create a 'visitors' table in Supabase.`);
-                        else alert('Visitors Table: Connection Successful ✅');
-                     }}
-                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left"
-                   >
-                     <p className="font-bold text-primary mb-1">Check Visitor Tracking</p>
-                     <p className="text-xs text-text-muted">Verifies if global visitor data is being saved.</p>
-                   </button>
+                 <div className="p-8 bg-primary rounded-[32px] text-white shadow-2xl">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center text-primary shadow-lg"><FileText size={24} /></div>
+                      <div>
+                        <h4 className="text-xl font-bold">1-Step Cloud Fix</h4>
+                        <p className="text-white/60 text-xs">Run this SQL in Supabase to fix all errors at once.</p>
+                      </div>
+                    </div>
 
-                   <button 
-                    onClick={() => {
-                      const sql = `
--- COPY AND RUN THIS IN SUPABASE SQL EDITOR TO FIX EVERYTHING
-
--- 1. Create Visitors Table
-CREATE TABLE IF NOT EXISTS public.visitors (
-    id TEXT PRIMARY KEY,
-    name TEXT,
-    email TEXT,
-    last_visit TIMESTAMPTZ,
-    session_start TIMESTAMPTZ,
-    duration_minutes INTEGER,
-    page_views INTEGER,
-    visited_properties JSONB,
-    interests TEXT[],
-    browser TEXT,
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 2. Enable RLS
-ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
-
--- 3. Create Policies (Allow Anon Insert)
-CREATE POLICY "Allow anon insert leads" ON public.leads FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow anon insert visitors" ON public.visitors FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow anon select visitors" ON public.visitors FOR SELECT USING (true);
-CREATE POLICY "Allow anon select properties" ON public.properties FOR SELECT USING (true);
-CREATE POLICY "Allow anon update properties" ON public.properties FOR UPDATE USING (true);
-CREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);
-                      `;
-                      navigator.clipboard.writeText(sql);
-                      alert("SQL Script copied to clipboard! Paste this into your Supabase SQL Editor to fix all permission issues.");
-                    }}
-                    className="p-5 rounded-3xl bg-primary text-secondary hover:bg-primary-light transition-all text-left shadow-lg"
-                   >
-                     <p className="font-bold mb-1">Copy Fix-All SQL Script</p>
-                     <p className="text-xs opacity-70">Copy the SQL code to fix tables and RLS permissions.</p>
-                   </button>
+                    <button 
+                      onClick={() => {
+                        const sql = `-- 1. Create Visitors Table\nCREATE TABLE IF NOT EXISTS public.visitors (\n    id TEXT PRIMARY KEY,\n    name TEXT,\n    email TEXT,\n    last_visit TIMESTAMPTZ,\n    session_start TIMESTAMPTZ,\n    duration_minutes INTEGER,\n    page_views INTEGER,\n    visited_properties JSONB,\n    interests TEXT[],\n    browser TEXT,\n    updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- 2. Enable RLS\nALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;\nALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;\nALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;\n\n-- 3. Create Policies (Allow Public Interaction)\nDROP POLICY IF EXISTS "Allow anon insert leads" ON public.leads;\nCREATE POLICY "Allow anon insert leads" ON public.leads FOR INSERT WITH CHECK (true);\n\nDROP POLICY IF EXISTS "Allow anon insert visitors" ON public.visitors;\nCREATE POLICY "Allow anon insert visitors" ON public.visitors FOR INSERT WITH CHECK (true);\n\nDROP POLICY IF EXISTS "Allow anon select visitors" ON public.visitors;\nCREATE POLICY "Allow anon select visitors" ON public.visitors FOR SELECT USING (true);\n\nDROP POLICY IF EXISTS "Allow anon select properties" ON public.properties;\nCREATE POLICY "Allow anon select properties" ON public.properties FOR SELECT USING (true);\n\nDROP POLICY IF EXISTS "Allow anon update properties" ON public.properties;\nCREATE POLICY "Allow anon update properties" ON public.properties FOR UPDATE USING (true);\n\nDROP POLICY IF EXISTS "Allow anon delete properties" ON public.properties;\nCREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);`;
+                        navigator.clipboard.writeText(sql);
+                        alert("SQL FIX SCRIPT COPIED! \n\n1. Open your Supabase Dashboard.\n2. Go to 'SQL Editor' on the left.\n3. Paste and click 'RUN'.\n4. Your cloud will be fully unlocked!");
+                      }}
+                      className="w-full bg-secondary text-primary py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-white transition-all flex items-center justify-center gap-3 shadow-xl"
+                    >
+                      Copy SQL Repair Script
+                    </button>
                  </div>
                </div>
             </section>
+
+            {/* 2. SITE IDENTITY & SECURITY */}
+            <div className="grid lg:grid-cols-2 gap-8">
+              <div className="bg-white rounded-[32px] border border-black/5 p-8 space-y-5">
+                <div className="flex items-center gap-3 mb-2"><Globe size={18} /><h3 className="font-black text-primary text-lg">Site Identity</h3></div>
+                {['siteName', 'contactPhone', 'contactEmail', 'whatsappNumber'].map(k => (
+                  <div key={k}><label className="block text-[10px] font-black text-text-muted uppercase mb-2">{k}</label><input value={(settings as any)[k]} onChange={e => setSettings(s => ({ ...s, [k]: e.target.value }))} className="w-full bg-gray-50 border border-black/5 rounded-2xl py-3 px-5 text-sm font-bold" /></div>
+                ))}
+              </div>
+              <div className="space-y-6">
+                <div className="bg-white rounded-[32px] border border-black/5 p-8 space-y-5 shadow-sm">
+                  <div className="flex items-center gap-3 mb-2"><Lock size={18} /><h3 className="font-black text-primary text-lg">Security</h3></div>
+                  <div><label className="block text-[10px] font-black uppercase mb-2">Admin Password</label><input type="password" value={settings.adminPassword} onChange={e => setSettings(s => ({ ...s, adminPassword: e.target.value }))} className="w-full bg-gray-50 border border-black/5 rounded-2xl py-3 px-5 text-sm font-bold" /></div>
+                </div>
+                <button onClick={() => { saveLocalSettings(settings); setSaved(true); setTimeout(() => setSaved(false), 2500); }} className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl">
+                  {saved ? 'Settings Saved!' : 'Save All Configuration'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </main>
