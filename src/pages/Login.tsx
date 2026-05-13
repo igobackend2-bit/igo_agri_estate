@@ -306,7 +306,7 @@ const Login: React.FC = () => {
 
                     <div className="flex items-center justify-between px-2">
                        <button type="button" onClick={() => switchMode('signup')} className="text-[10px] font-black uppercase tracking-widest text-secondary hover:text-primary transition-colors">Instant OTP Access</button>
-                       <Link to="/forgot-password" size={18} className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-primary">Forgot Key?</Link>
+                       <Link to="/forgot-password" className="text-[10px] font-black uppercase tracking-widest text-text-muted hover:text-primary">Forgot Key?</Link>
                     </div>
 
                     <button type="submit" disabled={loading} className="w-full bg-primary text-white py-6 rounded-[24px] font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-[0_20px_40px_-10px_rgba(10,50,40,0.3)] flex items-center justify-center gap-4 disabled:opacity-50">
