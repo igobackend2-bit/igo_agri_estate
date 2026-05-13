@@ -97,6 +97,8 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
     if (result.success) {
       setSubmitted(true);
       window.open(`https://wa.me/+${igoPhone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+    } else {
+      alert(`Submission Error: ${result.error || 'Could not connect to cloud'}. Please check your connection or contact admin.`);
     }
   };
 
