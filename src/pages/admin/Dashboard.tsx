@@ -835,7 +835,7 @@ const AdminDashboard: React.FC = () => {
 
                     <button 
                       onClick={() => {
-                        const sql = `-- DEEP REPAIR SCRIPT: Fixes Missing Columns & RLS Permissions
+                        const sql = `-- DEEP REPAIR SCRIPT (V2): Fixes ALL Missing Columns & Permissions
 
 -- 1. Create Visitors Table if missing
 CREATE TABLE IF NOT EXISTS public.visitors (
@@ -852,20 +852,29 @@ CREATE TABLE IF NOT EXISTS public.visitors (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 2. ADD MISSING COLUMNS TO LEADS (Schema Repair)
+-- 2. ADD EVERY POSSIBLE MISSING COLUMN TO LEADS
 DO $$ BEGIN
+    BEGIN ALTER TABLE public.leads ADD COLUMN property_id TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN property_title TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN intent TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN notes TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN asset_category TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN preferred_state TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN investment_size TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
-    BEGIN ALTER TABLE public.leads ADD COLUMN property_title TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN offer_amount NUMERIC; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN preferred_date TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.leads ADD COLUMN preferred_time TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN location TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN budget TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN size TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN "landType" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN "waterSource" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN "powerAccess" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN "estateCategory" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN "customTime" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
 END $$;
 
--- 3. ADD MISSING COLUMNS TO PROPERTIES (Schema Repair)
+-- 3. ADD EVERY POSSIBLE MISSING COLUMN TO PROPERTIES
 DO $$ BEGIN
     BEGIN ALTER TABLE public.properties ADD COLUMN yield TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.properties ADD COLUMN description TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
@@ -883,31 +892,32 @@ DO $$ BEGIN
     BEGIN ALTER TABLE public.properties ADD COLUMN video_url TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
 END $$;
 
--- 4. ENABLE RLS
+-- 4. RE-ENABLE RLS & POLICIES
 ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
 
--- 5. RE-CREATE POLICIES (Allow Public Interaction)
 DROP POLICY IF EXISTS "Allow anon insert leads" ON public.leads;
 CREATE POLICY "Allow anon insert leads" ON public.leads FOR INSERT WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow anon select leads" ON public.leads;
+CREATE POLICY "Allow anon select leads" ON public.leads FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Allow anon insert visitors" ON public.visitors;
 CREATE POLICY "Allow anon insert visitors" ON public.visitors FOR INSERT WITH CHECK (true);
-
 DROP POLICY IF EXISTS "Allow anon select visitors" ON public.visitors;
 CREATE POLICY "Allow anon select visitors" ON public.visitors FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Allow anon select properties" ON public.properties;
 CREATE POLICY "Allow anon select properties" ON public.properties FOR SELECT USING (true);
-
 DROP POLICY IF EXISTS "Allow anon update properties" ON public.properties;
 CREATE POLICY "Allow anon update properties" ON public.properties FOR UPDATE USING (true);
-
 DROP POLICY IF EXISTS "Allow anon delete properties" ON public.properties;
-CREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);`;
+CREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);
+
+-- 5. REFRESH SCHEMA CACHE
+NOTIFY pgrst, 'reload schema';`;
                         navigator.clipboard.writeText(sql);
-                        alert("DEEP REPAIR SCRIPT COPIED! \n\n1. Open your Supabase Dashboard.\n2. Go to 'SQL Editor' on the left.\n3. Paste and click 'RUN'.\n4. Your cloud will be fully repaired and unlocked!");
+                        alert("DEEP REPAIR SCRIPT V2 COPIED! \n\n1. Go to Supabase SQL Editor.\n2. Clear the box.\n3. Paste and click 'RUN'.\n4. Everything will work perfectly!");
                       }}
                       className="w-full bg-white text-red-600 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-secondary hover:text-primary transition-all flex items-center justify-center gap-3 shadow-xl"
                     >
