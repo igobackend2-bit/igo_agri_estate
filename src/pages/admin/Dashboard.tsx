@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { addNotification } from '../../lib/notificationService';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Plus, Settings, Users, LogOut, Search, Edit, Trash2, TrendingUp, MapPin, IndianRupee, ShieldCheck, Phone, Mail, RefreshCw, Eye, EyeOff, Save, CheckCircle, Bell, Globe, Lock, Clock, CheckSquare, Square, MinusSquare, FileText, Video, X, Calendar, User, Play } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -110,7 +111,16 @@ const AdminDashboard: React.FC = () => {
   const handleStatusChange = async (id: string, status: any) => {
     setStatusUpdating(id);
     const success = await updateStatus(id, status);
-    if (success) refresh();
+    if (success) {
+      const prop = properties.find(p => p.id === id);
+      addNotification(
+        `Estate Status Update: ${prop?.title || 'Property'}`,
+        'Admin Desk',
+        `The status of ${prop?.title || 'the estate'} has been updated to ${status}.`,
+        'update'
+      );
+      refresh();
+    }
     setStatusUpdating(null);
   };
 
@@ -127,7 +137,16 @@ const AdminDashboard: React.FC = () => {
   const bulkUpdateStatus = async (status: any) => {
     setStatusUpdating('bulk');
     for (const id of selectedIds) {
-      await updateStatus(id, status);
+      const success = await updateStatus(id, status);
+      if (success) {
+        const prop = properties.find(p => p.id === id);
+        addNotification(
+          `Bulk Update: ${prop?.title || 'Property'}`,
+          'Admin Desk',
+          `The status of ${prop?.title || 'the estate'} has been updated to ${status}.`,
+          'update'
+        );
+      }
     }
     refresh();
     setSelectedIds(new Set());

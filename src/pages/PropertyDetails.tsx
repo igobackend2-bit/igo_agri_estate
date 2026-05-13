@@ -231,10 +231,10 @@ const PropertyDetails: React.FC = () => {
 
     // Estimate property value
     const priceMatch = property.price.match(/(\d+(?:\.\d+)?)/);
-    const propertyValue = (property.priceValue || (priceMatch ? parseFloat(priceMatch[1]) : 1.0)) * 10000000; // Convert Crores to approx rupees
+    const propertyValue = (property.priceValue || (priceMatch ? parseFloat(priceMatch[1]) : 1.0)) * 10000000;
 
     const rentalYield = propertyValue > 0 ? (netIncome / propertyValue) * 100 : 0;
-    const monthlyCashflow = (netIncome / 12) - (propertyValue * 0.05 / 12); // rough EMI estimate
+    const monthlyCashflow = (netIncome / 12);
 
     setRentalResult({
       grossIncome,
@@ -408,15 +408,15 @@ const PropertyDetails: React.FC = () => {
             <div className="grid grid-cols-3 gap-4 py-6 border-y border-black/5">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Scale</p>
-                <p className="font-black text-primary flex items-center gap-2"><Maximize size={16} className="text-secondary" />{property.size}</p>
+                <p className="font-black text-primary flex items-center gap-2"><Maximize size={16} className="text-secondary" />{property.sizeValue ? `${property.sizeValue} Acres` : property.size}</p>
               </div>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Quote</p>
-                <p className="font-black text-primary flex items-center gap-2"><IndianRupee size={16} className="text-secondary" />{property.price}</p>
+                <p className="font-black text-primary flex items-center gap-2"><IndianRupee size={16} className="text-secondary" />{property.priceValue ? `₹${property.priceValue} Cr` : property.price}</p>
               </div>
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-2">Profit View</p>
-                <p className="font-black text-primary flex items-center gap-2"><TrendingUp size={16} className="text-secondary" />{property.roi}</p>
+                <p className="font-black text-primary flex items-center gap-2"><TrendingUp size={16} className="text-secondary" />{property.roiValue ? `${property.roiValue}% CAGR` : property.roi}</p>
               </div>
             </div>
 

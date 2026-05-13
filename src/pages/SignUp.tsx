@@ -133,16 +133,24 @@ const SignUp: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background pt-20 pb-10">
-      <div className="absolute top-0 left-0 w-full h-1/2 bg-primary/5 -z-10"></div>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-20">
+      {/* Background Layer */}
+      <div className="fixed inset-0 z-0">
+        <img 
+          src="/images/signup-bg.png" 
+          alt="Agricultural Background" 
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+      </div>
 
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg p-10 glass rounded-[48px]">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg p-10 bg-white/10 backdrop-blur-xl rounded-[48px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)] border border-white/20 relative z-10 mx-6">
         <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-            <ShieldCheck className="text-primary" size={32} />
+          <div className="w-20 h-20 bg-white rounded-[28px] flex items-center justify-center mx-auto mb-6 shadow-2xl overflow-hidden border border-white/20 p-2">
+            <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain" />
           </div>
-          <h2 className="text-3xl mb-2 font-black text-primary">Create Account</h2>
-          <p className="text-text-muted">Join IGO Agriestates and start your investment journey.</p>
+          <h2 className="text-3xl mb-2 font-black text-white uppercase tracking-tighter">Create Account</h2>
+          <p className="text-white/60 text-[10px] font-black uppercase tracking-widest">Join IGO Agriestates and start your investment journey.</p>
         </div>
 
         {error && (
@@ -154,7 +162,7 @@ const SignUp: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div>
-            <label className="block text-sm font-bold text-primary uppercase tracking-wider mb-2 ml-1">Full Name</label>
+            <label className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-2 ml-1">Full Name</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
               <input
@@ -164,14 +172,14 @@ const SignUp: React.FC = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your full name"
-                className="w-full bg-white border border-black/10 rounded-2xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 focus:ring-4 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-bold text-white placeholder:text-white/40"
               />
             </div>
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-bold text-primary uppercase tracking-wider mb-2 ml-1">Email Address</label>
+            <label className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-2 ml-1">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
               <input
@@ -181,14 +189,14 @@ const SignUp: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="name@example.com"
-                className="w-full bg-white border border-black/10 rounded-2xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 focus:ring-4 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-bold text-white placeholder:text-white/40"
               />
             </div>
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-bold text-primary uppercase tracking-wider mb-2 ml-1">Password</label>
+            <label className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-2 ml-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
               <input
@@ -198,7 +206,7 @@ const SignUp: React.FC = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Min 6 characters"
-                className="w-full bg-white border border-black/10 rounded-2xl py-4 pl-12 pr-12 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-12 focus:ring-4 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-bold text-white placeholder:text-white/40"
               />
               <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-primary">
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -208,7 +216,7 @@ const SignUp: React.FC = () => {
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-sm font-bold text-primary uppercase tracking-wider mb-2 ml-1">Confirm Password</label>
+            <label className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-2 ml-1">Confirm Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
               <input
@@ -218,41 +226,41 @@ const SignUp: React.FC = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Re-enter your password"
-                className="w-full bg-white border border-black/10 rounded-2xl py-4 pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all font-medium"
+                className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 pl-12 pr-4 focus:ring-4 focus:ring-secondary/20 focus:border-secondary outline-none transition-all font-bold text-white placeholder:text-white/40"
               />
             </div>
           </div>
 
           {/* Profile Type */}
           <div>
-            <label className="block text-sm font-bold text-primary uppercase tracking-wider mb-2 ml-1">I am a...</label>
+            <label className="block text-[10px] font-black text-white uppercase tracking-[0.2em] mb-4 ml-1">I am a...</label>
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, profileType: 'investor' }))}
-                className={`p-4 rounded-2xl border-2 transition-all text-left ${formData.profileType === 'investor' ? 'border-primary bg-primary/5' : 'border-black/10 hover:border-primary/30'}`}
+                className={`p-5 rounded-2xl border-2 transition-all text-left ${formData.profileType === 'investor' ? 'border-secondary bg-secondary/10' : 'border-white/10 hover:border-white/20'}`}
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${formData.profileType === 'investor' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${formData.profileType === 'investor' ? 'bg-secondary text-primary' : 'bg-white/5 text-white/40'}`}>
                     <TrendingUp size={20} />
                   </div>
-                  <span className="font-bold text-primary">Investor</span>
+                  <span className={`font-bold ${formData.profileType === 'investor' ? 'text-secondary' : 'text-white/60'}`}>Investor</span>
                 </div>
-                <p className="text-xs text-text-muted">I want to buy and invest in agricultural estates</p>
+                <p className={`text-[10px] font-medium leading-tight ${formData.profileType === 'investor' ? 'text-white/80' : 'text-white/30'}`}>I want to buy and invest in agricultural estates</p>
               </button>
 
               <button
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, profileType: 'seller' }))}
-                className={`p-4 rounded-2xl border-2 transition-all text-left ${formData.profileType === 'seller' ? 'border-primary bg-primary/5' : 'border-black/10 hover:border-primary/30'}`}
+                className={`p-5 rounded-2xl border-2 transition-all text-left ${formData.profileType === 'seller' ? 'border-secondary bg-secondary/10' : 'border-white/10 hover:border-white/20'}`}
               >
                 <div className="flex items-center gap-3 mb-2">
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${formData.profileType === 'seller' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600'}`}>
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${formData.profileType === 'seller' ? 'bg-secondary text-primary' : 'bg-white/5 text-white/40'}`}>
                     <Building2 size={20} />
                   </div>
-                  <span className="font-bold text-primary">Seller</span>
+                  <span className={`font-bold ${formData.profileType === 'seller' ? 'text-secondary' : 'text-white/60'}`}>Seller</span>
                 </div>
-                <p className="text-xs text-text-muted">I own agricultural land and want to list it</p>
+                <p className={`text-[10px] font-medium leading-tight ${formData.profileType === 'seller' ? 'text-white/80' : 'text-white/30'}`}>I own agricultural land and want to list it</p>
               </button>
             </div>
           </div>
@@ -266,8 +274,8 @@ const SignUp: React.FC = () => {
               onChange={handleChange}
               className="mt-1 w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary"
             />
-            <label className="text-sm text-text-muted leading-relaxed">
-              I agree to the <Link to="/policy" className="text-secondary hover:underline">Terms of Service</Link> and <Link to="/policy" className="text-secondary hover:underline">Privacy Policy</Link>
+            <label className="text-xs text-white/40 leading-relaxed font-bold uppercase tracking-widest">
+              I agree to the <Link to="/policy" className="text-secondary hover:underline">Terms</Link> and <Link to="/policy" className="text-secondary hover:underline">Privacy Policy</Link>
             </label>
           </div>
 
@@ -288,9 +296,9 @@ const SignUp: React.FC = () => {
           </button>
         </form>
 
-        <p className="text-center text-sm text-text-muted mt-8">
+        <p className="text-center text-[10px] font-black uppercase tracking-widest text-white/40 mt-8">
           Already have an account?{' '}
-          <Link to="/login" className="text-secondary font-bold hover:underline">
+          <Link to="/login" className="text-secondary hover:underline">
             Sign in
           </Link>
         </p>

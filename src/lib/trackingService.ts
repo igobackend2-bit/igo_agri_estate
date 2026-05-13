@@ -17,6 +17,20 @@ export interface VisitorSession {
 }
 
 const ANALYTICS_KEY = 'igo.analytics.visitors';
+let lastWriteTime = 0;
+const WRITE_DEBOUNCE = 1000;
+
+const persistVisitors = (visitors: VisitorSession[]) => {
+  const now = Date.now();
+  if (now - lastWriteTime < WRITE_DEBOUNCE) {
+    setTimeout(() => {
+      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+    }, WRITE_DEBOUNCE);
+    return;
+  }
+  localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+  lastWriteTime = now;
+};
 
 export const trackVisit = (property?: { id: string; title: string }) => {
   if (typeof window === 'undefined') return;
@@ -68,7 +82,7 @@ visitor = {
     new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime()
   ).slice(0, 50);
 
-  localStorage.setItem(ANALYTICS_KEY, JSON.stringify(trimmedVisitors));
+  persistVisitors(trimmedVisitors);
 };
 
 export const getVisitors = (): VisitorSession[] => {
@@ -101,7 +115,7 @@ export const updateVisitDuration = (propertyId: string, durationInSeconds: numbe
     const prop = visitor.visitedProperties.find(p => p.id === propertyId);
     if (prop) {
       prop.duration = (prop.duration || 0) + durationInSeconds;
-      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+      persistVisitors(visitors);
     }
   }
 };
@@ -118,7 +132,7 @@ export const addInterest = (interest: string) => {
       if (!visitor.interests.includes(interest)) {
        visitor.interests.push(interest);
      }
-     localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+     persistVisitors(visitors);
    }
  };
 

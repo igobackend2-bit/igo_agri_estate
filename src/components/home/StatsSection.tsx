@@ -4,10 +4,10 @@ import { Home, Users, Landmark, Map } from 'lucide-react';
 
 const StatsSection: React.FC = () => {
   const stats = [
-    { label: 'Total Properties', val: '1412+', icon: <Home className="text-secondary" /> },
-    { label: 'Expert Developers', val: '7+', icon: <Users className="text-secondary" /> },
-    { label: 'Modern Townships', val: '4+', icon: <Landmark className="text-secondary" /> },
-    { label: 'Prime Locations', val: '12+', icon: <Map className="text-secondary" /> }
+    { label: 'Total Properties', val: '2000+', icon: <Home className="text-secondary" /> },
+    { label: 'Expert Developers', val: '1345+', icon: <Users className="text-secondary" /> },
+    { label: 'Modern Townships', val: '789+', icon: <Landmark className="text-secondary" /> },
+    { label: 'Prime Locations', val: '359+', icon: <Map className="text-secondary" /> }
   ];
 
   return (
@@ -15,7 +15,7 @@ const StatsSection: React.FC = () => {
       <div className="container">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
-            <motion.div 
+            <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}

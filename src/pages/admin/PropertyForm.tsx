@@ -48,7 +48,10 @@ const PropertyForm: React.FC = () => {
     costRange: '',
     breakEven: '',
     projectAddress: '',
-    projectOffice: ''
+    projectOffice: '',
+    priceValue: 0,
+    sizeValue: 0,
+    roiValue: 0
   });
 
   // Reset initialized when ID changes
@@ -64,7 +67,7 @@ const PropertyForm: React.FC = () => {
       // Try local state first (fast)
       const localProp = properties.find(p => p.id === id);
       if (localProp) {
-        const { id: _, created_at: __, priceValue: ___, roiValue: ____, sizeValue: _____, ...rest } = localProp as any;
+        const { id: _, created_at: __, ...rest } = localProp as any;
         setFormData(rest);
         setInitialized(true);
         return;
@@ -74,7 +77,7 @@ const PropertyForm: React.FC = () => {
       setLoading(true);
       const data = await getProperty(id);
       if (data) {
-        const { id: __id, created_at: ___c, priceValue: ____p, roiValue: _____r, sizeValue: ______s, ...rest } = data as any;
+        const { id: __id, created_at: ___c, ...rest } = data as any;
         setFormData(rest);
       }
       setLoading(false);
@@ -382,6 +385,36 @@ const handleArrayChange = (field: 'images' | 'features' | 'crops' | 'setupScope'
                     <option>Open Field Paddy Estate</option>
                     <option>Urban Vertical Farm</option>
                   </select>
+                </div>
+
+                <div className="col-span-2 grid grid-cols-3 gap-6 pt-4 border-t border-black/5">
+                  <div>
+                    <label className="block text-[10px] font-black text-primary uppercase tracking-widest mb-3">Calc: Price (Cr)</label>
+                    <input 
+                      type="number" step="0.01" name="priceValue"
+                      value={formData.priceValue}
+                      onChange={(e) => setFormData(prev => ({ ...prev, priceValue: parseFloat(e.target.value) || 0 }))}
+                      className="w-full bg-secondary/5 border border-secondary/20 rounded-2xl py-4 px-6 font-black text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-primary uppercase tracking-widest mb-3">Calc: Size (Acres)</label>
+                    <input 
+                      type="number" step="0.1" name="sizeValue"
+                      value={formData.sizeValue}
+                      onChange={(e) => setFormData(prev => ({ ...prev, sizeValue: parseFloat(e.target.value) || 0 }))}
+                      className="w-full bg-secondary/5 border border-secondary/20 rounded-2xl py-4 px-6 font-black text-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-primary uppercase tracking-widest mb-3">Calc: ROI (%)</label>
+                    <input 
+                      type="number" step="0.1" name="roiValue"
+                      value={formData.roiValue}
+                      onChange={(e) => setFormData(prev => ({ ...prev, roiValue: parseFloat(e.target.value) || 0 }))}
+                      className="w-full bg-secondary/5 border border-secondary/20 rounded-2xl py-4 px-6 font-black text-primary"
+                    />
+                  </div>
                 </div>
               </div>
             </section>
