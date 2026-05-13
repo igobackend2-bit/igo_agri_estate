@@ -18,6 +18,7 @@ import {
   VideoItem
 } from '../../lib/localSync';
 import { seedDatabase } from '../../utils/seedDb';
+import { Property } from '../../types';
 import { getVisitors, VisitorSession, fetchAllVisitors } from '../../lib/trackingService';
 
 const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
@@ -35,7 +36,7 @@ const TYPE_COLORS: Record<string, string> = {
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { properties, updateStatus, deleteProperty, refresh } = useProperties();
+  const { properties, updateStatus, deleteProperty, refresh, setProperties } = useProperties();
   const [search, setSearch] = useState('');
   const [leadSearch, setLeadSearch] = useState('');
   const [tab, setTab] = useState<'inventory' | 'leads' | 'blogs' | 'videos' | 'analytics' | 'settings'>('inventory');
@@ -113,16 +114,16 @@ const AdminDashboard: React.FC = () => {
 
   const handleStatusChange = async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
     // 1. OPTIMISTIC UPDATE: Update the UI immediately
-    setProperties(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+    setProperties((prev: Property[]) => prev.map((p: Property) => p.id === id ? { ...p, status } : p));
     
     setStatusUpdating(id);
     const result = await updateStatus(id, status);
     
     // 2. BACKGROUND SYNC FEEDBACK
     if (result && (result as any).success && !(result as any).mocked) {
-      addNotification('Cloud Synced', 'Success', `Status updated to ${status} in cloud.`, 'success');
+      addNotification('Cloud Synced', 'Success', `Status updated to ${status} in cloud.`, 'update');
     } else {
-      addNotification('Local Sync Only', 'System', 'Status saved locally. Cloud sync pending.', 'info');
+      addNotification('Local Sync Only', 'System', 'Status saved locally. Cloud sync pending.', 'system');
     }
     
     setStatusUpdating(null);
@@ -559,7 +560,7 @@ const AdminDashboard: React.FC = () => {
                             <div className="flex items-center gap-3">
                               <div className="flex gap-1">
                                 {['Available', 'Reserved', 'Sold'].map(s => (
-                                  <button key={s} onClick={() => handleStatusChange(p.id, s)} className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border ${p.status === s ? 'bg-primary text-white' : 'bg-white text-text-muted'}`}>{s}</button>
+                                  <button key={s} onClick={() => handleStatusChange(p.id, s as 'Available' | 'Sold' | 'Reserved')} className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border ${p.status === s ? 'bg-primary text-white' : 'bg-white text-text-muted'}`}>{s}</button>
                                 ))}
                               </div>
                               <button 

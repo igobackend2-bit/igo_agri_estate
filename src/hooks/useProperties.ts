@@ -298,6 +298,7 @@ export const useProperties = () => {
     addProperty,
     updateProperty,
     updateStatus,
-    deleteProperty
+    deleteProperty,
+    setProperties
   };
 };
