@@ -186,11 +186,35 @@ export const useProperties = () => {
         });
         upsertLocalProperty(newProp);
         setProperties(enrichProperties(getMergedLocalProperties()));
+        
+        // Add notification
+        import('../lib/notificationService').then(ns => {
+          ns.addNotification(
+            'New Estate Launched!',
+            'IGO Inventory',
+            `A new agricultural estate "${newProp.title}" is now available in ${newProp.location}.`,
+            'update'
+          );
+        });
+        
         return { success: true, mocked: true, data: [newProp] };
       }
       const { data, error } = await supabase.from('properties').insert([propertyData]).select();
       if (error) throw error;
-      if (data) setProperties(prev => [computeNumericValues(normalizeProperty(data[0])), ...prev]);
+      if (data) {
+        const p = computeNumericValues(normalizeProperty(data[0]));
+        setProperties(prev => [p, ...prev]);
+        
+        // Add notification
+        import('../lib/notificationService').then(ns => {
+          ns.addNotification(
+            'New Estate Launched!',
+            'IGO Inventory',
+            `A new agricultural estate "${p.title}" is now available in ${p.location}.`,
+            'update'
+          );
+        });
+      }
       return { success: true, data };
     } catch (err: any) {
       console.warn('Supabase insert failed:', err.message);
@@ -203,14 +227,40 @@ export const useProperties = () => {
       if (!isSupabaseConfigured) {
         const existing = getMergedLocalProperties().find(p => p.id === id);
         if (existing) {
-          upsertLocalProperty(normalizeProperty({ ...existing, ...propertyData, id }));
+          const updated = normalizeProperty({ ...existing, ...propertyData, id });
+          upsertLocalProperty(updated);
           setProperties(enrichProperties(getMergedLocalProperties()));
+          
+          if (propertyData.status === 'Sold') {
+            import('../lib/notificationService').then(ns => {
+              ns.addNotification(
+                'Estate Sold Out',
+                'IGO Sales',
+                `The estate "${updated.title}" has been sold out. Check similar corridors for new opportunities.`,
+                'alert'
+              );
+            });
+          }
         }
         return { success: true, mocked: true };
       }
       const { data, error } = await supabase.from('properties').update(propertyData).eq('id', id).select();
       if (error) throw error;
-      if (data) setProperties(prev => prev.map(p => p.id === id ? computeNumericValues(normalizeProperty(data[0])) : p));
+      if (data) {
+        const p = computeNumericValues(normalizeProperty(data[0]));
+        setProperties(prev => prev.map(p => p.id === id ? computeNumericValues(normalizeProperty(data[0])) : p));
+        
+        if (propertyData.status === 'Sold') {
+           import('../lib/notificationService').then(ns => {
+             ns.addNotification(
+               'Estate Sold Out',
+               'IGO Sales',
+               `The estate "${p.title}" has been sold out. Check similar corridors for new opportunities.`,
+               'alert'
+             );
+           });
+         }
+      }
       return { success: true, data };
     } catch (err: any) {
       console.warn('Supabase update failed:', err.message);

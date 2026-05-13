@@ -100,11 +100,11 @@ const PropertyDetails: React.FC = () => {
   const leadRef = useRef<HTMLDivElement>(null);
 
   // Visitor Tracking
-  const tracked = React.useRef(false);
+  const tracked = React.useRef<string | null>(null);
   useEffect(() => {
-    if (property && !tracked.current) {
+    if (property && tracked.current !== property.id) {
       trackVisit({ id: property.id, title: property.title });
-      tracked.current = true;
+      tracked.current = property.id;
     }
   }, [property]);
 
@@ -128,7 +128,7 @@ const PropertyDetails: React.FC = () => {
   const { addView } = useRecentlyViewed([]);
 
   // Get location info from property
-  const locationName = property?.location?.split(',')?.[0] || '';
+  const locationName = property?.location?.split(',')?.[0] || 'Unknown Corridor';
 
   const [rentalInputs, setRentalInputs] = useState({
     monthlyRent: '',
@@ -152,13 +152,18 @@ const PropertyDetails: React.FC = () => {
   }, [id, getProperty, addView]);
 
   const similarEstates = useMemo(() => {
-    if (!property || !property.location) return [];
+    if (!property || !property.location || !publicProperties.length) return [];
+    
     // Use only public (non-expired) properties
     const availableProperties = publicProperties;
-    const locName = property.location.split(',')[0].trim().toLowerCase();
+    const parts = property.location.split(',');
+    if (parts.length === 0) return [];
+    
+    const locName = parts[0].trim().toLowerCase();
+    
     // Find other estates in the same location that are active
     const sameLocation = availableProperties.filter(p =>
-      p.location?.toLowerCase().includes(locName) && p.id !== property.id
+      p.location && p.location.toLowerCase().includes(locName) && p.id !== property.id
     );
     return sameLocation.length > 0 ? sameLocation.slice(0, 3) : getRecommendations(availableProperties, property.id).slice(0, 3);
   }, [property, publicProperties]);

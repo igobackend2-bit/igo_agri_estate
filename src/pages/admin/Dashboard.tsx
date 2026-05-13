@@ -621,33 +621,75 @@ const AdminDashboard: React.FC = () => {
               ))}
             </div>
             <div className="bg-white rounded-[32px] border border-black/5 shadow-xl overflow-hidden">
-               <div className="p-6 bg-gray-50/50 flex justify-between items-center"><h3 className="font-black text-primary uppercase">Recent Activity</h3><button onClick={() => setVisitors(getVisitors())}><RefreshCw size={16} /></button></div>
-               <div className="overflow-x-auto"><table className="w-full"><thead><tr className="bg-gray-50/50">{['Visitor', 'Last Active', 'Views', 'Duration', 'Interests'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
-               <tbody className="divide-y divide-black/5">{visitors.map(v => (
-                 <tr key={v.id}>
-                   <td className="px-6 py-4 font-bold text-sm">
-                     <div>
-                       <p className="font-bold text-primary">{v.name || 'Anonymous'}</p>
-                       {v.email && <p className="text-[10px] text-text-muted font-normal">{v.email}</p>}
-                     </div>
-                   </td>
-                   <td className="px-6 py-4 text-xs font-bold text-primary">{new Date(v.lastVisit).toLocaleString()}</td>
-                   <td className="px-6 py-4"><span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">{v.pageViews}</span></td>
-                   <td className="px-6 py-4"><span className="text-[11px] font-black text-primary uppercase tracking-widest">{v.durationMinutes || 0}m</span></td>
-                                       <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        {v.visitedProperties.map((p, i) => (
-                          <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">
-                            <span>{p.title}</span>
-                            {p.duration && p.duration > 30 && <span className="bg-secondary text-primary px-1 rounded-sm text-[8px] font-black" title={`Watched for ${p.duration}s`}>ENGAGED</span>}
-                            <span className="opacity-40 font-normal">({p.duration || 0}s)</span>
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-
-                 </tr>
-               ))}</tbody></table></div>
+               <div className="p-6 bg-gray-50/50 flex justify-between items-center">
+                 <h3 className="font-black text-primary uppercase">Recent Activity</h3>
+                 <div className="flex gap-3">
+                   <button 
+                     onClick={() => {
+                       if (confirm('Reset anomalously high view counts? This fixes corrupted data.')) {
+                        const cleaned = visitors.map(v => ({ ...v, pageViews: v.pageViews > 1000 ? Math.round(v.durationMinutes * 1.5) + 1 : v.pageViews }));
+                        localStorage.setItem('igo.analytics.visitors', JSON.stringify(cleaned));
+                        setVisitors(cleaned);
+                       }
+                     }}
+                     className="text-[10px] font-black uppercase text-secondary hover:underline"
+                   >
+                     Cleanse Data
+                   </button>
+                   <button onClick={() => setVisitors(getVisitors())}><RefreshCw size={16} /></button>
+                 </div>
+               </div>
+               <div className="overflow-x-auto">
+                 <table className="w-full">
+                   <thead>
+                     <tr className="bg-gray-50/50">
+                       {['Visitor / Contact', 'Last Active', 'Views', 'Time spent', 'Device', 'Estate Interests'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}
+                     </tr>
+                   </thead>
+                   <tbody className="divide-y divide-black/5">
+                     {visitors.map(v => (
+                       <tr key={v.id}>
+                         <td className="px-6 py-4 font-bold text-sm">
+                           <div>
+                             <p className="font-bold text-primary">{v.name || 'Anonymous'}</p>
+                             {v.email && <p className="text-[10px] text-text-muted font-normal">{v.email}</p>}
+                           </div>
+                         </td>
+                         <td className="px-6 py-4 text-xs font-bold text-primary">{new Date(v.lastVisit).toLocaleString()}</td>
+                         <td className="px-6 py-4">
+                           <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">{v.pageViews}</span>
+                         </td>
+                         <td className="px-6 py-4">
+                           <div className="flex flex-col">
+                             <span className="text-[11px] font-black text-primary uppercase tracking-widest">{v.durationMinutes || 0}m</span>
+                             <span className="text-[9px] text-text-muted font-bold">Total Session</span>
+                           </div>
+                         </td>
+                         <td className="px-6 py-4">
+                            <div className="flex items-center gap-2">
+                              <Globe size={14} className="text-secondary" />
+                              <span className="text-[10px] font-bold text-primary truncate max-w-[120px]" title={v.browser}>
+                                {v.browser?.split('(')[0] || 'Unknown'}
+                              </span>
+                            </div>
+                         </td>
+                         <td className="px-6 py-4">
+                            <div className="flex flex-wrap gap-2">
+                              {v.visitedProperties.map((p, i) => (
+                                <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">
+                                  <span className="truncate max-w-[100px]">{p.title}</span>
+                                  {p.duration && p.duration > 30 && <span className="bg-secondary text-primary px-1 rounded-sm text-[8px] font-black" title={`Watched for ${p.duration}s`}>ENGAGED</span>}
+                                  <span className="opacity-40 font-normal">({p.duration || 0}s)</span>
+                                </div>
+                              ))}
+                              {v.visitedProperties.length === 0 && <span className="text-[10px] text-text-muted italic">No estates viewed</span>}
+                            </div>
+                         </td>
+                       </tr>
+                     ))}
+                   </tbody>
+                 </table>
+               </div>
             </div>
           </div>
         )}

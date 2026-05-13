@@ -71,11 +71,26 @@ const Profile: React.FC = () => {
     { text: 'Signed in from Chennai, IN', time: '2 days ago' },
   ];
 
-  const mockMessages = [
-    { id: 1, title: 'Welcome to IGO Agriestates', sender: 'IGO Team', date: 'May 12, 2026', preview: 'Welcome to the premium agricultural estate network. Your account is now active.', read: false },
-    { id: 2, title: 'Site Visit Scheduled', sender: 'Operations Dept', date: 'May 10, 2026', preview: 'Your visit to Polyhouse Agri Estate is confirmed for May 15th.', read: true },
-    { id: 3, title: 'Market Insight Report', sender: 'IGO Research', date: 'May 08, 2026', preview: 'New report on land appreciation in Tamil Nadu corridor is now available.', read: true },
-  ];
+  const [notifications, setNotifications] = useState<any[]>([]);
+
+  useEffect(() => {
+    const loadNotifs = () => {
+      import('../lib/notificationService').then(ns => {
+        setNotifications(ns.getNotifications());
+      });
+    };
+    loadNotifs();
+    window.addEventListener('igo.notifications_updated', loadNotifs);
+    return () => window.removeEventListener('igo.notifications_updated', loadNotifs);
+  }, []);
+
+  const handleMarkAllRead = () => {
+    import('../lib/notificationService').then(ns => ns.markAllAsRead());
+  };
+
+  const handleMarkRead = (id: string) => {
+    import('../lib/notificationService').then(ns => ns.markAsRead(id));
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -388,28 +403,44 @@ const Profile: React.FC = () => {
                       <Inbox size={28} className="text-secondary" />
                       Investor Inbox
                     </h3>
-                    <button className="text-[10px] font-black uppercase tracking-widest text-secondary border-b-2 border-secondary">Mark All as Read</button>
+                    <button 
+                      onClick={handleMarkAllRead}
+                      className="text-[10px] font-black uppercase tracking-widest text-secondary border-b-2 border-secondary"
+                    >
+                      Mark All as Read
+                    </button>
                   </div>
                   
                   <div className="divide-y divide-black/5">
-                    {mockMessages.map((msg) => (
-                      <div key={msg.id} className={`p-8 hover:bg-gray-50 transition-colors cursor-pointer flex gap-6 ${!msg.read ? 'bg-primary/[0.02]' : ''}`}>
-                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${!msg.read ? 'bg-secondary text-primary shadow-lg' : 'bg-gray-100 text-text-muted'}`}>
-                          <MessageSquare size={20} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-1">
-                            <h4 className={`text-lg font-bold truncate ${!msg.read ? 'text-primary' : 'text-text-muted'}`}>{msg.title}</h4>
-                            <span className="text-[10px] font-black text-text-muted uppercase tracking-widest flex-shrink-0 ml-4">{msg.date}</span>
+                    {notifications.length > 0 ? (
+                      notifications.map((msg) => (
+                        <div 
+                          key={msg.id} 
+                          onClick={() => handleMarkRead(msg.id)}
+                          className={`p-8 hover:bg-gray-50 transition-colors cursor-pointer flex gap-6 ${!msg.read ? 'bg-primary/[0.02]' : ''}`}
+                        >
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${!msg.read ? 'bg-secondary text-primary shadow-lg' : 'bg-gray-100 text-text-muted'}`}>
+                            <MessageSquare size={20} />
                           </div>
-                          <p className="text-xs font-black text-secondary uppercase tracking-widest mb-2">{msg.sender}</p>
-                          <p className="text-sm text-text-muted line-clamp-1">{msg.preview}</p>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-1">
+                              <h4 className={`text-lg font-bold truncate ${!msg.read ? 'text-primary' : 'text-text-muted'}`}>{msg.title}</h4>
+                              <span className="text-[10px] font-black text-text-muted uppercase tracking-widest flex-shrink-0 ml-4">{msg.date}</span>
+                            </div>
+                            <p className="text-xs font-black text-secondary uppercase tracking-widest mb-2">{msg.sender}</p>
+                            <p className="text-sm text-text-muted line-clamp-1">{msg.preview}</p>
+                          </div>
+                          {!msg.read && (
+                            <div className="w-2.5 h-2.5 bg-secondary rounded-full mt-2 flex-shrink-0" />
+                          )}
                         </div>
-                        {!msg.read && (
-                          <div className="w-2.5 h-2.5 bg-secondary rounded-full mt-2 flex-shrink-0" />
-                        )}
+                      ))
+                    ) : (
+                      <div className="p-20 text-center">
+                        <Inbox size={48} className="mx-auto text-gray-200 mb-4" />
+                        <p className="text-text-muted font-bold">Your inbox is empty.</p>
                       </div>
-                    ))}
+                    )}
                   </div>
 
                   <div className="p-10 bg-gray-50/50 text-center border-t border-black/5">

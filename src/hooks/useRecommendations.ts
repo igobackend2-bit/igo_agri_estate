@@ -8,7 +8,8 @@ export const useRecentlyViewed = (properties: Property[]) => {
   const recentIds: string[] = useMemo(() => {
     try {
       const stored = localStorage.getItem(RECENT_VIEWS_KEY);
-      return stored ? JSON.parse(stored) : [];
+      const parsed = stored ? JSON.parse(stored) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
     }
