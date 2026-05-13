@@ -61,6 +61,7 @@ const Login: React.FC = () => {
     setLoading(true);
     setMessage(null);
 
+    // Force real-time Supabase OTP if credentials are present
     if (!isSupabaseConfigured) {
       const devOtp = String(Math.floor(100000 + Math.random() * 900000));
       localStorage.setItem('igo.cx.pendingEmail', email);
@@ -71,18 +72,27 @@ const Login: React.FC = () => {
       return;
     }
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/profile` }
-    });
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { 
+          emailRedirectTo: `${window.location.origin}/profile`,
+          shouldCreateUser: true
+        }
+      });
 
-    if (error) {
-      setMessage({ type: 'error', text: `Unable to send OTP: ${error.message}` });
-    } else {
+      if (error) throw error;
+      
       setMode('otp');
-      setMessage({ type: 'success', text: 'OTP sent to your email!' });
+      setMessage({ 
+        type: 'success', 
+        text: 'A 6-digit security code has been sent to your email. Please check your inbox and spam folder.' 
+      });
+    } catch (err: any) {
+      setMessage({ type: 'error', text: `Authentication failed: ${err.message}` });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
