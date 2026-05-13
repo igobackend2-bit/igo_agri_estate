@@ -35,12 +35,14 @@ const TYPE_COLORS: Record<string, string> = {
   contact: 'bg-gray-50 text-gray-600 border-gray-100',
 };
 
+import { getVisitors, VisitorSession } from '../../lib/trackingService';
+
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { properties, updateStatus, deleteProperty, refresh } = useProperties();
   const [search, setSearch] = useState('');
   const [leadSearch, setLeadSearch] = useState('');
-  const [tab, setTab] = useState<'inventory' | 'leads' | 'blogs' | 'videos' | 'settings'>('inventory');
+  const [tab, setTab] = useState<'inventory' | 'leads' | 'blogs' | 'videos' | 'analytics' | 'settings'>('inventory');
   const [leads, setLeads] = useState<LeadData[]>([]);
   const [leadsLoading, setLeadsLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
@@ -58,6 +60,10 @@ const AdminDashboard: React.FC = () => {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [editingBlog, setEditingBlog] = useState<BlogItem | null>(null);
   const [editingVideo, setEditingVideo] = useState<VideoItem | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  // Analytics state
+  const [visitors, setVisitors] = useState<VisitorSession[]>([]);
 
   const loadLeads = useCallback(async () => {
     setLeadsLoading(true);
@@ -71,112 +77,37 @@ const AdminDashboard: React.FC = () => {
       setLeadsNotification(0); // Clear notifications when viewing
       loadLeads();
     }
-  }, [tab, loadLeads]);
-
-  useEffect(() => {
-    if (isSupabaseConfigured) return;
-    return subscribeLocalSync(LEAD_SYNC_EVENT, () => {
-      if (tab === 'leads') loadLeads();
-      else setLeadsNotification(prev => prev + 1);
-    });
-  }, [tab, loadLeads]);
-
-  useEffect(() => {
-    return subscribeLocalSync(SETTINGS_SYNC_EVENT, () => setSettings(getLocalSettings()));
-  }, []);
-
-  useEffect(() => {
-    return subscribeLocalSync(BLOG_SYNC_EVENT, () => setBlogs(getLocalBlogs()));
-  }, []);
-
-  useEffect(() => {
-    return subscribeLocalSync(VIDEO_SYNC_EVENT, () => setVideos(getLocalVideos()));
-  }, []);
-
-  // Real-time subscription for leads
-  useEffect(() => {
-    if (!isSupabaseConfigured) return;
-
-    const channel = supabase
-      .channel('leads-changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, () => {
-        if (tab === 'leads') {
-          loadLeads();
-        } else {
-          setLeadsNotification(prev => prev + 1);
-        }
-      })
-      .subscribe();
-
-    return () => { supabase.removeChannel(channel); };
-  }, [tab, loadLeads]);
-
-  const filtered = properties.filter(p =>
-    p.title.toLowerCase().includes(search.toLowerCase()) ||
-    p.location.toLowerCase().includes(search.toLowerCase())
-  );
-  const filteredLeads = leads.filter(l =>
-    l.name.toLowerCase().includes(leadSearch.toLowerCase()) ||
-    (l.property_title || '').toLowerCase().includes(leadSearch.toLowerCase()) ||
-    (l.phone || '').includes(leadSearch)
-  );
-
-  // Bulk selection handlers
-  const toggleSelect = (id: string) => {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedIds.size === filtered.length) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(filtered.map(p => p.id)));
+    if (tab === 'analytics') {
+      setVisitors(getVisitors());
     }
+  }, [tab, loadLeads]);
+
+  const handleFileUpload = (file: File): Promise<string> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
   };
 
-  const clearSelection = () => setSelectedIds(new Set());
-
-  const bulkUpdateStatus = async (status: 'Available' | 'Sold' | 'Reserved') => {
-    await Promise.all(Array.from(selectedIds).map(id => updateStatus(id, status)));
-    clearSelection();
-  };
-
-  const bulkDelete = async () => {
-    if (!confirm(`Delete ${selectedIds.size} estates? This cannot be undone.`)) return;
-    await Promise.all(Array.from(selectedIds).map(id => deleteProperty(id)));
-    clearSelection();
-  };
-
-  // Clear selection when search changes
-  useEffect(() => { clearSelection(); }, [search]);
-
-  const handleStatusChange = async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
-    setStatusUpdating(id);
-    await updateStatus(id, status);
-    setStatusUpdating(null);
-  };
-
-  const handleDelete = async () => {
-    if (!deleteTarget) return;
-    await deleteProperty(deleteTarget.id);
-    setDeleteTarget(null);
-  };
-
-  const handleSaveBlog = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveBlog = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setUploading(true);
     const formData = new FormData(e.currentTarget);
+    const imageFile = (e.currentTarget.elements.namedItem('imageFile') as HTMLInputElement).files?.[0];
+    
+    let imageUrl = formData.get('image') as string;
+    if (imageFile) {
+      imageUrl = await handleFileUpload(imageFile);
+    }
+
     const blog: BlogItem = {
       id: editingBlog?.id || String(Date.now()),
       title: formData.get('title') as string,
       category: formData.get('category') as string,
       author: formData.get('author') as string,
       date: formData.get('date') as string,
-      image: formData.get('image') as string,
+      image: imageUrl || editingBlog?.image || '',
     };
 
     const nextBlogs = editingBlog 
@@ -186,16 +117,32 @@ const AdminDashboard: React.FC = () => {
     saveLocalBlogs(nextBlogs);
     setShowBlogModal(false);
     setEditingBlog(null);
+    setUploading(false);
   };
 
-  const handleSaveVideo = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSaveVideo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setUploading(true);
     const formData = new FormData(e.currentTarget);
+    const thumbFile = (e.currentTarget.elements.namedItem('thumbFile') as HTMLInputElement).files?.[0];
+    const videoFile = (e.currentTarget.elements.namedItem('videoFile') as HTMLInputElement).files?.[0];
+
+    let thumbUrl = formData.get('thumb') as string;
+    if (thumbFile) {
+      thumbUrl = await handleFileUpload(thumbFile);
+    }
+
+    let videoUrl = formData.get('url') as string;
+    if (videoFile) {
+      videoUrl = await handleFileUpload(videoFile);
+    }
+
     const video: VideoItem = {
       id: editingVideo?.id || String(Date.now()),
       title: formData.get('title') as string,
       views: formData.get('views') as string,
-      thumb: formData.get('thumb') as string,
+      thumb: thumbUrl || editingVideo?.thumb || '',
+      url: videoUrl || editingVideo?.url || '',
     };
 
     const nextVideos = editingVideo 
@@ -205,6 +152,7 @@ const AdminDashboard: React.FC = () => {
     saveLocalVideos(nextVideos);
     setShowVideoModal(false);
     setEditingVideo(null);
+    setUploading(false);
   };
 
   const deleteBlog = (id: string) => {
@@ -224,6 +172,7 @@ const AdminDashboard: React.FC = () => {
     { id: 'leads', label: 'Investment Pipeline', icon: Users },
     { id: 'blogs', label: 'Content: Blogs', icon: FileText },
     { id: 'videos', label: 'Content: Videos', icon: Video },
+    { id: 'analytics', label: 'Visitor Activity', icon: Eye },
     { id: 'settings', label: 'Global Settings', icon: Settings },
   ];
 
@@ -271,12 +220,16 @@ const AdminDashboard: React.FC = () => {
                     <input name="date" type="text" defaultValue={editingBlog?.date || new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })} className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Image URL</label>
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Image URL (Optional)</label>
                     <input name="image" defaultValue={editingBlog?.image} placeholder="/images/blog/..." className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none" />
                   </div>
                 </div>
-                <button type="submit" className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl">
-                  {editingBlog ? 'Update Article' : 'Publish Article'}
+                <div>
+                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Or Upload Image</label>
+                  <input name="imageFile" type="file" accept="image/*" className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/5 file:text-primary hover:file:bg-primary/10 transition-all cursor-pointer" />
+                </div>
+                <button type="submit" disabled={uploading} className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl disabled:opacity-50">
+                  {uploading ? 'Processing...' : editingBlog ? 'Update Article' : 'Publish Article'}
                 </button>
               </form>
             </motion.div>
@@ -302,12 +255,22 @@ const AdminDashboard: React.FC = () => {
                     <input name="views" defaultValue={editingVideo?.views || '0'} className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none" />
                   </div>
                   <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Thumbnail URL</label>
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Thumbnail URL (Optional)</label>
                     <input name="thumb" defaultValue={editingVideo?.thumb} placeholder="/images/blog/..." className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none" />
                   </div>
                 </div>
-                <button type="submit" className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl">
-                  {editingVideo ? 'Update Video' : 'Publish Video'}
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Or Upload Thumb</label>
+                    <input name="thumbFile" type="file" accept="image/*" className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/5 file:text-primary hover:file:bg-primary/10 cursor-pointer" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Upload Video File</label>
+                    <input name="videoFile" type="file" accept="video/*" className="w-full text-xs text-text-muted file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-primary/5 file:text-primary hover:file:bg-primary/10 cursor-pointer" />
+                  </div>
+                </div>
+                <button type="submit" disabled={uploading} className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl disabled:opacity-50">
+                  {uploading ? 'Processing...' : editingVideo ? 'Update Video' : 'Publish Video'}
                 </button>
               </form>
             </motion.div>
@@ -664,7 +627,14 @@ const AdminDashboard: React.FC = () => {
               {blogs.map(blog => (
                 <div key={blog.id} className="bg-white rounded-[40px] border border-black/5 overflow-hidden shadow-xl flex flex-col group">
                   <div className="h-48 overflow-hidden relative">
-                    <img src={blog.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                    <img 
+                      src={blog.image} 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/blog/farmland.png';
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      alt="" 
+                    />
                     <div className="absolute top-5 left-5 bg-secondary text-primary text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 rounded-full">{blog.category}</div>
                   </div>
                   <div className="p-8 flex-1 flex flex-col">
@@ -708,7 +678,14 @@ const AdminDashboard: React.FC = () => {
               {videos.map(video => (
                 <div key={video.id} className="bg-white rounded-[40px] border border-black/5 overflow-hidden shadow-xl flex flex-col group">
                   <div className="aspect-video overflow-hidden relative">
-                    <img src={video.thumb} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="" />
+                    <img 
+                      src={video.thumb} 
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/images/properties/polyhouse.png';
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      alt="" 
+                    />
                     <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center"><Play className="text-white fill-white" size={24} /></div>
                     </div>
@@ -732,6 +709,89 @@ const AdminDashboard: React.FC = () => {
               {videos.length === 0 && (
                 <div className="col-span-2 text-center py-24 bg-white rounded-[40px] border border-dashed border-black/20 text-text-muted font-bold">No trending videos found.</div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* ANALYTICS */}
+        {tab === 'analytics' && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-4 gap-5">
+              {[
+                { label: 'Total Sessions', value: visitors.length, icon: Users, color: 'text-primary' },
+                { label: 'Avg. Page Views', value: visitors.length ? (visitors.reduce((acc, v) => acc + v.pageViews, 0) / visitors.length).toFixed(1) : 0, icon: TrendingUp, color: 'text-secondary' },
+                { label: 'Active Today', value: visitors.filter(v => new Date(v.lastVisit).toDateString() === new Date().toDateString()).length, icon: Clock, color: 'text-green-600' },
+                { label: 'Identified Users', value: visitors.filter(v => v.name).length, icon: ShieldCheck, color: 'text-blue-600' },
+              ].map((s, i) => (
+                <div key={i} className="bg-white p-6 rounded-[28px] border border-black/5 shadow-sm">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center"><s.icon size={20} className={s.color} /></div>
+                  </div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-text-muted mb-1">{s.label}</p>
+                  <p className={`text-4xl font-black ${s.color}`}>{s.value}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-white rounded-[32px] border border-black/5 shadow-xl overflow-hidden">
+              <div className="p-6 border-b border-black/5 flex justify-between items-center bg-gray-50/50">
+                <h3 className="font-black text-primary uppercase tracking-tight">Recent Visitor Activity</h3>
+                <button onClick={() => setVisitors(getVisitors())} className="p-3 bg-white border border-black/10 rounded-xl text-text-muted hover:text-primary transition-all">
+                  <RefreshCw size={16} />
+                </button>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-50/50">
+                      {['Visitor', 'Last Active', 'Page Views', 'Interests (Lands Visited)', 'Browser'].map(h => (
+                        <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-text-muted">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-black/5">
+                    {visitors.map(v => (
+                      <tr key={v.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center font-black text-primary">
+                              {v.name?.[0] || 'V'}
+                            </div>
+                            <div>
+                              <p className="font-bold text-primary text-sm">{v.name || 'Anonymous Visitor'}</p>
+                              {v.email && <p className="text-[10px] text-text-muted">{v.email}</p>}
+                              <p className="text-[9px] text-text-muted font-mono">{v.id.substring(0, 8)}...</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-xs font-bold text-primary">{new Date(v.lastVisit).toLocaleTimeString()}</p>
+                          <p className="text-[10px] text-text-muted">{new Date(v.lastVisit).toLocaleDateString()}</p>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">{v.pageViews}</span>
+                        </td>
+                        <td className="px-6 py-4 max-w-md">
+                          <div className="flex flex-wrap gap-2">
+                            {v.visitedProperties.map((p, i) => (
+                              <span key={i} className="px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">
+                                {p.title}
+                              </span>
+                            ))}
+                            {v.visitedProperties.length === 0 && <span className="text-[10px] text-text-muted italic">No properties viewed yet</span>}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <p className="text-[10px] text-text-muted truncate w-32" title={v.browser}>{v.browser}</p>
+                        </td>
+                      </tr>
+                    ))}
+                    {visitors.length === 0 && (
+                      <tr><td colSpan={5} className="text-center py-16 text-text-muted font-bold">No visitor activity recorded yet.</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}

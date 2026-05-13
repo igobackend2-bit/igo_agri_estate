@@ -83,6 +83,8 @@ const estateFlow = [
   },
 ];
 
+import { trackVisit } from '../lib/trackingService';
+
 const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -96,6 +98,13 @@ const PropertyDetails: React.FC = () => {
   const [authMessage, setAuthMessage] = useState('');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const leadRef = useRef<HTMLDivElement>(null);
+
+  // Visitor Tracking
+  useEffect(() => {
+    if (property) {
+      trackVisit({ id: property.id, title: property.title });
+    }
+  }, [property]);
 
   // Personalization: track recently viewed and get recommendations
   const { addView } = useRecentlyViewed([]);

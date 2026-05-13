@@ -41,6 +41,8 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
 
     setIsSubmitting(true);
     
+    const timeValue = formData.time === 'Custom' ? formData.customTime : formData.time;
+
     const lines = [
       `IGO Agritech Farms Agri Estate Enquiry`,
       `Estate: ${propertyTitle}`,
@@ -50,9 +52,8 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
       `Phone: ${formData.phone}`,
       `Email: ${formData.email}`,
       activeTab === 'visit' ? `Preferred Date: ${formData.date}` : '',
-      activeTab === 'visit' ? `Preferred Time: ${formData.time}` : '',
+      (activeTab === 'visit' || activeTab === 'callback') ? `Preferred Time: ${timeValue}` : '',
       activeTab === 'offer' ? `Approx Budget / Offer: ${formData.offer} Cr` : '',
-      activeTab === 'callback' ? `Preferred Callback Time: ${formData.time}` : '',
       `Purpose: ${formData.purpose}`,
       `Please share estate details, seller process, site visit availability, documents, and next steps.`,
     ].filter(Boolean);
@@ -67,7 +68,7 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
       property_title: propertyTitle,
       offer_amount: formData.offer ? Number(formData.offer) * 10000000 : undefined,
       preferred_date: formData.date || undefined,
-      preferred_time: (activeTab === 'visit' || activeTab === 'callback') ? formData.time : undefined,
+      preferred_time: (activeTab === 'visit' || activeTab === 'callback') ? timeValue : undefined,
       intent: formData.purpose,
       notes: message,
     });
@@ -75,118 +76,95 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
     setIsSubmitting(false);
     if (result.success) {
       setSubmitted(true);
-      window.open(`https://wa.me/${igoPhone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      // Fixed WhatsApp phone number with + prefix
+      window.open(`https://wa.me/+${igoPhone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
     }
   };
 
-  return (
-    <div className="bg-white rounded-[40px] shadow-2xl border border-black/5 overflow-hidden sticky top-32">
-      <div className="flex border-b border-black/5 bg-gray-50/50">
-        <button 
-          onClick={() => setActiveTab('visit')}
-          className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors flex flex-col items-center gap-2 ${activeTab === 'visit' ? 'text-secondary border-b-2 border-secondary bg-white' : 'text-text-muted hover:text-primary'}`}
-        >
-          <Calendar size={18} />
-          <span>Site Visit</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('offer')}
-          className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors flex flex-col items-center gap-2 ${activeTab === 'offer' ? 'text-secondary border-b-2 border-secondary bg-white' : 'text-text-muted hover:text-primary'}`}
-        >
-          <IndianRupee size={18} />
-          <span>Proposal</span>
-        </button>
-        <button 
-          onClick={() => setActiveTab('callback')}
-          className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors flex flex-col items-center gap-2 ${activeTab === 'callback' ? 'text-secondary border-b-2 border-secondary bg-white' : 'text-text-muted hover:text-primary'}`}
-        >
-          <MessageSquare size={18} />
-          <span>Callback</span>
-        </button>
-      </div>
+// ... inside state
+  const [formData, setFormData] = useState({
+    name: user?.user_metadata?.name || '',
+    phone: '',
+    email: user?.email || '',
+    date: '',
+    time: 'Morning (9AM - 12PM)',
+    customTime: '',
+    offer: '',
+    purpose: 'Buy this estate'
+  });
 
-      <div className="p-8">
-        {submitted ? (
-          <div className="text-center py-10">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 size={32} className="text-green-600" />
-            </div>
-            <h3 className="text-2xl font-black text-primary mb-3">Request Sent to Admin</h3>
-            <p className="text-sm text-text-muted leading-relaxed">
-              This buyer request is now visible in the admin Investment Leads page with the estate name, purpose, contact, and timing.
-            </p>
-            <button
-              type="button"
-              onClick={() => setSubmitted(false)}
-              className="mt-8 text-[10px] font-black uppercase tracking-widest text-secondary hover:text-primary"
-            >
-              Send Another Request
-            </button>
-          </div>
-        ) : (
-        <form onSubmit={handleSubmit} className="space-y-6">
+// ... inside JSX
           {activeTab === 'visit' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <div>
                 <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Preferred Date</label>
                 <input 
-                  type="date" 
-                  required 
-                  min={today}
-                  value={formData.date}
-                  onChange={(e) => setFormData({...formData, date: e.target.value})}
-                  className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary" 
+                   type="date" 
+                   required 
+                   min={today}
+                   value={formData.date}
+                   onChange={(e) => setFormData({...formData, date: e.target.value})}
+                   className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary" 
                 />
               </div>
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Time Preference</label>
-                <select 
-                  value={formData.time}
-                  onChange={(e) => setFormData({...formData, time: e.target.value})}
-                  className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary cursor-pointer"
-                >
-                  <option>Morning (9AM - 12PM)</option>
-                  <option>Afternoon (12PM - 4PM)</option>
-                </select>
-              </div>
-            </motion.div>
-          )}
-
-          {activeTab === 'offer' && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Approx Budget / Your Offer</label>
-                <div className="relative">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 font-bold text-primary">₹</span>
-                  <input 
-                    type="number" 
-                    step="0.01" 
-                    required 
-                    placeholder="e.g. 1.25" 
-                    value={formData.offer}
-                    onChange={(e) => setFormData({...formData, offer: e.target.value})}
-                    className="w-full bg-gray-50 border border-black/5 rounded-2xl pl-12 pr-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary text-xl" 
-                  />
-                  <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-text-muted text-xs">Cr</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Time Preference</label>
+                  <select 
+                    value={formData.time}
+                    onChange={(e) => setFormData({...formData, time: e.target.value})}
+                    className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary cursor-pointer"
+                  >
+                    <option>Morning (9AM - 12PM)</option>
+                    <option>Afternoon (12PM - 4PM)</option>
+                    <option>Custom</option>
+                  </select>
                 </div>
+                {formData.time === 'Custom' && (
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Specify Time</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. 11:30 AM" 
+                      value={formData.customTime}
+                      onChange={(e) => setFormData({...formData, customTime: e.target.value})}
+                      className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary"
+                    />
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
 
           {activeTab === 'callback' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Preferred Callback Time</label>
-                <select 
-                  value={formData.time}
-                  onChange={(e) => setFormData({...formData, time: e.target.value})}
-                  className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary cursor-pointer"
-                >
-                  <option>Immediate (ASAP)</option>
-                  <option>Morning (9AM - 12PM)</option>
-                  <option>Afternoon (12PM - 4PM)</option>
-                  <option>Evening (4PM - 7PM)</option>
-                </select>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Preferred Callback Time</label>
+                  <select 
+                    value={formData.time}
+                    onChange={(e) => setFormData({...formData, time: e.target.value})}
+                    className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary cursor-pointer"
+                  >
+                    <option>Immediate (ASAP)</option>
+                    <option>Morning (9AM - 12PM)</option>
+                    <option>Afternoon (12PM - 4PM)</option>
+                    <option>Evening (4PM - 7PM)</option>
+                    <option>Custom</option>
+                  </select>
+                </div>
+                {formData.time === 'Custom' && (
+                  <div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Specify Time</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g. Monday 10AM" 
+                      value={formData.customTime}
+                      onChange={(e) => setFormData({...formData, customTime: e.target.value})}
+                      className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary"
+                    />
+                  </div>
+                )}
               </div>
             </motion.div>
           )}

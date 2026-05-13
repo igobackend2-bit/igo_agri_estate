@@ -64,7 +64,14 @@ const Blog: React.FC = () => {
                 whileHover={{ scale: 1.02 }}
                 className="relative aspect-video rounded-[40px] overflow-hidden group cursor-pointer shadow-xl text-left"
               >
-                <img src={vid.thumb} alt={vid.title} className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-[2s]" />
+                <img 
+                  src={vid.thumb} 
+                  alt={vid.title} 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/images/properties/polyhouse.png';
+                  }}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-[2s]" 
+                />
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                   <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center group-hover:bg-secondary group-hover:scale-110 transition-all">
                     <Play className="text-white fill-white" size={32} />

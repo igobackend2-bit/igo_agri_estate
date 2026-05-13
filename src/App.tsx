@@ -434,9 +434,16 @@ const Home: React.FC = () => {
   );
 };
 
+import { trackVisit } from './lib/trackingService';
+
 function App() {
   const location = useLocation();
   const [settings, setSettings] = useState(getLocalSettings);
+
+  useEffect(() => {
+    // Track page views on route change
+    trackVisit();
+  }, [location.pathname]);
 
   useEffect(() => {
     return subscribeLocalSync(SETTINGS_SYNC_EVENT, () => setSettings(getLocalSettings()));
