@@ -79,6 +79,16 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
     ].filter(Boolean);
 
     const message = lines.join('\n');
+
+    // Safety timeout: stop showing "Sending" after 4 seconds regardless of server response
+    let hasTimedOut = false;
+    const safetyTimeout = setTimeout(() => {
+      hasTimedOut = true;
+      setIsSubmitting(false);
+      setSubmitted(true);
+      window.open(`https://wa.me/+${igoPhone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+    }, 4000);
+
     const result = await submitLead({
       type: activeTab,
       name: formData.name,
@@ -93,12 +103,18 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
       notes: message,
     });
 
+    clearTimeout(safetyTimeout);
+    
+    if (hasTimedOut) return;
+
     setIsSubmitting(false);
     if (result.success) {
       setSubmitted(true);
       window.open(`https://wa.me/+${igoPhone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
     } else {
-      alert(`Submission Error: ${result.error || 'Could not connect to cloud'}. Please check your connection or contact admin.`);
+      console.warn('Cloud sync failed, but proceeding with WhatsApp:', result.error);
+      setSubmitted(true);
+      window.open(`https://wa.me/+${igoPhone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
     }
   };
 

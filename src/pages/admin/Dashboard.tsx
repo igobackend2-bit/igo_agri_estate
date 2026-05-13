@@ -111,31 +111,22 @@ const AdminDashboard: React.FC = () => {
 
   const clearSelection = () => setSelectedIds(new Set());
 
-  const handleStatusChange = async (id: string, status: any) => {
+  const handleStatusChange = async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
+    // 1. OPTIMISTIC UPDATE: Update the UI immediately
+    setProperties(prev => prev.map(p => p.id === id ? { ...p, status } : p));
+    
     setStatusUpdating(id);
     const result = await updateStatus(id, status);
-    // updateStatus now returns {success, data, mocked}
+    
+    // 2. BACKGROUND SYNC FEEDBACK
     if (result && (result as any).success && !(result as any).mocked) {
-      const prop = properties.find(p => p.id === id);
-      addNotification(
-        `Estate Status Update: ${prop?.title || 'Property'}`,
-        'Admin Desk',
-        `The status of ${prop?.title || 'the estate'} has been updated to ${status} in the cloud.`,
-        'update'
-      );
-      refresh();
-    } else if (result && (result as any).mocked) {
-      addNotification(
-        'Offline Mode Active',
-        'System',
-        'Changes saved locally. Cloud sync is currently restricted by database permissions.',
-        'alert'
-      );
-      refresh();
+      addNotification('Cloud Synced', 'Success', `Status updated to ${status} in cloud.`, 'success');
     } else {
-      addNotification('Sync Failed', 'System', 'Please check your connection.', 'alert');
+      addNotification('Local Sync Only', 'System', 'Status saved locally. Cloud sync pending.', 'info');
     }
+    
     setStatusUpdating(null);
+    refresh();
   };
 
   const handleDelete = async () => {

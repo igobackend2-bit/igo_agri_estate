@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
+import { isSupabaseConfigured, supabase, directPostgREST } from '../lib/supabaseClient';
 import { Property } from '../types';
 import { fallbackProperties, normalizeProperty } from '../data/properties';
 import { allEstates } from '../data/locationEstates';
@@ -224,66 +224,39 @@ export const useProperties = () => {
 
   const updateProperty = useCallback(async (id: string, propertyData: Partial<Property>) => {
     const payload: any = { ...propertyData, id };
-    let retryCount = 0;
-    const maxRetries = 3;
 
     if (!isSupabaseConfigured) {
-      const existing = getMergedLocalProperties().find(p => p.id === id);
-      if (existing) {
-        const updated = normalizeProperty({ ...existing, ...propertyData, id });
-        upsertLocalProperty(updated);
-        setProperties(enrichProperties(getMergedLocalProperties()));
-      }
+      const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
+      setProperties(next);
+      saveLocalProperties(next);
       return { success: true, mocked: true };
     }
 
-    while (retryCount < maxRetries) {
-      try {
-        const { data, error } = await supabase
-          .from('properties')
-          .upsert([payload], { onConflict: 'id' })
-          .select();
+    // Try direct update via REST for speed and reliability
+    const { data, error } = await directPostgREST('properties', 'PATCH', payload, `id=eq.${id}`);
 
-        if (error) throw error;
-        
-        if (data) {
-          const p = computeNumericValues(normalizeProperty(data[0]));
-          setProperties(prev => prev.map(item => item.id === id ? p : item));
-        }
-        return { success: true, data };
-
-      } catch (err: any) {
-        console.error(`Property update attempt ${retryCount + 1} failed:`, err);
-
-        const isMissingColumn = err.code === 'PGRST204' || 
-                                err.message?.includes('column') ||
-                                err.code === '42703';
-
-        if (isMissingColumn && retryCount < maxRetries - 1) {
-          const match = err.message?.match(/column ['"](.+?)['"]/i) || err.message?.match(/column (.+?) /i);
-          const missingColumn = match ? match[1] : null;
-
-          if (missingColumn && payload[missingColumn] !== undefined) {
-            console.warn(`Auto-Fix: Stripping missing column '${missingColumn}' from update.`);
-            delete payload[missingColumn];
-            retryCount++;
-            continue;
-          }
-        }
-
-        // Handle RLS or other permanent errors
-        console.warn('Supabase update failed, falling back to LocalSync:', err.message);
-        const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
-        setProperties(next);
-        saveLocalProperties(next);
-        
-        // If it's a permission error, we still return success: true but with mocked: true
-        // to let the UI know it's only local, but without a hard failure.
-        return { success: true, mocked: true, error: err.message };
+    if (error) {
+      console.warn('Direct property update failed, falling back to LocalSync:', error.message);
+      
+      // If it's a schema mismatch (missing column), try stripping extra fields
+      if (error.message?.toLowerCase().includes('column') || error.message?.toLowerCase().includes('find')) {
+         const essentialPayload: any = { status: propertyData.status, id };
+         const retry = await directPostgREST('properties', 'PATCH', essentialPayload, `id=eq.${id}`);
+         if (!retry.error) return { success: true, data: retry.data };
       }
+
+      const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
+      setProperties(next);
+      saveLocalProperties(next);
+      return { success: true, mocked: true, error: error.message };
     }
-    return { success: false, error: 'Maximum retries exceeded.' };
-  }, [isSupabaseConfigured, enrichProperties, getMergedLocalProperties, properties]);
+
+    if (data) {
+      const p = computeNumericValues(normalizeProperty(data[0]));
+      setProperties(prev => prev.map(item => item.id === id ? p : item));
+    }
+    return { success: true, data };
+  }, [isSupabaseConfigured, properties]);
 
   const updateStatus = useCallback(async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
     const now = new Date().toISOString();
