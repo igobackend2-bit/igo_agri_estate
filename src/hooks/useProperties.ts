@@ -130,7 +130,7 @@ export const useProperties = () => {
   useEffect(() => { fetchProperties(); }, [fetchProperties]);
 
   useEffect(() => {
-    if (isSupabaseConfigured) return;
+    // Always listen for local sync as a fallback/real-time booster
     return subscribeLocalSync(PROPERTY_SYNC_EVENT, fetchProperties);
   }, [fetchProperties]);
 
@@ -223,68 +223,66 @@ export const useProperties = () => {
   }, [isSupabaseConfigured, enrichProperties, getMergedLocalProperties]);
 
   const updateProperty = useCallback(async (id: string, propertyData: Partial<Property>) => {
-    try {
-      if (!isSupabaseConfigured) {
-        const existing = getMergedLocalProperties().find(p => p.id === id);
-        if (existing) {
-          const updated = normalizeProperty({ ...existing, ...propertyData, id });
-          upsertLocalProperty(updated);
-          setProperties(enrichProperties(getMergedLocalProperties()));
-          
-          if (propertyData.status === 'Sold') {
-            import('../lib/notificationService').then(ns => {
-              ns.addNotification(
-                'Estate Sold Out',
-                'IGO Sales',
-                `The estate "${updated.title}" has been sold out. Check similar corridors for new opportunities.`,
-                'alert'
-              );
-            });
-          }
-        }
-        return { success: true, mocked: true };
-      }
-      // Use upsert instead of update to handle fallback properties that aren't in DB yet
-      const { data, error } = await supabase
-        .from('properties')
-        .upsert([{ ...propertyData, id }], { onConflict: 'id' })
-        .select();
+    const payload: any = { ...propertyData, id };
+    let retryCount = 0;
+    const maxRetries = 3;
 
-      if (error) throw error;
-      if (data) {
-        const p = computeNumericValues(normalizeProperty(data[0]));
-        setProperties(prev => {
-          const exists = prev.some(item => item.id === id);
-          if (exists) {
-            return prev.map(item => item.id === id ? p : item);
-          } else {
-            return [p, ...prev];
-          }
-        });
-        
-        if (propertyData.status === 'Sold') {
-           import('../lib/notificationService').then(ns => {
-             ns.addNotification(
-               'Estate Sold Out',
-               'IGO Sales',
-               `The estate "${p.title}" has been sold out. Check similar corridors for new opportunities.`,
-               'alert'
-             );
-           });
-         }
+    if (!isSupabaseConfigured) {
+      const existing = getMergedLocalProperties().find(p => p.id === id);
+      if (existing) {
+        const updated = normalizeProperty({ ...existing, ...propertyData, id });
+        upsertLocalProperty(updated);
+        setProperties(enrichProperties(getMergedLocalProperties()));
       }
-      return { success: true, data };
-    } catch (err: any) {
-      console.warn('Supabase update failed:', err.message);
-      // If it's a permission error, let the user know
-      if (err.code === '42501' || err.message?.includes('permission')) {
-        setError('Database permission denied. Please check Supabase RLS policies.');
-      }
-      const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
-      setProperties(next);
-      saveLocalProperties(next);
       return { success: true, mocked: true };
     }
+
+    while (retryCount < maxRetries) {
+      try {
+        const { data, error } = await supabase
+          .from('properties')
+          .upsert([payload], { onConflict: 'id' })
+          .select();
+
+        if (error) throw error;
+        
+        if (data) {
+          const p = computeNumericValues(normalizeProperty(data[0]));
+          setProperties(prev => prev.map(item => item.id === id ? p : item));
+        }
+        return { success: true, data };
+
+      } catch (err: any) {
+        console.error(`Property update attempt ${retryCount + 1} failed:`, err);
+
+        const isMissingColumn = err.code === 'PGRST204' || 
+                                err.message?.includes('column') ||
+                                err.code === '42703';
+
+        if (isMissingColumn && retryCount < maxRetries - 1) {
+          const match = err.message?.match(/column ['"](.+?)['"]/i) || err.message?.match(/column (.+?) /i);
+          const missingColumn = match ? match[1] : null;
+
+          if (missingColumn && payload[missingColumn] !== undefined) {
+            console.warn(`Auto-Fix: Stripping missing column '${missingColumn}' from update.`);
+            delete payload[missingColumn];
+            retryCount++;
+            continue;
+          }
+        }
+
+        // Handle RLS or other permanent errors
+        console.warn('Supabase update failed, falling back to LocalSync:', err.message);
+        const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
+        setProperties(next);
+        saveLocalProperties(next);
+        
+        // If it's a permission error, we still return success: true but with mocked: true
+        // to let the UI know it's only local, but without a hard failure.
+        return { success: true, mocked: true, error: err.message };
+      }
+    }
+    return { success: false, error: 'Maximum retries exceeded.' };
   }, [isSupabaseConfigured, enrichProperties, getMergedLocalProperties, properties]);
 
   const updateStatus = useCallback(async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {

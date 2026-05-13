@@ -124,27 +124,67 @@ const isDemoLead = (lead: LeadData) =>
   demoLeads.some((demo) => demo.name === lead.name && demo.phone === lead.phone);
 
 export const submitLead = async (leadData: LeadData) => {
-  try {
-    if (!isSupabaseConfigured) {
+  const payload: any = { ...leadData, created_at: new Date().toISOString() };
+  let retryCount = 0;
+  const maxRetries = 5;
+
+  while (retryCount < maxRetries) {
+    try {
+      if (!isSupabaseConfigured) {
+        addLocalLead(leadData, []);
+        return { success: true, mocked: true };
+      }
+
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([payload])
+        .select();
+      
+      if (error) throw error;
+      return { success: true, data };
+
+    } catch (err: any) {
+      console.error(`Lead submission attempt ${retryCount + 1} failed:`, err);
+      
+      // Check if error is "Column not found"
+      const isMissingColumn = err.code === 'PGRST204' || 
+                              err.message?.toLowerCase().includes('could not find') || 
+                              err.message?.toLowerCase().includes('column') ||
+                              err.code === '42703';
+
+      if (isMissingColumn && retryCount < maxRetries - 1) {
+        // More robust regex to find the missing column name
+        const match = err.message?.match(/column ['"]?(.+?)['"]? (of|in|does)/i);
+        const missingColumn = match ? match[1] : null;
+
+        if (missingColumn && payload[missingColumn] !== undefined) {
+          console.warn(`Auto-Fix: Moving missing column '${missingColumn}' to notes.`);
+          const value = payload[missingColumn];
+          payload.notes = `${payload.notes || ''}\n[Auto-Field: ${missingColumn}]: ${value}`.trim();
+          delete payload[missingColumn];
+          retryCount++;
+          continue;
+        } else {
+          // Absolute fallback: move ALL non-essential fields to notes
+          console.warn('Auto-Fix: Aggressive schema fallback triggered.');
+          const essential = ['name', 'phone', 'email', 'created_at', 'notes'];
+          Object.keys(payload).forEach(key => {
+            if (!essential.includes(key)) {
+              payload.notes = `${payload.notes || ''}\n[Field: ${key}]: ${payload[key]}`.trim();
+              delete payload[key];
+            }
+          });
+          retryCount++;
+          continue;
+        }
+      }
+
+      console.error('Final Lead submission failure:', err.message);
       addLocalLead(leadData, []);
-      return { success: true, mocked: true };
+      return { success: false, error: err.message || 'Database sync failed. Saved locally.' };
     }
-    const { data, error } = await supabase
-      .from('leads')
-      .insert([{ ...leadData, created_at: new Date().toISOString() }])
-      .select();
-    
-    if (error) {
-      console.error('Supabase Lead Insert Error:', error);
-      throw error;
-    }
-    return { success: true, data };
-  } catch (err: any) {
-    console.error('Lead submission failed:', err.message);
-    // Only use local fallback as a last resort, but return false to signal failure if cloud is intended
-    addLocalLead(leadData, []);
-    return { success: false, error: err.message };
   }
+  return { success: false, error: 'Maximum retries exceeded.' };
 };
 
 export const fetchLeads = async (): Promise<LeadData[]> => {

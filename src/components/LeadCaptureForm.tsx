@@ -134,9 +134,9 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={32} className="text-green-600" />
             </div>
-            <h3 className="text-2xl font-black text-primary mb-3">Request Sent to Admin</h3>
+            <h3 className="text-2xl font-black text-primary mb-3">Request Received</h3>
             <p className="text-sm text-text-muted leading-relaxed">
-              This buyer request is now visible in the admin Investment Leads page with the estate name, purpose, contact, and timing.
+              Your inquiry has been logged. Our property advisors will review your requirements and reach out via WhatsApp/Phone shortly.
             </p>
             <button
               type="button"
