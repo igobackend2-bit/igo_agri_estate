@@ -23,7 +23,7 @@ const isAutoExpired = (p: Property): boolean => {
 
 const computeNumericValues = (prop: Property): Property => {
   let priceValue = 0;
-  const priceStr = (prop.price || '').toLowerCase();
+  const priceStr = String(prop.price || '').toLowerCase();
   if (priceStr.includes('quote')) {
     priceValue = 0;
   } else {
@@ -40,7 +40,7 @@ const computeNumericValues = (prop: Property): Property => {
   }
 
   let roiValue = 0;
-  const roiStr = (prop.roi || '').toLowerCase();
+  const roiStr = String(prop.roi || '').toLowerCase();
   const roiMatch = roiStr.match(/(\d+(?:\.\d+)?)\s*%/);
   if (roiMatch) {
     roiValue = parseFloat(roiMatch[1]);

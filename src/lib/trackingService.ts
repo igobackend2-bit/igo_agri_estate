@@ -52,6 +52,7 @@ visitor = {
 
   if (property) {
     // Avoid duplicates in the same session for the same property within a short time
+    if (!visitor.visitedProperties) visitor.visitedProperties = [];
     const alreadyVisited = visitor.visitedProperties.find(p => p.id === property.id);
     if (!alreadyVisited || (Date.now() - new Date(alreadyVisited.timestamp).getTime() > 3600000)) {
       visitor.visitedProperties.unshift({
@@ -72,8 +73,21 @@ visitor = {
 
 export const getVisitors = (): VisitorSession[] => {
   if (typeof window === 'undefined') return [];
-  const raw = localStorage.getItem(ANALYTICS_KEY);
-  return raw ? JSON.parse(raw) : [];
+  try {
+    const raw = localStorage.getItem(ANALYTICS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return [];
+    
+    // Sanitize old data: ensure all required arrays exist
+    return parsed.map(v => ({
+      ...v,
+      visitedProperties: Array.isArray(v.visitedProperties) ? v.visitedProperties : [],
+      interests: Array.isArray(v.interests) ? v.interests : []
+    }));
+  } catch (e) {
+    console.warn('Failed to parse analytics:', e);
+    return [];
+  }
 };
 
 export const updateVisitDuration = (propertyId: string, durationInSeconds: number) => {
@@ -99,8 +113,9 @@ export const addInterest = (interest: string) => {
 
    const visitors = getVisitors();
    const visitor = visitors.find(v => v.id === sessionId);
-   if (visitor) {
-     if (!visitor.interests.includes(interest)) {
+    if (visitor) {
+      if (!visitor.interests) visitor.interests = [];
+      if (!visitor.interests.includes(interest)) {
        visitor.interests.push(interest);
      }
      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
