@@ -17,6 +17,7 @@ import {
   BlogItem,
   VideoItem
 } from '../../lib/localSync';
+import { seedDatabase } from '../../utils/seedDb';
 import { getVisitors, VisitorSession } from '../../lib/trackingService';
 
 const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
@@ -419,6 +420,38 @@ const AdminDashboard: React.FC = () => {
             <p className="text-text-muted text-sm">Live control — changes reflect immediately on the public site.</p>
           </div>
         </header>
+
+        {isSupabaseConfigured && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-10 p-6 bg-blue-50 border border-blue-100 rounded-[32px] flex items-center gap-6 shadow-sm"
+          >
+            <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-inner">
+              <Globe size={28} />
+            </div>
+            <div className="flex-1">
+              <p className="font-black text-blue-900 text-lg uppercase tracking-tight">Institutional Cloud Active</p>
+              <p className="text-blue-700 text-sm font-medium">Your platform is connected to <span className="font-bold">lzhiqntjgyexhbtfsnks.supabase.co</span>. All changes reflect in real-time for investors.</p>
+            </div>
+            <div className="flex gap-3">
+              <button 
+                onClick={async () => {
+                  if (confirm('This will sync all fallback estates to your cloud database. Proceed?')) {
+                    const success = await seedDatabase();
+                    if (success) {
+                      alert('Sync Complete! All estates are now in the cloud.');
+                      refresh();
+                    }
+                  }
+                }}
+                className="bg-primary text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-secondary hover:text-primary transition-all shadow-lg"
+              >
+                Sync All Estates to Cloud
+              </button>
+            </div>
+          </motion.div>
+        )}
 
         {!isSupabaseConfigured && (
           <motion.div 

@@ -133,12 +133,17 @@ export const submitLead = async (leadData: LeadData) => {
       .from('leads')
       .insert([{ ...leadData, created_at: new Date().toISOString() }])
       .select();
-    if (error) throw error;
+    
+    if (error) {
+      console.error('Supabase Lead Insert Error:', error);
+      throw error;
+    }
     return { success: true, data };
   } catch (err: any) {
-    console.warn('Lead submission to Supabase failed, using fallback:', err.message);
+    console.error('Lead submission failed:', err.message);
+    // Only use local fallback as a last resort, but return false to signal failure if cloud is intended
     addLocalLead(leadData, []);
-    return { success: true, mocked: true };
+    return { success: false, error: err.message };
   }
 };
 

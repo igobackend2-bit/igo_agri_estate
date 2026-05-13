@@ -244,11 +244,23 @@ export const useProperties = () => {
         }
         return { success: true, mocked: true };
       }
-      const { data, error } = await supabase.from('properties').update(propertyData).eq('id', id).select();
+      // Use upsert instead of update to handle fallback properties that aren't in DB yet
+      const { data, error } = await supabase
+        .from('properties')
+        .upsert([{ ...propertyData, id }], { onConflict: 'id' })
+        .select();
+
       if (error) throw error;
       if (data) {
         const p = computeNumericValues(normalizeProperty(data[0]));
-        setProperties(prev => prev.map(p => p.id === id ? computeNumericValues(normalizeProperty(data[0])) : p));
+        setProperties(prev => {
+          const exists = prev.some(item => item.id === id);
+          if (exists) {
+            return prev.map(item => item.id === id ? p : item);
+          } else {
+            return [p, ...prev];
+          }
+        });
         
         if (propertyData.status === 'Sold') {
            import('../lib/notificationService').then(ns => {
@@ -264,6 +276,10 @@ export const useProperties = () => {
       return { success: true, data };
     } catch (err: any) {
       console.warn('Supabase update failed:', err.message);
+      // If it's a permission error, let the user know
+      if (err.code === '42501' || err.message?.includes('permission')) {
+        setError('Database permission denied. Please check Supabase RLS policies.');
+      }
       const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
       setProperties(next);
       saveLocalProperties(next);
