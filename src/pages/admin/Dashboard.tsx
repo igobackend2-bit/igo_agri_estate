@@ -609,14 +609,23 @@ const AdminDashboard: React.FC = () => {
             <div className="grid grid-cols-4 gap-5">
               {[
                 { label: 'Total Sessions', value: visitors.length, icon: Users, color: 'text-primary' },
-                { label: 'Avg. Page Views', value: visitors.length ? (visitors.reduce((acc, v) => acc + v.pageViews, 0) / visitors.length).toFixed(1) : 0, icon: TrendingUp, color: 'text-secondary' },
+                { 
+                  label: 'Avg. Page Views', 
+                  value: visitors.length 
+                    ? (visitors.reduce((acc, v) => acc + (v.pageViews > 100000 ? 5 : v.pageViews), 0) / visitors.length).toFixed(1) 
+                    : 0, 
+                  icon: TrendingUp, 
+                  color: 'text-secondary' 
+                },
                 { label: 'Active Today', value: visitors.filter(v => new Date(v.lastVisit).toDateString() === new Date().toDateString()).length, icon: Clock, color: 'text-green-600' },
                 { label: 'Identified Users', value: visitors.filter(v => v.name).length, icon: ShieldCheck, color: 'text-blue-600' },
               ].map((s, i) => (
                 <div key={i} className="bg-white p-6 rounded-[28px] border border-black/5 shadow-sm">
                   <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center mb-3"><s.icon size={20} className={s.color} /></div>
                   <p className="text-[10px] font-black uppercase text-text-muted">{s.label}</p>
-                  <p className={`text-4xl font-black ${s.color}`}>{s.value}</p>
+                  <p className={`text-4xl font-black ${s.color}`}>
+                    {typeof s.value === 'number' ? s.value.toLocaleString() : s.value}
+                  </p>
                 </div>
               ))}
             </div>
@@ -626,8 +635,11 @@ const AdminDashboard: React.FC = () => {
                  <div className="flex gap-3">
                    <button 
                      onClick={() => {
-                       if (confirm('Reset anomalously high view counts? This fixes corrupted data.')) {
-                        const cleaned = visitors.map(v => ({ ...v, pageViews: v.pageViews > 1000 ? Math.round(v.durationMinutes * 1.5) + 1 : v.pageViews }));
+                       if (confirm('Reset anomalously high view counts? This fixes corrupted tracking data.')) {
+                        const cleaned = visitors.map(v => ({ 
+                          ...v, 
+                          pageViews: v.pageViews > 1000 ? Math.max(1, Math.round(v.durationMinutes * 1.2)) : v.pageViews 
+                        }));
                         localStorage.setItem('igo.analytics.visitors', JSON.stringify(cleaned));
                         setVisitors(cleaned);
                        }
@@ -657,7 +669,9 @@ const AdminDashboard: React.FC = () => {
                          </td>
                          <td className="px-6 py-4 text-xs font-bold text-primary">{new Date(v.lastVisit).toLocaleString()}</td>
                          <td className="px-6 py-4">
-                           <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">{v.pageViews}</span>
+                           <span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">
+                             {v.pageViews.toLocaleString()}
+                           </span>
                          </td>
                          <td className="px-6 py-4">
                            <div className="flex flex-col">
@@ -674,17 +688,22 @@ const AdminDashboard: React.FC = () => {
                             </div>
                          </td>
                          <td className="px-6 py-4">
-                            <div className="flex flex-wrap gap-2">
-                              {v.visitedProperties.map((p, i) => (
-                                <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">
-                                  <span className="truncate max-w-[100px]">{p.title}</span>
-                                  {p.duration && p.duration > 30 && <span className="bg-secondary text-primary px-1 rounded-sm text-[8px] font-black" title={`Watched for ${p.duration}s`}>ENGAGED</span>}
-                                  <span className="opacity-40 font-normal">({p.duration || 0}s)</span>
-                                </div>
-                              ))}
-                              {v.visitedProperties.length === 0 && <span className="text-[10px] text-text-muted italic">No estates viewed</span>}
-                            </div>
-                         </td>
+                             <div className="flex flex-wrap gap-2 max-w-[400px]">
+                               {v.visitedProperties.map((p, i) => (
+                                 <div key={i} className="flex flex-col gap-1 p-2 bg-primary/5 text-primary rounded-xl text-[10px] font-bold border border-primary/10 hover:border-secondary/30 transition-colors">
+                                   <div className="flex items-center gap-1.5">
+                                      <span className="truncate max-w-[120px]">{p.title}</span>
+                                      {p.duration && p.duration > 30 && <span className="bg-secondary text-primary px-1 rounded-sm text-[8px] font-black" title={`Watched for ${p.duration}s`}>ENGAGED</span>}
+                                   </div>
+                                   <div className="flex justify-between items-center opacity-60">
+                                      <span>{new Date(p.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                      <span className="font-black text-secondary">{p.duration || 0}s</span>
+                                   </div>
+                                 </div>
+                               ))}
+                               {v.visitedProperties.length === 0 && <span className="text-[10px] text-text-muted italic">No estates viewed</span>}
+                             </div>
+                          </td>
                        </tr>
                      ))}
                    </tbody>

@@ -1,6 +1,6 @@
 import {
   MapPin, Star, ArrowRight, Zap, TrendingUp, Sprout, ShieldCheck, CheckCircle2,
-  LayoutGrid, Newspaper, PlayCircle, Users, Calculator
+  LayoutGrid, Newspaper, PlayCircle, Users, Calculator, Globe, MessageCircle, Camera
 } from 'lucide-react';
 import { Routes, Route, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
@@ -537,21 +537,34 @@ function App() {
             <div className="container-pro relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-16 lg:gap-24 mb-32">
                 <div className="lg:col-span-5">
-                  <Link to="/" className="flex items-center space-x-4 mb-10">
-                    <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center text-primary font-black text-2xl">I</div>
+                  <Link to="/" className="flex items-center space-x-5 mb-10 group">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center p-2 shadow-xl group-hover:scale-105 transition-transform overflow-hidden">
+                      <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain" />
+                    </div>
                     <div className="flex flex-col -space-y-1">
-                      <span className="font-black text-xl tracking-tight text-white uppercase">Igo Agri</span>
-                      <span className="text-[11px] text-secondary font-black uppercase italic tracking-[0.2em]">Estates</span>
+                      <span className="font-black text-2xl tracking-tight text-white uppercase">Agricultural</span>
+                      <span className="text-[11px] text-secondary font-black uppercase italic tracking-[0.4em] ml-0.5">Estate India</span>
                     </div>
                   </Link>
                   <p className="text-white/40 text-lg max-w-md mb-12 leading-relaxed font-light">
                     Defined by transparency, driven by technology. IGO Agriestates is the institutional standard for sustainable land investments.
                   </p>
                   <div className="flex space-x-5">
-                    {['Twitter', 'LinkedIn', 'Instagram', 'YouTube'].map(social => (
-                      <button key={social} className="w-14 h-14 border border-white/10 rounded-[20px] flex items-center justify-center hover:bg-secondary hover:text-primary transition-all text-xs font-black uppercase tracking-widest hover:border-secondary shadow-lg">
-                        {social[0]}
-                      </button>
+                    {[
+                      { icon: MessageCircle, link: 'https://www.facebook.com/share/173LkV9obs/', label: 'Facebook' },
+                      { icon: Camera, link: 'https://www.instagram.com/igofarmlandestates/?hl=en', label: 'Instagram' },
+                      { icon: Globe, link: 'https://www.igoagritechfarms.com/', label: 'Website' }
+                    ].map(social => (
+                      <a 
+                        key={social.label} 
+                        href={social.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="w-14 h-14 border border-white/10 rounded-[20px] flex items-center justify-center hover:bg-secondary hover:text-primary transition-all text-white hover:border-secondary shadow-lg group"
+                        title={social.label}
+                      >
+                        <social.icon size={22} className="group-hover:scale-110 transition-transform" />
+                      </a>
                     ))}
                   </div>
                 </div>

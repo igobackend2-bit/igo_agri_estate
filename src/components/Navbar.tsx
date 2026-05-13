@@ -29,8 +29,8 @@ const Navbar: React.FC = () => {
         <div className="container-pro w-full flex items-center justify-between">
           {/* Logo Section */}
           <Link to="/" className="flex items-center space-x-4 group shrink-0">
-            <div className="w-12 h-12 bg-[#00814a] rounded-full flex items-center justify-center text-white font-black text-2xl shadow-lg transition-transform group-hover:rotate-12">
-               <Sprout size={24} />
+            <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center p-2 shadow-md transition-transform group-hover:scale-105 border border-black/5 overflow-hidden">
+               <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col -space-y-1">
               <span className="font-black text-2xl tracking-tight text-primary uppercase font-serif">Agricultural</span>
