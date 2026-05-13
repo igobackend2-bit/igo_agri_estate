@@ -11,7 +11,6 @@ interface LeadCaptureFormProps {
 }
 
 const igoPhone = '918376883780';
-const igoEmail = 'info@igoagritechfarms.com';
 
 const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, propertyId }) => {
   const { user } = useAuth();
@@ -25,6 +24,7 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
     email: user?.email || '',
     date: '',
     time: 'Morning (9AM - 12PM)',
+    customTime: '',
     offer: '',
     purpose: 'Buy this estate'
   });
@@ -76,24 +76,56 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
     setIsSubmitting(false);
     if (result.success) {
       setSubmitted(true);
-      // Fixed WhatsApp phone number with + prefix
       window.open(`https://wa.me/+${igoPhone.replace('+', '')}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
     }
   };
 
-// ... inside state
-  const [formData, setFormData] = useState({
-    name: user?.user_metadata?.name || '',
-    phone: '',
-    email: user?.email || '',
-    date: '',
-    time: 'Morning (9AM - 12PM)',
-    customTime: '',
-    offer: '',
-    purpose: 'Buy this estate'
-  });
+  return (
+    <div className="bg-white rounded-[40px] shadow-2xl border border-black/5 overflow-hidden sticky top-32">
+      <div className="flex border-b border-black/5 bg-gray-50/50">
+        <button 
+          onClick={() => setActiveTab('visit')}
+          className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors flex flex-col items-center gap-2 ${activeTab === 'visit' ? 'text-secondary border-b-2 border-secondary bg-white' : 'text-text-muted hover:text-primary'}`}
+        >
+          <Calendar size={18} />
+          <span>Site Visit</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('offer')}
+          className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors flex flex-col items-center gap-2 ${activeTab === 'offer' ? 'text-secondary border-b-2 border-secondary bg-white' : 'text-text-muted hover:text-primary'}`}
+        >
+          <IndianRupee size={18} />
+          <span>Proposal</span>
+        </button>
+        <button 
+          onClick={() => setActiveTab('callback')}
+          className={`flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors flex flex-col items-center gap-2 ${activeTab === 'callback' ? 'text-secondary border-b-2 border-secondary bg-white' : 'text-text-muted hover:text-primary'}`}
+        >
+          <MessageSquare size={18} />
+          <span>Callback</span>
+        </button>
+      </div>
 
-// ... inside JSX
+      <div className="p-8">
+        {submitted ? (
+          <div className="text-center py-10">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 size={32} className="text-green-600" />
+            </div>
+            <h3 className="text-2xl font-black text-primary mb-3">Request Sent to Admin</h3>
+            <p className="text-sm text-text-muted leading-relaxed">
+              This buyer request is now visible in the admin Investment Leads page with the estate name, purpose, contact, and timing.
+            </p>
+            <button
+              type="button"
+              onClick={() => setSubmitted(false)}
+              className="mt-8 text-[10px] font-black uppercase tracking-widest text-secondary hover:text-primary"
+            >
+              Send Another Request
+            </button>
+          </div>
+        ) : (
+        <form onSubmit={handleSubmit} className="space-y-6">
           {activeTab === 'visit' && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
               <div>
@@ -132,6 +164,27 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
                     />
                   </div>
                 )}
+              </div>
+            </motion.div>
+          )}
+
+          {activeTab === 'offer' && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <div>
+                <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1 mb-2 block">Approx Budget / Your Offer</label>
+                <div className="relative">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 font-bold text-primary">₹</span>
+                  <input 
+                    type="number" 
+                    step="0.01" 
+                    required 
+                    placeholder="e.g. 1.25" 
+                    value={formData.offer}
+                    onChange={(e) => setFormData({...formData, offer: e.target.value})}
+                    className="w-full bg-gray-50 border border-black/5 rounded-2xl pl-12 pr-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary text-xl" 
+                  />
+                  <span className="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-text-muted text-xs">Cr</span>
+                </div>
               </div>
             </motion.div>
           )}
