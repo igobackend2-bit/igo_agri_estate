@@ -75,16 +75,16 @@ const AdminDashboard: React.FC = () => {
 
   const filtered = useMemo(() => {
     return properties.filter(p => 
-      p.title.toLowerCase().includes(search.toLowerCase()) || 
-      p.location.toLowerCase().includes(search.toLowerCase())
+      (p.title?.toLowerCase().includes(search.toLowerCase()) ?? false) || 
+      (p.location?.toLowerCase().includes(search.toLowerCase()) ?? false)
     );
   }, [properties, search]);
 
   const filteredLeads = useMemo(() => {
     return leads.filter(l => 
-      l.name.toLowerCase().includes(leadSearch.toLowerCase()) || 
-      l.phone.includes(leadSearch) ||
-      (l.property_title || '').toLowerCase().includes(leadSearch.toLowerCase())
+      (l.name?.toLowerCase().includes(leadSearch.toLowerCase()) ?? false) || 
+      (l.phone?.includes(leadSearch) ?? false) ||
+      (l.property_title?.toLowerCase().includes(leadSearch.toLowerCase()) ?? false)
     );
   }, [leads, leadSearch]);
 

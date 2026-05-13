@@ -64,6 +64,16 @@ const Home: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { publicProperties } = useProperties();
+
+  // Identify visitor if logged in
+  useEffect(() => {
+    if (user && user.email) {
+      import('./lib/trackingService').then(ts => {
+        ts.identifyVisitor(user.user_metadata?.name || user.email || 'Anonymous', user.email || '');
+      });
+    }
+  }, [user]);
+
   const recentlyAdded = useMemo(() => 
     [...publicProperties]
       .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
@@ -349,18 +359,44 @@ const Home: React.FC = () => {
                      const category = form.elements.namedItem('category') as HTMLSelectElement;
                      const state = form.elements.namedItem('state') as HTMLSelectElement;
                      const size = form.elements.namedItem('size') as HTMLInputElement;
+                     const name = (form.elements.namedItem('name') as HTMLInputElement)?.value || user?.user_metadata?.name || 'Institutional Inquiry';
+                     const phone = (form.elements.namedItem('phone') as HTMLInputElement)?.value || user?.user_metadata?.phone || 'Captured via Desk';
+                     const email = (form.elements.namedItem('email') as HTMLInputElement)?.value || user?.email || '';
+                     
                      const result = await submitLead({
                        type: 'requirement',
-                       name: user?.user_metadata?.name || 'Institutional Inquiry',
-                       phone: user?.user_metadata?.phone || 'Captured via Desk',
-                       email: user?.email || '',
+                       name,
+                       phone,
+                       email,
                        asset_category: category?.value,
                        preferred_state: state?.value,
                        investment_size: size?.value
                      });
-                     if (result.success) alert(`Thank you ${user?.user_metadata?.name || 'Investor'}. Your institutional requirement has been submitted. Our desk will contact you at ${user?.email || 'your email'}.`);
+                     if (result.success) {
+                       import('./lib/trackingService').then(ts => ts.identifyVisitor(name, email));
+                       alert(`Thank you ${name}. Your institutional requirement has been submitted. Our desk will contact you soon.`);
+                       form.reset();
+                     }
                    }}
                  >
+                  {!user && (
+                    <div className="space-y-6 mb-8">
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Full Name</label>
+                          <input name="name" required placeholder="John Doe" className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4 px-6 text-sm font-bold outline-none focus:border-secondary transition-colors text-white" />
+                        </div>
+                        <div className="space-y-3">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Phone Number</label>
+                          <input name="phone" required placeholder="+91..." className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4 px-6 text-sm font-bold outline-none focus:border-secondary transition-colors text-white" />
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Work Email</label>
+                        <input name="email" type="email" required placeholder="john@company.com" className="w-full bg-white/5 border border-white/10 rounded-[20px] py-4 px-6 text-sm font-bold outline-none focus:border-secondary transition-colors text-white" />
+                      </div>
+                    </div>
+                  )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     <div className="space-y-3">
                       <label className="text-[10px] font-black uppercase tracking-widest text-white/40 ml-1">Asset Category</label>

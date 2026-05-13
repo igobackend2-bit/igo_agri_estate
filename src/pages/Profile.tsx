@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Mail, Settings, Inbox, ArrowLeft, LogOut, ShieldCheck, Bell, Globe, CreditCard, ChevronRight, MessageSquare, CheckCircle } from 'lucide-react';
+import { User, Mail, Settings, Inbox, ArrowLeft, LogOut, ShieldCheck, Bell, Globe, CreditCard, ChevronRight, MessageSquare, CheckCircle, Phone, MapPin, X, Save } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const Profile: React.FC = () => {
@@ -9,7 +9,16 @@ const Profile: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'overview' | 'inbox' | 'settings'>('overview');
   const [uploading, setUploading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const [editForm, setEditForm] = useState({
+    name: user?.user_metadata?.name || '',
+    phone: user?.user_metadata?.phone || '',
+    role: user?.user_metadata?.role || 'Estate Buyer / Investor',
+    address: user?.user_metadata?.address || ''
+  });
 
   const [visitorInfo, setVisitorInfo] = useState<any>(null);
 
@@ -68,8 +77,120 @@ const Profile: React.FC = () => {
     { id: 3, title: 'Market Insight Report', sender: 'IGO Research', date: 'May 08, 2026', preview: 'New report on land appreciation in Tamil Nadu corridor is now available.', read: true },
   ];
 
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await updateProfile({
+        name: editForm.name,
+        phone: editForm.phone,
+        role: editForm.role,
+        address: editForm.address
+      });
+      setIsEditing(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="pt-48 pb-32 bg-gray-50 min-h-screen">
+      {/* Edit Modal */}
+      <AnimatePresence>
+        {isEditing && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white rounded-[40px] w-full max-w-xl p-10 relative shadow-2xl"
+            >
+              <button 
+                onClick={() => setIsEditing(false)}
+                className="absolute top-8 right-8 text-text-muted hover:text-primary transition-colors"
+              >
+                <X size={24} />
+              </button>
+              
+              <h2 className="text-3xl font-black text-primary mb-8 uppercase tracking-tighter">Edit Profile</h2>
+              
+              <form onSubmit={handleSave} className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Full Name</label>
+                  <div className="relative">
+                    <User className="absolute left-5 top-1/2 -translate-y-1/2 text-secondary" size={18} />
+                    <input 
+                      value={editForm.name}
+                      onChange={e => setEditForm({...editForm, name: e.target.value})}
+                      required
+                      className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none" 
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Phone Number</label>
+                    <div className="relative">
+                      <Phone className="absolute left-5 top-1/2 -translate-y-1/2 text-secondary" size={18} />
+                      <input 
+                        value={editForm.phone}
+                        onChange={e => setEditForm({...editForm, phone: e.target.value})}
+                        placeholder="+91..."
+                        className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none" 
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Account Role</label>
+                    <select 
+                      value={editForm.role}
+                      onChange={e => setEditForm({...editForm, role: e.target.value})}
+                      className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none cursor-pointer"
+                    >
+                      <option>Estate Buyer / Investor</option>
+                      <option>Land Seller / Owner</option>
+                      <option>Partner Developer</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2 ml-1">Permanent Address</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-5 top-4 text-secondary" size={18} />
+                    <textarea 
+                      value={editForm.address}
+                      onChange={e => setEditForm({...editForm, address: e.target.value})}
+                      rows={3}
+                      placeholder="Street, City, State, ZIP..."
+                      className="w-full bg-gray-50 border border-black/10 rounded-2xl py-4 pl-14 pr-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none resize-none" 
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={saving}
+                  className="w-full bg-primary text-white py-5 rounded-2xl font-black uppercase tracking-widest text-sm hover:bg-secondary hover:text-primary transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  {saving ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      <Save size={18} />
+                      Save Changes
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <div className="container max-w-6xl">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Sidebar */}
@@ -167,7 +288,7 @@ const Profile: React.FC = () => {
                         <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Full Name</label>
                         <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
                           <span>{user?.user_metadata?.name || 'Not Provided'}</span>
-                          <button className="text-secondary text-[10px] font-black uppercase">Edit</button>
+                          <button onClick={() => setIsEditing(true)} className="text-secondary text-[10px] font-black uppercase">Edit</button>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -181,21 +302,21 @@ const Profile: React.FC = () => {
                         <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Phone Number</label>
                         <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
                           <span>{user?.user_metadata?.phone || '+91 XXXXX XXXXX'}</span>
-                          <button className="text-secondary text-[10px] font-black uppercase">Edit</button>
+                          <button onClick={() => setIsEditing(true)} className="text-secondary text-[10px] font-black uppercase">Edit</button>
                         </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Account Role</label>
                         <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
                           <span className="capitalize">{user?.user_metadata?.role || 'Estate Buyer / Investor'}</span>
-                          <button className="text-secondary text-[10px] font-black uppercase">Change</button>
+                          <button onClick={() => setIsEditing(true)} className="text-secondary text-[10px] font-black uppercase">Change</button>
                         </div>
                       </div>
                       <div className="md:col-span-2 space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Permanent Address</label>
                         <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
                           <span className="text-sm">{user?.user_metadata?.address || 'Address not set for official documentation'}</span>
-                          <button className="text-secondary text-[10px] font-black uppercase flex-shrink-0 ml-4">Edit Address</button>
+                          <button onClick={() => setIsEditing(true)} className="text-secondary text-[10px] font-black uppercase flex-shrink-0 ml-4">Edit Address</button>
                         </div>
                       </div>
                     </div>

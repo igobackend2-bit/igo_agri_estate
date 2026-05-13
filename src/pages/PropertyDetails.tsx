@@ -100,9 +100,11 @@ const PropertyDetails: React.FC = () => {
   const leadRef = useRef<HTMLDivElement>(null);
 
   // Visitor Tracking
+  const tracked = React.useRef(false);
   useEffect(() => {
-    if (property) {
+    if (property && !tracked.current) {
       trackVisit({ id: property.id, title: property.title });
+      tracked.current = true;
     }
   }, [property]);
 
@@ -126,7 +128,7 @@ const PropertyDetails: React.FC = () => {
   const { addView } = useRecentlyViewed([]);
 
   // Get location info from property
-  const locationName = property?.location.split(',')[0] || '';
+  const locationName = property?.location?.split(',')?.[0] || '';
 
   const [rentalInputs, setRentalInputs] = useState({
     monthlyRent: '',
@@ -150,13 +152,13 @@ const PropertyDetails: React.FC = () => {
   }, [id, getProperty, addView]);
 
   const similarEstates = useMemo(() => {
-    if (!property) return [];
+    if (!property || !property.location) return [];
     // Use only public (non-expired) properties
     const availableProperties = publicProperties;
-    const locationName = property.location.split(',')[0].trim().toLowerCase();
+    const locName = property.location.split(',')[0].trim().toLowerCase();
     // Find other estates in the same location that are active
     const sameLocation = availableProperties.filter(p =>
-      p.location.toLowerCase().includes(locationName) && p.id !== property.id
+      p.location?.toLowerCase().includes(locName) && p.id !== property.id
     );
     return sameLocation.length > 0 ? sameLocation.slice(0, 3) : getRecommendations(availableProperties, property.id).slice(0, 3);
   }, [property, publicProperties]);
@@ -238,7 +240,7 @@ const PropertyDetails: React.FC = () => {
   };
 
   useEffect(() => {
-    if (property && (property.intention === 'Rent' || property.intention === 'Lease' || property.type?.toLowerCase().includes('rent'))) {
+    if (property && (property.intention === 'Rent' || property.intention === 'Lease' || property.type?.toLowerCase()?.includes('rent'))) {
       // Auto-calculate with estimated rent based on property value
       const priceValue = property.priceValue || 5;
       const estimatedRent = priceValue * 0.05 * 10000000 / 12; // 0.5% monthly rent
@@ -733,7 +735,7 @@ const PropertyDetails: React.FC = () => {
         </div>
 
         {/* Rental Yield Calculator - for Rent/Lease properties */}
-        {property && (property.intention === 'Rent' || property.intention === 'Lease' || property.type?.toLowerCase().includes('rent') || property.type?.toLowerCase().includes('lease')) && (
+        {property && (property.intention === 'Rent' || property.intention === 'Lease' || property.type?.toLowerCase()?.includes('rent') || property.type?.toLowerCase()?.includes('lease')) && (
           <section className="mt-12">
             <div className="bg-gradient-to-br from-primary to-secondary rounded-[40px] p-8 md:p-12 text-white shadow-2xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
@@ -835,7 +837,7 @@ const PropertyDetails: React.FC = () => {
         )}
 
         {/* Mortgage Calculator - for Buy properties */}
-        {property && property.intention !== 'Rent' && property.intention !== 'Lease' && !property.type?.toLowerCase().includes('rent') && !property.type?.toLowerCase().includes('lease') && (
+        {property && property.intention !== 'Rent' && property.intention !== 'Lease' && !property.type?.toLowerCase()?.includes('rent') && !property.type?.toLowerCase()?.includes('lease') && (
           <section className="mt-12">
             <div className="bg-white rounded-[40px] p-8 md:p-12 border border-black/5 shadow-xl">
               <div className="flex items-center gap-3 mb-8">
