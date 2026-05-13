@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, MessageSquare, IndianRupee, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 import { submitLead } from '../lib/leadsService';
 import { useAuth } from '../context/AuthContext';
 import AuthRequiredModal from './modals/AuthRequiredModal';
+import { identifyVisitor, addInterest, VisitorSession } from '../lib/trackingService';
 
 interface LeadCaptureFormProps {
   propertyTitle: string;
@@ -13,21 +14,40 @@ interface LeadCaptureFormProps {
 const igoPhone = '918376883780';
 
 const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, propertyId }) => {
-  const { user } = useAuth();
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'visit' | 'offer' | 'callback'>('visit');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({
-    name: user?.user_metadata?.name || '',
-    phone: '',
-    email: user?.email || '',
-    date: '',
-    time: 'Morning (9AM - 12PM)',
-    customTime: '',
-    offer: '',
-    purpose: 'Buy this estate'
-  });
+   const { user } = useAuth();
+   const [showAuthModal, setShowAuthModal] = useState(false);
+   const [activeTab, setActiveTab] = useState<'visit' | 'offer' | 'callback'>('visit');
+   const [isSubmitting, setIsSubmitting] = useState(false);
+   const [submitted, setSubmitted] = useState(false);
+   const [formData, setFormData] = useState({
+     name: user?.user_metadata?.name || '',
+     phone: '',
+     email: user?.email || '',
+     date: '',
+     time: 'Morning (9AM - 12PM)',
+     customTime: '',
+     offer: '',
+     purpose: 'Buy this estate'
+   });
+
+   // Track visitor interest and identify on form interaction
+   useEffect(() => {
+     if (propertyTitle) {
+       addInterest(propertyTitle);
+     }
+   }, [propertyTitle]);
+
+   const handleInputChange = (field: string, value: string) => {
+     setFormData(prev => ({ ...prev, [field]: value }));
+     // Identify visitor with name/email once they start filling the form
+     if ((field === 'name' || field === 'email') && value) {
+       const name = field === 'name' ? value : formData.name;
+       const email = field === 'email' ? value : formData.email;
+       if (name && email) {
+         identifyVisitor(name, email);
+       }
+     }
+   };
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -249,7 +269,7 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
                 required 
                 placeholder="John Doe" 
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) => handleInputChange('name', e.target.value)}
                 className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary" 
               />
             </div>
@@ -260,7 +280,7 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
                 required 
                 placeholder="+91 XXXXX XXXXX" 
                 value={formData.phone}
-                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                onChange={(e) => handleInputChange('phone', e.target.value)}
                 className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary" 
               />
             </div>
@@ -271,7 +291,7 @@ const LeadCaptureForm: React.FC<LeadCaptureFormProps> = ({ propertyTitle, proper
                 required 
                 placeholder="john@example.com" 
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) => handleInputChange('email', e.target.value)}
                 className="w-full bg-gray-50 border border-black/5 rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-secondary/20 font-bold text-primary" 
               />
             </div>

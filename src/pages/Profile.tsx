@@ -156,10 +156,10 @@ const Profile: React.FC = () => {
                   exit={{ opacity: 0, y: -20 }}
                   className="space-y-8"
                 >
-                  <div className="bg-white p-10 rounded-[48px] border border-black/5 shadow-xl">
+                    <div className="bg-white p-10 rounded-[48px] border border-black/5 shadow-xl">
                     <h3 className="text-2xl font-black text-primary mb-8 flex items-center gap-3">
                       <User className="text-secondary" />
-                      Personal Information
+                      Professional Profile
                     </h3>
                     
                     <div className="grid md:grid-cols-2 gap-8">
@@ -172,9 +172,30 @@ const Profile: React.FC = () => {
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Email Address</label>
-                        <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary/50 flex items-center gap-3">
-                          <Mail size={16} />
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center gap-3">
+                          <Mail size={16} className="text-secondary" />
                           <span>{user.email}</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Phone Number</label>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
+                          <span>{user?.user_metadata?.phone || '+91 XXXXX XXXXX'}</span>
+                          <button className="text-secondary text-[10px] font-black uppercase">Edit</button>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Account Role</label>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
+                          <span className="capitalize">{user?.user_metadata?.role || 'Estate Buyer / Investor'}</span>
+                          <button className="text-secondary text-[10px] font-black uppercase">Change</button>
+                        </div>
+                      </div>
+                      <div className="md:col-span-2 space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-text-muted ml-1">Permanent Address</label>
+                        <div className="bg-gray-50 p-5 rounded-2xl border border-black/5 font-bold text-primary flex items-center justify-between">
+                          <span className="text-sm">{user?.user_metadata?.address || 'Address not set for official documentation'}</span>
+                          <button className="text-secondary text-[10px] font-black uppercase flex-shrink-0 ml-4">Edit Address</button>
                         </div>
                       </div>
                     </div>
@@ -182,41 +203,52 @@ const Profile: React.FC = () => {
                     <div className="mt-12 p-8 bg-primary/5 rounded-[32px] border border-primary/10 flex flex-col md:flex-row items-center justify-between gap-6">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary shadow-sm">
-                          <ShieldCheck size={24} />
+                          <ShieldCheck size={24} className="text-secondary" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-primary">Account Security</h4>
-                          <p className="text-xs text-text-muted">Your account is protected with 2FA.</p>
+                          <h4 className="font-bold text-primary">Identity Verified</h4>
+                          <p className="text-xs text-text-muted">Your profile is verified for legal land transactions.</p>
                         </div>
                       </div>
                       <button className="bg-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest text-primary border border-black/5 hover:bg-gray-50 transition-all">
-                        Update Password
+                        View KYC Docs
                       </button>
                     </div>
                   </div>
 
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="bg-white p-8 rounded-[40px] border border-black/5 shadow-xl">
-                      <h4 className="text-lg font-black text-primary mb-6">Recent Activity</h4>
+                      <h4 className="text-lg font-black text-primary mb-6">Recent Property Interests</h4>
                       <div className="space-y-4">
-                        {[
-                          { text: 'Viewed Polyhouse Estate', time: '2 hours ago' },
-                          { text: 'Downloaded Brochure: Mushroom Project', time: '1 day ago' },
-                          { text: 'Signed in from Chennai, IN', time: '2 days ago' },
-                        ].map((act, i) => (
-                          <div key={i} className="flex items-center justify-between py-3 border-b border-black/5 last:border-0">
-                            <span className="text-sm font-bold text-primary">{act.text}</span>
-                            <span className="text-[10px] text-text-muted">{act.time}</span>
-                          </div>
-                        ))}
+                        {visitorInfo?.visitedProperties?.length > 0 ? (
+                          visitorInfo.visitedProperties.slice(0, 3).map((p: any, i: number) => (
+                            <div key={i} className="flex items-center justify-between py-3 border-b border-black/5 last:border-0">
+                              <div className="flex flex-col">
+                                <span className="text-sm font-bold text-primary">{p.title}</span>
+                                <span className="text-[10px] text-text-muted">Viewed for {p.duration || '0'}s</span>
+                              </div>
+                              <CheckCircle size={16} className="text-secondary" />
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-sm text-text-muted italic py-4">No recent property views found.</p>
+                        )}
                       </div>
                     </div>
-                    <div className="bg-secondary p-8 rounded-[40px] shadow-xl text-primary relative overflow-hidden group">
-                      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
-                      <h4 className="text-lg font-black mb-2">Investment Limit</h4>
-                      <p className="text-4xl font-black mb-4">₹ 5.0 Cr</p>
-                      <p className="text-xs font-bold opacity-70">Pre-approved based on your investor profile and history with IGO.</p>
-                      <button className="mt-8 bg-primary text-white px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg">Upgrade Tier</button>
+                    <div className="bg-primary p-8 rounded-[40px] shadow-xl text-white relative overflow-hidden group">
+                      <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000"></div>
+                      <h4 className="text-lg font-black mb-2 text-secondary">Investment Portfolio</h4>
+                      <div className="flex items-baseline gap-2 mb-4">
+                        <p className="text-4xl font-black">₹ 0.00</p>
+                        <p className="text-xs font-bold opacity-60">Total Active Estates</p>
+                      </div>
+                      <p className="text-xs font-bold opacity-70">Start your journey by exploring our verified corridor estates.</p>
+                      <button 
+                        onClick={() => navigate('/listings')}
+                        className="mt-8 bg-secondary text-primary px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg"
+                      >
+                        Browse Estates
+                      </button>
                     </div>
                   </div>
                 </motion.div>

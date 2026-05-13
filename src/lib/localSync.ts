@@ -150,6 +150,14 @@ export interface AdminSettings {
   enableAI: boolean;
   enableChat: boolean;
   maintenanceMode: boolean;
+  siteLogo?: string;
+  siteFavicon?: string;
+  heroImage?: string;
+  defaultLeadSource?: string;
+  enableLeadNotifications?: boolean;
+  leadNotificationEmail?: string;
+  currencySymbol?: string;
+  areaUnit?: string;
 }
 
 export const defaultAdminSettings: AdminSettings = {
@@ -161,6 +169,14 @@ export const defaultAdminSettings: AdminSettings = {
   enableAI: true,
   enableChat: true,
   maintenanceMode: false,
+  siteLogo: '',
+  siteFavicon: '',
+  heroImage: '/images/hero-bg.png',
+  defaultLeadSource: 'Website',
+  enableLeadNotifications: true,
+  leadNotificationEmail: 'admin@igoagriestates.com',
+  currencySymbol: '₹',
+  areaUnit: 'Acres',
 };
 
 export const getLocalSettings = (): AdminSettings => readJson<AdminSettings>(SETTINGS_KEY, defaultAdminSettings);

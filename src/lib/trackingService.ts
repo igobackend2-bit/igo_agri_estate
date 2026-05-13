@@ -10,7 +10,9 @@ export interface VisitorSession {
     id: string;
     title: string;
     timestamp: string;
+    duration?: number; // duration in seconds
   }[];
+  interests: string[];
   browser: string;
 }
 
@@ -27,15 +29,16 @@ export const trackVisit = (property?: { id: string; title: string }) => {
 
   if (!visitor) {
     const now = new Date().toISOString();
-    visitor = {
-      id: sessionId,
-      lastVisit: now,
-      sessionStart: now,
-      durationMinutes: 0,
-      pageViews: 0,
-      visitedProperties: [],
-      browser: navigator.userAgent
-    };
+visitor = {
+       id: sessionId,
+       lastVisit: now,
+       sessionStart: now,
+       durationMinutes: 0,
+       pageViews: 0,
+       visitedProperties: [],
+       interests: [],
+       browser: navigator.userAgent
+     };
     visitors.push(visitor);
   }
 
@@ -53,7 +56,8 @@ export const trackVisit = (property?: { id: string; title: string }) => {
     if (!alreadyVisited || (Date.now() - new Date(alreadyVisited.timestamp).getTime() > 3600000)) {
       visitor.visitedProperties.unshift({
         ...property,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        duration: 0
       });
     }
   }
@@ -72,7 +76,38 @@ export const getVisitors = (): VisitorSession[] => {
   return raw ? JSON.parse(raw) : [];
 };
 
-export const identifyVisitor = (name: string, email: string) => {
+export const updateVisitDuration = (propertyId: string, durationInSeconds: number) => {
+  if (typeof window === 'undefined') return;
+  const sessionId = localStorage.getItem('igo.analytics.sessionId');
+  if (!sessionId) return;
+
+  const visitors = getVisitors();
+  const visitor = visitors.find(v => v.id === sessionId);
+  if (visitor) {
+    const prop = visitor.visitedProperties.find(p => p.id === propertyId);
+    if (prop) {
+      prop.duration = (prop.duration || 0) + durationInSeconds;
+      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+    }
+  }
+};
+
+export const addInterest = (interest: string) => {
+   if (typeof window === 'undefined') return;
+   const sessionId = localStorage.getItem('igo.analytics.sessionId');
+   if (!sessionId) return;
+
+   const visitors = getVisitors();
+   const visitor = visitors.find(v => v.id === sessionId);
+   if (visitor) {
+     if (!visitor.interests.includes(interest)) {
+       visitor.interests.push(interest);
+     }
+     localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+   }
+ };
+
+ export const identifyVisitor = (name: string, email: string) => {
   if (typeof window === 'undefined') return;
   const sessionId = localStorage.getItem('igo.analytics.sessionId');
   if (!sessionId) return;

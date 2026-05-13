@@ -83,7 +83,7 @@ const estateFlow = [
   },
 ];
 
-import { trackVisit } from '../lib/trackingService';
+import { trackVisit, updateVisitDuration } from '../lib/trackingService';
 
 const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -104,6 +104,22 @@ const PropertyDetails: React.FC = () => {
     if (property) {
       trackVisit({ id: property.id, title: property.title });
     }
+  }, [property]);
+
+  // Engagement Timer
+  const [startTime] = useState(Date.now());
+  const timerRef = useRef<any>(null);
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      if (property) {
+        updateVisitDuration(property.id, 5);
+      }
+    }, 5000);
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, [property]);
 
   // Personalization: track recently viewed and get recommendations
@@ -208,7 +224,7 @@ const PropertyDetails: React.FC = () => {
 
     // Estimate property value
     const priceMatch = property.price.match(/(\d+(?:\.\d+)?)/);
-    const propertyValue = priceMatch ? parseFloat(priceMatch[1]) * 10000000 : 0; // Convert Crores to approx rupees
+    const propertyValue = (property.priceValue || (priceMatch ? parseFloat(priceMatch[1]) : 1.0)) * 10000000; // Convert Crores to approx rupees
 
     const rentalYield = propertyValue > 0 ? (netIncome / propertyValue) * 100 : 0;
     const monthlyCashflow = (netIncome / 12) - (propertyValue * 0.05 / 12); // rough EMI estimate

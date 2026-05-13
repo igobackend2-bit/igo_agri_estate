@@ -495,10 +495,19 @@ const AdminDashboard: React.FC = () => {
                           <td className="px-6 py-4 text-xs font-bold">{p.location.split(',')[0]}</td>
                           <td className="px-6 py-4"><span className="font-black text-sm">₹{p.price}</span></td>
                           <td className="px-6 py-4">
-                            <div className="flex gap-1">
-                              {['Available', 'Reserved', 'Sold'].map(s => (
-                                <button key={s} onClick={() => handleStatusChange(p.id, s)} className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border ${p.status === s ? 'bg-primary text-white' : 'bg-white text-text-muted'}`}>{s}</button>
-                              ))}
+                            <div className="flex items-center gap-3">
+                              <div className="flex gap-1">
+                                {['Available', 'Reserved', 'Sold'].map(s => (
+                                  <button key={s} onClick={() => handleStatusChange(p.id, s)} className={`px-3 py-1 rounded-full text-[9px] font-black uppercase border ${p.status === s ? 'bg-primary text-white' : 'bg-white text-text-muted'}`}>{s}</button>
+                                ))}
+                              </div>
+                              <button 
+                                onClick={() => navigate(`/admin/edit/${p.id}`)}
+                                className="p-2 bg-gray-100 text-primary rounded-xl hover:bg-secondary transition-all"
+                                title="Edit Estate"
+                              >
+                                <Edit size={16} />
+                              </button>
                             </div>
                           </td>
                         </motion.tr>
@@ -511,37 +520,52 @@ const AdminDashboard: React.FC = () => {
           </div>
         )}
 
-        {/* LEADS */}
-        {tab === 'leads' && (
-          <div className="space-y-8">
-            <div className="bg-white rounded-[32px] border border-black/5 shadow-xl overflow-hidden">
-               <div className="p-6 bg-gray-50/50 flex justify-between items-center">
-                 <input type="text" placeholder="Search leads..." value={leadSearch} onChange={e => setLeadSearch(e.target.value)} className="bg-white border border-black/10 rounded-2xl px-6 py-3 text-sm font-bold" />
-                 <button onClick={loadLeads}><RefreshCw size={16} /></button>
-               </div>
-               <div className="overflow-x-auto">
-                 <table className="w-full">
-                    <thead><tr className="bg-gray-50/50">{['Investor', 'Contact', 'Type', 'Estate', 'Budget', 'Date'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
-                    <tbody>
-                      {filteredLeads.map(l => (
-                        <tr key={l.id} className="hover:bg-gray-50/50 border-t border-black/5">
-                          <td className="px-6 py-4">
-                            <p className="font-bold text-sm text-primary">{l.name}</p>
-                            {l.email && <p className="text-[10px] text-text-muted">{l.email}</p>}
-                          </td>
-                          <td className="px-6 py-4 text-xs font-bold">{l.phone}</td>
-                          <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${TYPE_COLORS[l.type]}`}>{l.type}</span></td>
-                          <td className="px-6 py-4 font-bold text-xs">{l.property_title || 'General Interest'}</td>
-                          <td className="px-6 py-4 font-black text-sm">₹{l.offer_amount ? (l.offer_amount/10000000).toFixed(2) : l.investment_size || '—'} Cr</td>
-                          <td className="px-6 py-4 text-[10px] text-text-muted uppercase font-black">{new Date(l.created_at || Date.now()).toLocaleDateString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                 </table>
-               </div>
-            </div>
-          </div>
-        )}
+{/* LEADS */}
+         {tab === 'leads' && (
+           <div className="space-y-8">
+             <div className="bg-white rounded-[32px] border border-black/5 shadow-xl overflow-hidden">
+                <div className="p-6 bg-gray-50/50 flex justify-between items-center">
+                  <input type="text" placeholder="Search leads by name, phone, email, or property..." value={leadSearch} onChange={e => setLeadSearch(e.target.value)} className="bg-white border border-black/10 rounded-2xl px-6 py-3 text-sm font-bold" />
+                  <button onClick={loadLeads}><RefreshCw size={16} /></button>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                     <thead><tr className="bg-gray-50/50">{['Investor', 'Contact', 'Email', 'Intent', 'Estate', 'Budget / Offer', 'Preferred Timing', 'Additional Info', 'Date'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
+                     <tbody>
+                        {filteredLeads.map(l => (
+                         <tr key={l.id} className="hover:bg-gray-50/50 border-t border-black/5">
+                           <td className="px-6 py-4">
+                             <p className="font-bold text-sm text-primary">{l.name}</p>
+                           </td>
+                           <td className="px-6 py-4 text-xs font-bold">{l.phone}</td>
+                           <td className="px-6 py-4 text-xs font-bold">{l.email || '—'}</td>
+                           <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${TYPE_COLORS[l.type]}`}>{l.intent || l.type}</span></td>
+                           <td className="px-6 py-4 font-bold text-xs">{l.property_title || 'General Interest'}</td>
+                           <td className="px-6 py-4 font-black text-sm">
+                             {l.offer_amount ? `₹${(l.offer_amount/10000000).toFixed(2)} Cr` : l.investment_size ? `₹${l.investment_size} Cr` : '—'}
+                           </td>
+                           <td className="px-6 py-4">
+                              <div className="flex flex-col gap-0.5">
+                                <span className="text-[10px] font-black text-primary uppercase tracking-widest">{l.preferred_date || 'ASAP'}</span>
+                                <span className="text-[9px] text-text-muted font-bold">{l.preferred_time || ''}</span>
+                              </div>
+                           </td>
+                           <td className="px-6 py-4">
+                             <div className="flex flex-wrap gap-1 max-w-[180px]">
+                               {l.asset_category && <span className="px-2 py-0.5 bg-primary/5 text-primary rounded-lg text-[9px] font-bold">{l.asset_category}</span>}
+                               {l.preferred_state && <span className="px-2 py-0.5 bg-secondary/10 text-secondary rounded-lg text-[9px] font-bold">{l.preferred_state}</span>}
+                               {l.notes && <span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-lg text-[9px] font-bold cursor-help" title={l.notes}>Read Notes</span>}
+                             </div>
+                           </td>
+                           <td className="px-6 py-4 text-[10px] text-text-muted uppercase font-black">{new Date(l.created_at || Date.now()).toLocaleDateString()}</td>
+                         </tr>
+                       ))}
+                     </tbody>
+                  </table>
+                </div>
+             </div>
+           </div>
+         )}
 
         {/* BLOGS */}
         {tab === 'blogs' && (
@@ -610,7 +634,18 @@ const AdminDashboard: React.FC = () => {
                    <td className="px-6 py-4 text-xs font-bold text-primary">{new Date(v.lastVisit).toLocaleString()}</td>
                    <td className="px-6 py-4"><span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">{v.pageViews}</span></td>
                    <td className="px-6 py-4"><span className="text-[11px] font-black text-primary uppercase tracking-widest">{v.durationMinutes || 0}m</span></td>
-                   <td className="px-6 py-4"><div className="flex flex-wrap gap-2">{v.visitedProperties.map((p, i) => <span key={i} className="px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">{p.title}</span>)}</div></td>
+                                       <td className="px-6 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        {v.visitedProperties.map((p, i) => (
+                          <div key={i} className="flex items-center gap-1.5 px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">
+                            <span>{p.title}</span>
+                            {p.duration && p.duration > 30 && <span className="bg-secondary text-primary px-1 rounded-sm text-[8px] font-black" title={`Watched for ${p.duration}s`}>ENGAGED</span>}
+                            <span className="opacity-40 font-normal">({p.duration || 0}s)</span>
+                          </div>
+                        ))}
+                      </div>
+                    </td>
+
                  </tr>
                ))}</tbody></table></div>
             </div>

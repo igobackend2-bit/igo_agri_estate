@@ -122,11 +122,18 @@ const PropertyForm: React.FC = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleArrayChange = (field: 'images' | 'features' | 'crops' | 'setupScope' | 'customerNeeds' | 'igoSupport', index: number, value: string) => {
-    const newArr = [...(formData[field] || [])];
-    newArr[index] = value;
-    setFormData(prev => ({ ...prev, [field]: newArr }));
-  };
+const handleArrayChange = (field: 'images' | 'features' | 'crops' | 'setupScope' | 'customerNeeds' | 'igoSupport', index: number, value: string) => {
+     const newArr = [...(formData[field] || [])];
+     newArr[index] = value;
+     setFormData(prev => ({ ...prev, [field]: newArr }));
+   };
+
+   const handleObjectChange = (field: 'soilData' | 'infrastructure', key: string, value: string | number) => {
+     setFormData(prev => ({
+       ...prev,
+       [field]: { ...(prev[field] as any || {}), [key]: value }
+     }));
+   };
 
   const addArrayItem = (field: 'images' | 'features' | 'crops' | 'setupScope' | 'customerNeeds' | 'igoSupport') => {
     setFormData(prev => ({ ...prev, [field]: [...(formData[field] || []), ''] }));
@@ -508,75 +515,188 @@ const PropertyForm: React.FC = () => {
                 <h3 className="text-xl font-bold text-primary">Location Profile</h3>
               </div>
 
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Corridor / City</label>
-                  <input 
-                    name="location"
-                    required
-                    value={formData.location}
-                    onChange={handleChange}
-                    placeholder="e.g. Mahabalipuram, TN"
-                    className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
-                  />
-                </div>
+<div className="space-y-6">
+                 <div>
+                   <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Corridor / City</label>
+                   <input
+                     name="location"
+                     required
+                     value={formData.location}
+                     onChange={handleChange}
+                     placeholder="e.g. Mahabalipuram, TN"
+                     className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                   />
+                 </div>
 
-                <div>
-                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Site Address</label>
-                  <input 
-                    name="projectAddress"
-                    value={formData.projectAddress || ''}
-                    onChange={handleChange}
-                    placeholder="Detailed site location..."
-                    className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
-                  />
-                </div>
+                 <div>
+                   <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Site Address</label>
+                   <input
+                     name="projectAddress"
+                     value={formData.projectAddress || ''}
+                     onChange={handleChange}
+                     placeholder="Detailed site location..."
+                     className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                   />
+                 </div>
 
-                <div>
-                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Soil Type</label>
-                  <input
-                    name="soilType"
-                    value={formData.soilType || ''}
-                    onChange={handleChange}
-                    placeholder="e.g. Red Soil"
-                    className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
-                  />
-                </div>
+                 <div>
+                   <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Soil Type</label>
+                   <input
+                     name="soilType"
+                     value={formData.soilType || ''}
+                     onChange={handleChange}
+                     placeholder="e.g. Red Soil"
+                     className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                   />
+                 </div>
 
-                <div>
-                  <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Water Source</label>
-                  <input
-                    name="waterSource"
-                    value={formData.waterSource || ''}
-                    onChange={handleChange}
-                    placeholder="e.g. Borewell, canal, rainfed"
-                    className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
-                  />
-                </div>
+                 <div>
+                   <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Water Source</label>
+                   <input
+                     name="waterSource"
+                     value={formData.waterSource || ''}
+                     onChange={handleChange}
+                     placeholder="e.g. Borewell, canal, rainfed"
+                     className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                   />
+                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Total Units</label>
-                    <input
-                      name="totalUnits"
-                      type="number"
-                      value={formData.totalUnits || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, totalUnits: e.target.value ? Number(e.target.value) : undefined }))}
-                      className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Available</label>
-                    <input
-                      name="availableUnits"
-                      type="number"
-                      value={formData.availableUnits || ''}
-                      onChange={(e) => setFormData(prev => ({ ...prev, availableUnits: e.target.value ? Number(e.target.value) : undefined }))}
-                      className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
+                 {/* Soil Data Sub-fields */}
+                 <div className="grid grid-cols-2 gap-4 border border-primary/10 rounded-2xl p-4 bg-primary/5">
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">pH Level</label>
+                     <input
+                       value={formData.soilData?.ph || ''}
+                       onChange={(e) => handleObjectChange('soilData', 'ph', Number(e.target.value))}
+                       type="number" step="0.1"
+                       placeholder="e.g. 6.5"
+                       className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Nitrogen</label>
+                     <input
+                       value={formData.soilData?.nitrogen || ''}
+                       onChange={(e) => handleObjectChange('soilData', 'nitrogen', e.target.value)}
+                       placeholder="e.g. Medium"
+                       className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Phosphorus</label>
+                     <input
+                       value={formData.soilData?.phosphorus || ''}
+                       onChange={(e) => handleObjectChange('soilData', 'phosphorus', e.target.value)}
+                       placeholder="e.g. High"
+                       className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Potassium</label>
+                     <input
+                       value={formData.soilData?.potassium || ''}
+                       onChange={(e) => handleObjectChange('soilData', 'potassium', e.target.value)}
+                       placeholder="e.g. Medium"
+                       className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Organic Carbon</label>
+                     <input
+                       value={formData.soilData?.organicCarbon || ''}
+                       onChange={(e) => handleObjectChange('soilData', 'organicCarbon', e.target.value)}
+                       placeholder="e.g. 0.65%"
+                       className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                 </div>
+
+                 {/* Infrastructure Fields */}
+                 <div className="border border-primary/10 rounded-2xl p-4 bg-secondary/5">
+                   <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Infrastructure Details</p>
+                   <div className="grid grid-cols-2 gap-4">
+                     <div>
+                       <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Market Distance</label>
+                       <input
+                         value={formData.infrastructure?.marketDistance || ''}
+                         onChange={(e) => handleObjectChange('infrastructure', 'marketDistance', e.target.value)}
+                         placeholder="e.g. 10-15 km"
+                         className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Highway Distance</label>
+                       <input
+                         value={formData.infrastructure?.highwayDistance || ''}
+                         onChange={(e) => handleObjectChange('infrastructure', 'highwayDistance', e.target.value)}
+                         placeholder="e.g. 2.5 km"
+                         className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Cold Storage Distance</label>
+                       <input
+                         value={formData.infrastructure?.coldStorageDistance || ''}
+                         onChange={(e) => handleObjectChange('infrastructure', 'coldStorageDistance', e.target.value)}
+                         placeholder="e.g. 15 km"
+                         className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Power Supply</label>
+                       <input
+                         value={formData.infrastructure?.powerAvailability || ''}
+                         onChange={(e) => handleObjectChange('infrastructure', 'powerAvailability', e.target.value)}
+                         placeholder="e.g. 3-Phase Agri"
+                         className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-2">Water Table Depth</label>
+                       <input
+                         value={formData.infrastructure?.waterTableDepth || ''}
+                         onChange={(e) => handleObjectChange('infrastructure', 'waterTableDepth', e.target.value)}
+                         placeholder="e.g. 120 ft"
+                         className="w-full bg-white border border-black/5 rounded-[16px] py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                       />
+                     </div>
+                   </div>
+                 </div>
+
+                 <div className="grid grid-cols-2 gap-4">
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Total Units</label>
+                     <input
+                       name="totalUnits"
+                       type="number"
+                       value={formData.totalUnits || ''}
+                       onChange={(e) => setFormData(prev => ({ ...prev, totalUnits: e.target.value ? Number(e.target.value) : undefined }))}
+                       className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                   <div>
+                     <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">Available</label>
+                     <input
+                       name="availableUnits"
+                       type="number"
+                       value={formData.availableUnits || ''}
+                       onChange={(e) => setFormData(prev => ({ ...prev, availableUnits: e.target.value ? Number(e.target.value) : undefined }))}
+                       className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                     />
+                   </div>
+                 </div>
+
+                 <div>
+                   <label className="block text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-3 ml-1">RERA Number</label>
+                   <input
+                     name="reraNumber"
+                     value={formData.reraNumber || ''}
+                     onChange={handleChange}
+                     placeholder="e.g. TNRERA/LAYOUT/4104/2024"
+                     className="w-full bg-gray-50 border border-black/5 rounded-[20px] py-4 px-6 text-sm font-bold focus:ring-2 focus:ring-secondary/50 outline-none"
+                   />
+                 </div>
+               </div>
             </section>
 
             <div className="bg-white/50 p-8 rounded-[40px] border border-black/5 flex items-center space-x-4">
