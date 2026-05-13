@@ -774,16 +774,16 @@ const AdminDashboard: React.FC = () => {
         {tab === 'settings' && (
           <div className="space-y-8">
             {/* 1. CLOUD INTEGRITY (High Priority) */}
-            <section className="bg-white rounded-[40px] p-10 border-2 border-blue-100 shadow-xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-full -z-0 opacity-50"></div>
+            <section className="bg-white rounded-[40px] p-10 border-2 border-red-100 shadow-xl relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-red-50 rounded-bl-full -z-0 opacity-50"></div>
                <div className="relative z-10">
                  <div className="flex items-center gap-3 mb-8">
-                   <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
+                   <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center text-red-600 shadow-sm">
                      <ShieldCheck size={24} />
                    </div>
                    <div>
-                     <h3 className="text-2xl font-black text-primary uppercase tracking-tighter">Database Cloud Repair</h3>
-                     <p className="text-sm text-text-muted font-medium">Fix permissions and sync issues in 10 seconds.</p>
+                     <h3 className="text-2xl font-black text-primary uppercase tracking-tighter">Deep Cloud Repair</h3>
+                     <p className="text-sm text-text-muted font-medium">Fixes "Missing Column" errors and RLS permission blockers instantly.</p>
                    </div>
                  </div>
 
@@ -791,7 +791,7 @@ const AdminDashboard: React.FC = () => {
                    <button 
                      onClick={async () => {
                        const { error } = await supabase.from('leads').select('count', { count: 'exact', head: true });
-                       if (error) alert(`Leads Table Error: ${error.message}\n\nHint: Check if 'leads' table exists and has RLS policies.`);
+                       if (error) alert(`Leads Table Error: ${error.message}\n\nHint: Column mismatch or RLS issue detected.`);
                        else alert('Leads Table: Connection Successful ✅');
                      }}
                      className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left flex items-center gap-4"
@@ -799,14 +799,14 @@ const AdminDashboard: React.FC = () => {
                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-blue-600"><Users size={20} /></div>
                      <div>
                        <p className="font-bold text-primary text-sm">Test Leads Sync</p>
-                       <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Verify Site Visits</p>
+                       <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Check Inquiry Data</p>
                      </div>
                    </button>
 
                    <button 
                      onClick={async () => {
                        const { error } = await supabase.from('properties').select('count', { count: 'exact', head: true });
-                       if (error) alert(`Properties Table Error: ${error.message}\n\nHint: Check if 'properties' table exists.`);
+                       if (error) alert(`Properties Table Error: ${error.message}\n\nHint: Column mismatch or RLS issue detected.`);
                        else alert('Properties Table: Connection Successful ✅');
                      }}
                      className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left flex items-center gap-4"
@@ -814,29 +814,99 @@ const AdminDashboard: React.FC = () => {
                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-green-600"><LayoutDashboard size={20} /></div>
                      <div>
                        <p className="font-bold text-primary text-sm">Test Status Sync</p>
-                       <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Verify Cloud Updates</p>
+                       <p className="text-[10px] text-text-muted uppercase tracking-widest font-black">Check Estate Data</p>
                      </div>
                    </button>
                  </div>
 
-                 <div className="p-8 bg-primary rounded-[32px] text-white shadow-2xl">
+                 <div className="p-8 bg-red-600 rounded-[32px] text-white shadow-2xl">
                     <div className="flex items-center gap-4 mb-6">
-                      <div className="w-12 h-12 bg-secondary rounded-2xl flex items-center justify-center text-primary shadow-lg"><FileText size={24} /></div>
+                      <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white shadow-lg"><FileText size={24} /></div>
                       <div>
-                        <h4 className="text-xl font-bold">1-Step Cloud Fix</h4>
-                        <p className="text-white/60 text-xs">Run this SQL in Supabase to fix all errors at once.</p>
+                        <h4 className="text-xl font-bold">1-Click Deep Repair</h4>
+                        <p className="text-white/60 text-xs">Adds all missing columns (intent, yield, notes) to your database.</p>
                       </div>
                     </div>
 
                     <button 
                       onClick={() => {
-                        const sql = `-- 1. Create Visitors Table\nCREATE TABLE IF NOT EXISTS public.visitors (\n    id TEXT PRIMARY KEY,\n    name TEXT,\n    email TEXT,\n    last_visit TIMESTAMPTZ,\n    session_start TIMESTAMPTZ,\n    duration_minutes INTEGER,\n    page_views INTEGER,\n    visited_properties JSONB,\n    interests TEXT[],\n    browser TEXT,\n    updated_at TIMESTAMPTZ DEFAULT NOW()\n);\n\n-- 2. Enable RLS\nALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;\nALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;\nALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;\n\n-- 3. Create Policies (Allow Public Interaction)\nDROP POLICY IF EXISTS "Allow anon insert leads" ON public.leads;\nCREATE POLICY "Allow anon insert leads" ON public.leads FOR INSERT WITH CHECK (true);\n\nDROP POLICY IF EXISTS "Allow anon insert visitors" ON public.visitors;\nCREATE POLICY "Allow anon insert visitors" ON public.visitors FOR INSERT WITH CHECK (true);\n\nDROP POLICY IF EXISTS "Allow anon select visitors" ON public.visitors;\nCREATE POLICY "Allow anon select visitors" ON public.visitors FOR SELECT USING (true);\n\nDROP POLICY IF EXISTS "Allow anon select properties" ON public.properties;\nCREATE POLICY "Allow anon select properties" ON public.properties FOR SELECT USING (true);\n\nDROP POLICY IF EXISTS "Allow anon update properties" ON public.properties;\nCREATE POLICY "Allow anon update properties" ON public.properties FOR UPDATE USING (true);\n\nDROP POLICY IF EXISTS "Allow anon delete properties" ON public.properties;\nCREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);`;
+                        const sql = `-- DEEP REPAIR SCRIPT: Fixes Missing Columns & RLS Permissions
+
+-- 1. Create Visitors Table if missing
+CREATE TABLE IF NOT EXISTS public.visitors (
+    id TEXT PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    last_visit TIMESTAMPTZ,
+    session_start TIMESTAMPTZ,
+    duration_minutes INTEGER,
+    page_views INTEGER,
+    visited_properties JSONB,
+    interests TEXT[],
+    browser TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. ADD MISSING COLUMNS TO LEADS (Schema Repair)
+DO $$ BEGIN
+    BEGIN ALTER TABLE public.leads ADD COLUMN intent TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN notes TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN asset_category TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN preferred_state TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN investment_size TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN property_title TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN offer_amount NUMERIC; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN preferred_date TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.leads ADD COLUMN preferred_time TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+END $$;
+
+-- 3. ADD MISSING COLUMNS TO PROPERTIES (Schema Repair)
+DO $$ BEGIN
+    BEGIN ALTER TABLE public.properties ADD COLUMN yield TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN description TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN features TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN images TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN size TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN sqft TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN price_per_sqft TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN coordinates JSONB; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN investors INTEGER; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN total_units INTEGER; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN available_units INTEGER; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN project_type TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN amenities TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN video_url TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+END $$;
+
+-- 4. ENABLE RLS
+ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
+
+-- 5. RE-CREATE POLICIES (Allow Public Interaction)
+DROP POLICY IF EXISTS "Allow anon insert leads" ON public.leads;
+CREATE POLICY "Allow anon insert leads" ON public.leads FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon insert visitors" ON public.visitors;
+CREATE POLICY "Allow anon insert visitors" ON public.visitors FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow anon select visitors" ON public.visitors;
+CREATE POLICY "Allow anon select visitors" ON public.visitors FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow anon select properties" ON public.properties;
+CREATE POLICY "Allow anon select properties" ON public.properties FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Allow anon update properties" ON public.properties;
+CREATE POLICY "Allow anon update properties" ON public.properties FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Allow anon delete properties" ON public.properties;
+CREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);`;
                         navigator.clipboard.writeText(sql);
-                        alert("SQL FIX SCRIPT COPIED! \n\n1. Open your Supabase Dashboard.\n2. Go to 'SQL Editor' on the left.\n3. Paste and click 'RUN'.\n4. Your cloud will be fully unlocked!");
+                        alert("DEEP REPAIR SCRIPT COPIED! \n\n1. Open your Supabase Dashboard.\n2. Go to 'SQL Editor' on the left.\n3. Paste and click 'RUN'.\n4. Your cloud will be fully repaired and unlocked!");
                       }}
-                      className="w-full bg-secondary text-primary py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-white transition-all flex items-center justify-center gap-3 shadow-xl"
+                      className="w-full bg-white text-red-600 py-5 rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-secondary hover:text-primary transition-all flex items-center justify-center gap-3 shadow-xl"
                     >
-                      Copy SQL Repair Script
+                      Copy Deep Repair Script
                     </button>
                  </div>
                </div>
