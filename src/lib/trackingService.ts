@@ -3,6 +3,8 @@ export interface VisitorSession {
   name?: string;
   email?: string;
   lastVisit: string;
+  sessionStart: string;
+  durationMinutes: number;
   pageViews: number;
   visitedProperties: {
     id: string;
@@ -24,9 +26,12 @@ export const trackVisit = (property?: { id: string; title: string }) => {
   let visitor = visitors.find(v => v.id === sessionId);
 
   if (!visitor) {
+    const now = new Date().toISOString();
     visitor = {
       id: sessionId,
-      lastVisit: new Date().toISOString(),
+      lastVisit: now,
+      sessionStart: now,
+      durationMinutes: 0,
       pageViews: 0,
       visitedProperties: [],
       browser: navigator.userAgent
@@ -36,6 +41,11 @@ export const trackVisit = (property?: { id: string; title: string }) => {
 
   visitor.pageViews += 1;
   visitor.lastVisit = new Date().toISOString();
+  
+  // Calculate duration in minutes
+  const start = new Date(visitor.sessionStart).getTime();
+  const now = new Date().getTime();
+  visitor.durationMinutes = Math.round((now - start) / 60000);
 
   if (property) {
     // Avoid duplicates in the same session for the same property within a short time

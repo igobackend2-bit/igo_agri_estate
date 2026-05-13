@@ -31,6 +31,8 @@ import PropertyForm from './pages/admin/PropertyForm';
 import InvestorDashboard from './pages/dashboard/InvestorDashboard';
 import SellerDashboard from './pages/SellerDashboard';
 import AIReportPage from './pages/AIReportPage';
+import BlogsPage from './pages/BlogsPage';
+import VideosPage from './pages/VideosPage';
 import { motion } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
@@ -59,6 +61,7 @@ const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children
 };
 
 const Home: React.FC = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
   const { publicProperties } = useProperties();
   const recentlyAdded = useMemo(() => 
@@ -284,7 +287,7 @@ const Home: React.FC = () => {
               <h2 className="text-4xl font-bold mb-10 leading-tight">Investment <br /><span className="text-secondary italic">Intelligence</span></h2>
 
               <div className="space-y-8 relative z-10">
-                <Link to="/blog#videos" className="block p-6 bg-white/5 rounded-[32px] border border-white/10 hover:bg-white/10 transition-all cursor-pointer group">
+                <Link to="/videos" className="block p-6 bg-white/5 rounded-[32px] border border-white/10 hover:bg-white/10 transition-all cursor-pointer group">
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="w-10 h-10 bg-secondary rounded-xl flex items-center justify-center text-primary">
                       <PlayCircle size={20} />
@@ -294,7 +297,7 @@ const Home: React.FC = () => {
                   <p className="text-xs text-white/50 leading-relaxed font-light">Watch virtual site visits and drone audits of our prime estates.</p>
                 </Link>
 
-                <Link to="/blog#blogs" className="block p-6 bg-white/5 rounded-[32px] border border-white/10 hover:bg-white/10 transition-all cursor-pointer group">
+                <Link to="/blogs" className="block p-6 bg-white/5 rounded-[32px] border border-white/10 hover:bg-white/10 transition-all cursor-pointer group">
                   <div className="flex items-center space-x-4 mb-4">
                     <div className="w-10 h-10 bg-secondary rounded-xl flex items-center justify-center text-primary">
                       <Newspaper size={20} />
@@ -348,13 +351,14 @@ const Home: React.FC = () => {
                      const size = form.elements.namedItem('size') as HTMLInputElement;
                      const result = await submitLead({
                        type: 'requirement',
-                       name: 'Institutional Inquiry',
-                       phone: 'Captured via Desk',
+                       name: user?.user_metadata?.name || 'Institutional Inquiry',
+                       phone: user?.user_metadata?.phone || 'Captured via Desk',
+                       email: user?.email || '',
                        asset_category: category?.value,
                        preferred_state: state?.value,
                        investment_size: size?.value
                      });
-                     if (result.success) alert('Institutional Requirement Submitted. Our Desk will contact you shortly.');
+                     if (result.success) alert(`Thank you ${user?.user_metadata?.name || 'Investor'}. Your institutional requirement has been submitted. Our desk will contact you at ${user?.email || 'your email'}.`);
                    }}
                  >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -474,6 +478,8 @@ function App() {
               <Route path="/post-property" element={<PostProperty />} />
               <Route path="/seller-dashboard" element={<SellerDashboard />} />
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blogs" element={<BlogsPage />} />
+              <Route path="/videos" element={<VideosPage />} />
               <Route path="/knowledge-hub" element={<KnowledgeHub />} />
               <Route path="/dashboard" element={<ProtectedRoute><InvestorDashboard /></ProtectedRoute>} />
               <Route path="/admin" element={<AdminLogin />} />

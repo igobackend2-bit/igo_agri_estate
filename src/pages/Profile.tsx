@@ -11,11 +11,22 @@ const Profile: React.FC = () => {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
+  const [visitorInfo, setVisitorInfo] = useState<any>(null);
+
   useEffect(() => {
     if (!user) {
       navigate('/login');
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    const sessionId = localStorage.getItem('igo.analytics.sessionId');
+    if (sessionId) {
+      const visitors = JSON.parse(localStorage.getItem('igo.analytics.visitors') || '[]');
+      const current = visitors.find((v: any) => v.id === sessionId);
+      if (current) setVisitorInfo(current);
+    }
+  }, []);
 
   if (!user) return null;
 
@@ -41,6 +52,15 @@ const Profile: React.FC = () => {
       setUploading(false);
     }
   };
+
+  const recentActivity = visitorInfo?.visitedProperties?.slice(0, 5).map((p: any) => ({
+    text: `Viewed ${p.title}`,
+    time: new Date(p.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  })) || [
+    { text: 'Viewed Polyhouse Estate', time: '2 hours ago' },
+    { text: 'Downloaded Brochure: Mushroom Project', time: '1 day ago' },
+    { text: 'Signed in from Chennai, IN', time: '2 days ago' },
+  ];
 
   const mockMessages = [
     { id: 1, title: 'Welcome to IGO Agriestates', sender: 'IGO Team', date: 'May 12, 2026', preview: 'Welcome to the premium agricultural estate network. Your account is now active.', read: false },

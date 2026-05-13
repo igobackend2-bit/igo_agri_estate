@@ -156,54 +156,66 @@ const AdminDashboard: React.FC = () => {
 
   const handleSaveBlog = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setUploading(true);
-    const formData = new FormData(e.currentTarget);
-    const imageFile = (e.currentTarget.elements.namedItem('imageFile') as HTMLInputElement).files?.[0];
-    let imageUrl = formData.get('image') as string;
-    if (imageFile) imageUrl = await handleFileUpload(imageFile);
+    try {
+      setUploading(true);
+      const formData = new FormData(e.currentTarget);
+      const imageFile = (e.currentTarget.elements.namedItem('imageFile') as HTMLInputElement).files?.[0];
+      let imageUrl = formData.get('image') as string;
+      if (imageFile) imageUrl = await handleFileUpload(imageFile);
 
-    const blog: BlogItem = {
-      id: editingBlog?.id || String(Date.now()),
-      title: formData.get('title') as string,
-      category: formData.get('category') as string,
-      author: formData.get('author') as string,
-      date: formData.get('date') as string,
-      image: imageUrl || editingBlog?.image || '',
-    };
+      const blog: BlogItem = {
+        id: editingBlog?.id || String(Date.now()),
+        title: formData.get('title') as string,
+        category: formData.get('category') as string,
+        author: formData.get('author') as string,
+        date: formData.get('date') as string,
+        image: imageUrl || editingBlog?.image || '',
+      };
 
-    const nextBlogs = editingBlog ? blogs.map(b => b.id === editingBlog.id ? blog : b) : [blog, ...blogs];
-    saveLocalBlogs(nextBlogs);
-    setBlogs(nextBlogs);
-    setShowBlogModal(false);
-    setEditingBlog(null);
-    setUploading(false);
+      const nextBlogs = editingBlog ? blogs.map(b => b.id === editingBlog.id ? blog : b) : [blog, ...blogs];
+      saveLocalBlogs(nextBlogs);
+      setBlogs(nextBlogs);
+      setShowBlogModal(false);
+      setEditingBlog(null);
+    } catch (err) {
+      console.error(err);
+      alert("Upload failed. If uploading a large file, please note that browser storage is limited. Try using a URL instead.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSaveVideo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setUploading(true);
-    const formData = new FormData(e.currentTarget);
-    const thumbFile = (e.currentTarget.elements.namedItem('thumbFile') as HTMLInputElement).files?.[0];
-    const videoFile = (e.currentTarget.elements.namedItem('videoFile') as HTMLInputElement).files?.[0];
-    let thumbUrl = formData.get('thumb') as string;
-    if (thumbFile) thumbUrl = await handleFileUpload(thumbFile);
-    let videoUrl = formData.get('url') as string;
-    if (videoFile) videoUrl = await handleFileUpload(videoFile);
+    try {
+      setUploading(true);
+      const formData = new FormData(e.currentTarget);
+      const thumbFile = (e.currentTarget.elements.namedItem('thumbFile') as HTMLInputElement).files?.[0];
+      const videoFile = (e.currentTarget.elements.namedItem('videoFile') as HTMLInputElement).files?.[0];
+      let thumbUrl = formData.get('thumb') as string;
+      if (thumbFile) thumbUrl = await handleFileUpload(thumbFile);
+      let videoUrl = formData.get('url') as string;
+      if (videoFile) videoUrl = await handleFileUpload(videoFile);
 
-    const video: VideoItem = {
-      id: editingVideo?.id || String(Date.now()),
-      title: formData.get('title') as string,
-      views: formData.get('views') as string,
-      thumb: thumbUrl || editingVideo?.thumb || '',
-      url: videoUrl || editingVideo?.url || '',
-    };
+      const video: VideoItem = {
+        id: editingVideo?.id || String(Date.now()),
+        title: formData.get('title') as string,
+        views: formData.get('views') as string,
+        thumb: thumbUrl || editingVideo?.thumb || '',
+        url: videoUrl || editingVideo?.url || '',
+      };
 
-    const nextVideos = editingVideo ? videos.map(v => v.id === editingVideo.id ? video : v) : [video, ...videos];
-    saveLocalVideos(nextVideos);
-    setVideos(nextVideos);
-    setShowVideoModal(false);
-    setEditingVideo(null);
-    setUploading(false);
+      const nextVideos = editingVideo ? videos.map(v => v.id === editingVideo.id ? video : v) : [video, ...videos];
+      saveLocalVideos(nextVideos);
+      setVideos(nextVideos);
+      setShowVideoModal(false);
+      setEditingVideo(null);
+    } catch (err) {
+      console.error(err);
+      alert("Video upload failed. Browser storage (LocalSync) has a 5MB limit. Please provide a video URL instead for larger videos.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const deleteBlog = (id: string) => {
@@ -509,18 +521,22 @@ const AdminDashboard: React.FC = () => {
                </div>
                <div className="overflow-x-auto">
                  <table className="w-full">
-                   <thead><tr className="bg-gray-50/50">{['Investor', 'Contact', 'Type', 'Estate', 'Budget'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
-                   <tbody>
-                     {filteredLeads.map(l => (
-                       <tr key={l.id} className="hover:bg-gray-50/50 border-t border-black/5">
-                         <td className="px-6 py-4 font-bold text-sm">{l.name}</td>
-                         <td className="px-6 py-4 text-xs">{l.phone}</td>
-                         <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${TYPE_COLORS[l.type]}`}>{l.type}</span></td>
-                         <td className="px-6 py-4 font-bold text-xs">{l.property_title}</td>
-                         <td className="px-6 py-4 font-black">₹{l.offer_amount ? (l.offer_amount/10000000).toFixed(2) : l.investment_size || '—'} Cr</td>
-                       </tr>
-                     ))}
-                   </tbody>
+                    <thead><tr className="bg-gray-50/50">{['Investor', 'Contact', 'Type', 'Estate', 'Budget', 'Date'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
+                    <tbody>
+                      {filteredLeads.map(l => (
+                        <tr key={l.id} className="hover:bg-gray-50/50 border-t border-black/5">
+                          <td className="px-6 py-4">
+                            <p className="font-bold text-sm text-primary">{l.name}</p>
+                            {l.email && <p className="text-[10px] text-text-muted">{l.email}</p>}
+                          </td>
+                          <td className="px-6 py-4 text-xs font-bold">{l.phone}</td>
+                          <td className="px-6 py-4"><span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase ${TYPE_COLORS[l.type]}`}>{l.type}</span></td>
+                          <td className="px-6 py-4 font-bold text-xs">{l.property_title || 'General Interest'}</td>
+                          <td className="px-6 py-4 font-black text-sm">₹{l.offer_amount ? (l.offer_amount/10000000).toFixed(2) : l.investment_size || '—'} Cr</td>
+                          <td className="px-6 py-4 text-[10px] text-text-muted uppercase font-black">{new Date(l.created_at || Date.now()).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
                  </table>
                </div>
             </div>
@@ -582,13 +598,19 @@ const AdminDashboard: React.FC = () => {
             </div>
             <div className="bg-white rounded-[32px] border border-black/5 shadow-xl overflow-hidden">
                <div className="p-6 bg-gray-50/50 flex justify-between items-center"><h3 className="font-black text-primary uppercase">Recent Activity</h3><button onClick={() => setVisitors(getVisitors())}><RefreshCw size={16} /></button></div>
-               <div className="overflow-x-auto"><table className="w-full"><thead><tr className="bg-gray-50/50">{['Visitor', 'Last Active', 'Views', 'Interests'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
+               <div className="overflow-x-auto"><table className="w-full"><thead><tr className="bg-gray-50/50">{['Visitor', 'Last Active', 'Views', 'Duration', 'Interests'].map(h => <th key={h} className="px-6 py-4 text-left text-[10px] font-black uppercase text-text-muted">{h}</th>)}</tr></thead>
                <tbody className="divide-y divide-black/5">{visitors.map(v => (
                  <tr key={v.id}>
-                   <td className="px-6 py-4 font-bold text-sm">{v.name || 'Anonymous'}</td>
-                   <td className="px-6 py-4 text-xs">{new Date(v.lastVisit).toLocaleString()}</td>
+                   <td className="px-6 py-4 font-bold text-sm">
+                     <div>
+                       <p className="font-bold text-primary">{v.name || 'Anonymous'}</p>
+                       {v.email && <p className="text-[10px] text-text-muted font-normal">{v.email}</p>}
+                     </div>
+                   </td>
+                   <td className="px-6 py-4 text-xs font-bold text-primary">{new Date(v.lastVisit).toLocaleString()}</td>
                    <td className="px-6 py-4"><span className="bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-black">{v.pageViews}</span></td>
-                   <td className="px-6 py-4"><div className="flex flex-wrap gap-2">{v.visitedProperties.map((p, i) => <span key={i} className="px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold">{p.title}</span>)}</div></td>
+                   <td className="px-6 py-4"><span className="text-[11px] font-black text-primary uppercase tracking-widest">{v.durationMinutes || 0}m</span></td>
+                   <td className="px-6 py-4"><div className="flex flex-wrap gap-2">{v.visitedProperties.map((p, i) => <span key={i} className="px-2 py-1 bg-primary/5 text-primary rounded-lg text-[10px] font-bold border border-primary/10">{p.title}</span>)}</div></td>
                  </tr>
                ))}</tbody></table></div>
             </div>
