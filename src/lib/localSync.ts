@@ -131,7 +131,8 @@ const defaultBlogs: BlogItem[] = [
 
 const defaultVideos: VideoItem[] = [
   { id: '1', title: "Top 5 Estates in Tamil Nadu", views: "12k", thumb: "/images/blog/drone-audit.png", url: "https://www.youtube.com/results?search_query=agricultural+estate+drone+tour+tamil+nadu" },
-  { id: '2', title: "Investing in Teak: 10 Year ROI", views: "8.5k", thumb: "/images/properties/teak-estate.png", url: "https://www.youtube.com/results?search_query=teak+plantation+investment+returns+india" }
+  { id: '2', title: "Investing in Teak: 10 Year ROI", views: "8.5k", thumb: "/images/properties/teak-estate.png", url: "https://www.youtube.com/results?search_query=teak+plantation+investment+returns+india" },
+  { id: '3', title: "Premium Estate Tour", views: "2.1k", thumb: "/images/properties/polyhouse.png", url: "/videos/trending-agri.mp4" }
 ];
 
 export const getLocalBlogs = (): BlogItem[] => readJson<BlogItem[]>(BLOGS_KEY, defaultBlogs);
