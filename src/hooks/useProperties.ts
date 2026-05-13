@@ -223,39 +223,53 @@ export const useProperties = () => {
   }, [isSupabaseConfigured, enrichProperties, getMergedLocalProperties]);
 
   const updateProperty = useCallback(async (id: string, propertyData: Partial<Property>) => {
-    const payload: any = { ...propertyData, id };
+    // 1. GET FULL OBJECT FOR UPSERT (Must have all required fields for new inserts)
+    const existing = properties.find(p => p.id === id);
+    const fullObject = normalizeProperty({ ...(existing || {}), ...propertyData, id });
+    const payload = computeNumericValues(fullObject);
+
+    // 2. INSTANT LOCAL REFLECTION (Broadcasting to other tabs)
+    const nextProperties = properties.map(p => p.id === id ? payload : p);
+    setProperties(nextProperties);
+    saveLocalProperties(nextProperties);
 
     if (!isSupabaseConfigured) {
-      const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
-      setProperties(next);
-      saveLocalProperties(next);
       return { success: true, mocked: true };
     }
 
-    // Try direct update via REST for speed and reliability
-    const { data, error } = await directPostgREST('properties', 'PATCH', payload, `id=eq.${id}`);
+    // 3. AGGRESSIVE CLOUD UPSERT
+    try {
+      const { data, error } = await supabase
+        .from('properties')
+        .upsert([payload], { onConflict: 'id' })
+        .select();
 
-    if (error) {
-      console.warn('Direct property update failed, falling back to LocalSync:', error.message);
+      if (error) throw error;
       
-      // If it's a schema mismatch (missing column), try stripping extra fields
-      if (error.message?.toLowerCase().includes('column') || error.message?.toLowerCase().includes('find')) {
-         const essentialPayload: any = { status: propertyData.status, id };
-         const retry = await directPostgREST('properties', 'PATCH', essentialPayload, `id=eq.${id}`);
-         if (!retry.error) return { success: true, data: retry.data };
+      if (data && data[0]) {
+        const p = computeNumericValues(normalizeProperty(data[0]));
+        setProperties(prev => prev.map(item => item.id === id ? p : item));
+      }
+      return { success: true, data };
+
+    } catch (err: any) {
+      console.warn('Supabase upsert failed, trying schema-agnostic retry:', err.message);
+      
+      // Schema-Agnostic Fallback: Strip problematic columns
+      const isMissingColumn = err.code === 'PGRST204' || err.message?.includes('column');
+      if (isMissingColumn) {
+        const match = err.message?.match(/column ['"](.+?)['"]/i);
+        const missing = match ? match[1] : null;
+        if (missing && (payload as any)[missing] !== undefined) {
+          const { [missing]: _, ...stripped } = payload as any;
+          const retry = await supabase.from('properties').upsert([stripped], { onConflict: 'id' }).select();
+          if (!retry.error) return { success: true, data: retry.data };
+        }
       }
 
-      const next = properties.map(p => p.id === id ? computeNumericValues({ ...p, ...propertyData }) : p);
-      setProperties(next);
-      saveLocalProperties(next);
-      return { success: true, mocked: true, error: error.message };
+      // If all else fails, the local broadcast above already handled the UI
+      return { success: true, mocked: true, error: err.message };
     }
-
-    if (data) {
-      const p = computeNumericValues(normalizeProperty(data[0]));
-      setProperties(prev => prev.map(item => item.id === id ? p : item));
-    }
-    return { success: true, data };
   }, [isSupabaseConfigured, properties]);
 
   const updateStatus = useCallback(async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
