@@ -124,8 +124,23 @@ const Login: React.FC = () => {
         return;
       }
 
-      const { error } = await supabase.auth.verifyOtp({ email, token: otp, type: 'email' });
-      if (error) throw error;
+      // Try magiclink first as it's the default for signInWithOtp
+      const { error: verifyError } = await supabase.auth.verifyOtp({ 
+        email, 
+        token: otp, 
+        type: 'magiclink' 
+      });
+
+      if (verifyError) {
+        // Fallback to 'signup' type if 'magiclink' fails (for new users)
+        const { error: signupError } = await supabase.auth.verifyOtp({ 
+          email, 
+          token: otp, 
+          type: 'signup' 
+        });
+        
+        if (signupError) throw new Error('Security token is incorrect or has expired.');
+      }
       
       setMode('success');
       setTimeout(() => navigate('/profile'), 2000);
@@ -247,10 +262,15 @@ const Login: React.FC = () => {
                       placeholder="000000"
                       className="w-full bg-white/10 border border-white/20 rounded-[32px] py-6 px-4 text-center text-5xl font-black tracking-[1rem] focus:ring-4 focus:ring-secondary/30 focus:border-secondary outline-none transition-all text-white placeholder:text-white/20"
                     />
-                    <div className="mt-6 p-4 bg-white/5 rounded-2xl inline-block">
-                        <p className="text-[10px] text-white font-black uppercase tracking-widest">
-                          Sent to: <span className="text-secondary">{email}</span>
-                        </p>
+                    <div className="flex flex-col items-center gap-4 mt-6">
+                      <div className="p-4 bg-white/5 rounded-2xl inline-block">
+                          <p className="text-[10px] text-white font-black uppercase tracking-widest">
+                            Sent to: <span className="text-secondary">{email}</span>
+                          </p>
+                      </div>
+                      <button type="button" onClick={handleSendOTP} className="text-[10px] font-black uppercase tracking-widest text-secondary hover:text-white transition-colors underline underline-offset-4">
+                        Did not receive? Resend Code
+                      </button>
                     </div>
                   </div>
 
