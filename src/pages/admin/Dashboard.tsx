@@ -18,7 +18,7 @@ import {
   VideoItem
 } from '../../lib/localSync';
 import { seedDatabase } from '../../utils/seedDb';
-import { getVisitors, VisitorSession } from '../../lib/trackingService';
+import { getVisitors, VisitorSession, fetchAllVisitors } from '../../lib/trackingService';
 
 const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
 const daysLeft = (soldAt?: string) => {
@@ -71,7 +71,7 @@ const AdminDashboard: React.FC = () => {
       loadLeads();
     }
     if (tab === 'analytics') {
-      setVisitors(getVisitors());
+      fetchAllVisitors().then(data => setVisitors(data));
     }
   }, [tab, loadLeads]);
 
@@ -111,16 +111,21 @@ const AdminDashboard: React.FC = () => {
 
   const handleStatusChange = async (id: string, status: any) => {
     setStatusUpdating(id);
-    const success = await updateStatus(id, status);
-    if (success) {
+    const result = await updateStatus(id, status);
+    // updateStatus now returns {success, data, mocked}
+    if (result && (result as any).success && !(result as any).mocked) {
       const prop = properties.find(p => p.id === id);
       addNotification(
         `Estate Status Update: ${prop?.title || 'Property'}`,
         'Admin Desk',
-        `The status of ${prop?.title || 'the estate'} has been updated to ${status}.`,
+        `The status of ${prop?.title || 'the estate'} has been updated to ${status} in the cloud.`,
         'update'
       );
       refresh();
+    } else if (result && (result as any).mocked) {
+      alert("Database Error: Status was NOT saved to the cloud. It is only updated locally on your browser. Please check Supabase RLS policies.");
+    } else {
+      alert("Failed to update status. Please check your internet connection and Supabase permissions.");
     }
     setStatusUpdating(null);
   };
@@ -783,6 +788,105 @@ const AdminDashboard: React.FC = () => {
                 {saved ? 'Settings Saved!' : 'Save Configuration'}
               </button>
             </div>
+          </div>
+        )}
+
+        {tab === 'settings' && (
+          <div className="space-y-8">
+            <section className="bg-white rounded-[40px] p-10 border border-black/5 shadow-xl">
+               <div className="flex items-center gap-3 mb-8">
+                 <div className="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
+                   <ShieldCheck size={24} />
+                 </div>
+                 <div>
+                   <h3 className="text-2xl font-black text-primary uppercase tracking-tighter">Cloud Integrity Check</h3>
+                   <p className="text-sm text-text-muted">Verify your institutional database connectivity and permissions.</p>
+                 </div>
+               </div>
+
+               <div className="space-y-4">
+                 <div className="grid md:grid-cols-2 gap-4">
+                   <button 
+                     onClick={async () => {
+                       const { error } = await supabase.from('leads').select('count', { count: 'exact', head: true });
+                       if (error) alert(`Leads Table Error: ${error.message}\n\nHint: Check if 'leads' table exists and has RLS policies.`);
+                       else alert('Leads Table: Connection Successful ✅');
+                     }}
+                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left"
+                   >
+                     <p className="font-bold text-primary mb-1">Check Leads Table</p>
+                     <p className="text-xs text-text-muted">Verifies if site visit requests can be saved.</p>
+                   </button>
+
+                   <button 
+                     onClick={async () => {
+                       const { error } = await supabase.from('properties').select('count', { count: 'exact', head: true });
+                       if (error) alert(`Properties Table Error: ${error.message}\n\nHint: Check if 'properties' table exists.`);
+                       else alert('Properties Table: Connection Successful ✅');
+                     }}
+                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left"
+                   >
+                     <p className="font-bold text-primary mb-1">Check Properties Table</p>
+                     <p className="text-xs text-text-muted">Verifies if status changes can be saved.</p>
+                   </button>
+
+                   <button 
+                     onClick={async () => {
+                        // Test insert for visitor
+                        const { error } = await supabase.from('visitors').select('count', { count: 'exact', head: true });
+                        if (error) alert(`Visitors Table Error: ${error.message}\n\nHint: Create a 'visitors' table in Supabase.`);
+                        else alert('Visitors Table: Connection Successful ✅');
+                     }}
+                     className="p-5 rounded-3xl bg-gray-50 border border-black/5 hover:border-blue-200 transition-all text-left"
+                   >
+                     <p className="font-bold text-primary mb-1">Check Visitor Tracking</p>
+                     <p className="text-xs text-text-muted">Verifies if global visitor data is being saved.</p>
+                   </button>
+
+                   <button 
+                    onClick={() => {
+                      const sql = `
+-- COPY AND RUN THIS IN SUPABASE SQL EDITOR TO FIX EVERYTHING
+
+-- 1. Create Visitors Table
+CREATE TABLE IF NOT EXISTS public.visitors (
+    id TEXT PRIMARY KEY,
+    name TEXT,
+    email TEXT,
+    last_visit TIMESTAMPTZ,
+    session_start TIMESTAMPTZ,
+    duration_minutes INTEGER,
+    page_views INTEGER,
+    visited_properties JSONB,
+    interests TEXT[],
+    browser TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Enable RLS
+ALTER TABLE public.leads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
+
+-- 3. Create Policies (Allow Anon Insert)
+CREATE POLICY "Allow anon insert leads" ON public.leads FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anon insert visitors" ON public.visitors FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow anon select visitors" ON public.visitors FOR SELECT USING (true);
+CREATE POLICY "Allow anon select properties" ON public.properties FOR SELECT USING (true);
+CREATE POLICY "Allow anon update properties" ON public.properties FOR UPDATE USING (true);
+CREATE POLICY "Allow anon delete properties" ON public.properties FOR DELETE USING (true);
+                      `;
+                      navigator.clipboard.writeText(sql);
+                      alert("SQL Script copied to clipboard! Paste this into your Supabase SQL Editor to fix all permission issues.");
+                    }}
+                    className="p-5 rounded-3xl bg-primary text-secondary hover:bg-primary-light transition-all text-left shadow-lg"
+                   >
+                     <p className="font-bold mb-1">Copy Fix-All SQL Script</p>
+                     <p className="text-xs opacity-70">Copy the SQL code to fix tables and RLS permissions.</p>
+                   </button>
+                 </div>
+               </div>
+            </section>
           </div>
         )}
       </main>

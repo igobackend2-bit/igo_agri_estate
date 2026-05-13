@@ -1,3 +1,5 @@
+import { supabase, isSupabaseConfigured } from './supabaseClient';
+
 export interface VisitorSession {
   id: string;
   name?: string;
@@ -18,18 +20,44 @@ export interface VisitorSession {
 
 const ANALYTICS_KEY = 'igo.analytics.visitors';
 let lastWriteTime = 0;
-const WRITE_DEBOUNCE = 1000;
+const WRITE_DEBOUNCE = 2000;
 
-const persistVisitors = (visitors: VisitorSession[]) => {
+const persistVisitors = async (visitors: VisitorSession[]) => {
   const now = Date.now();
-  if (now - lastWriteTime < WRITE_DEBOUNCE) {
-    setTimeout(() => {
-      localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
-    }, WRITE_DEBOUNCE);
-    return;
-  }
+  
+  // Local persistence for fallback
   localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+  
+  if (!isSupabaseConfigured) return;
+
+  // Global persistence in Supabase
+  if (now - lastWriteTime < WRITE_DEBOUNCE) return;
   lastWriteTime = now;
+
+  const currentSession = visitors[0]; // Most recent is usually first due to trackVisit sort
+  if (!currentSession) return;
+
+  try {
+    const { error } = await supabase
+      .from('visitors')
+      .upsert([{
+        id: currentSession.id,
+        name: currentSession.name,
+        email: currentSession.email,
+        last_visit: currentSession.lastVisit,
+        session_start: currentSession.sessionStart,
+        duration_minutes: currentSession.durationMinutes,
+        page_views: currentSession.pageViews,
+        visited_properties: currentSession.visitedProperties,
+        interests: currentSession.interests,
+        browser: currentSession.browser,
+        updated_at: new Date().toISOString()
+      }], { onConflict: 'id' });
+      
+    if (error) console.warn('Supabase analytics sync failed:', error.message);
+  } catch (err) {
+    console.warn('Analytics sync error:', err);
+  }
 };
 
 export const trackVisit = (property?: { id: string; title: string }) => {
@@ -43,7 +71,7 @@ export const trackVisit = (property?: { id: string; title: string }) => {
 
   if (!visitor) {
     const now = new Date().toISOString();
-visitor = {
+    visitor = {
        id: sessionId,
        lastVisit: now,
        sessionStart: now,
@@ -59,13 +87,11 @@ visitor = {
   visitor.pageViews += 1;
   visitor.lastVisit = new Date().toISOString();
   
-  // Calculate duration in minutes
   const start = new Date(visitor.sessionStart).getTime();
   const now = new Date().getTime();
   visitor.durationMinutes = Math.round((now - start) / 60000);
 
   if (property) {
-    // Avoid duplicates in the same session for the same property within a short time
     if (!visitor.visitedProperties) visitor.visitedProperties = [];
     const alreadyVisited = visitor.visitedProperties.find(p => p.id === property.id);
     if (!alreadyVisited || (Date.now() - new Date(alreadyVisited.timestamp).getTime() > 3600000)) {
@@ -77,7 +103,6 @@ visitor = {
     }
   }
 
-  // Keep only last 50 visitors for localStorage limits
   const trimmedVisitors = visitors.sort((a, b) => 
     new Date(b.lastVisit).getTime() - new Date(a.lastVisit).getTime()
   ).slice(0, 50);
@@ -92,15 +117,43 @@ export const getVisitors = (): VisitorSession[] => {
     const parsed = raw ? JSON.parse(raw) : [];
     if (!Array.isArray(parsed)) return [];
     
-    // Sanitize old data: ensure all required arrays exist
     return parsed.map(v => ({
       ...v,
       visitedProperties: Array.isArray(v.visitedProperties) ? v.visitedProperties : [],
       interests: Array.isArray(v.interests) ? v.interests : []
     }));
   } catch (e) {
-    console.warn('Failed to parse analytics:', e);
     return [];
+  }
+};
+
+export const fetchAllVisitors = async (): Promise<VisitorSession[]> => {
+  if (!isSupabaseConfigured) return getVisitors();
+
+  try {
+    const { data, error } = await supabase
+      .from('visitors')
+      .select('*')
+      .order('last_visit', { ascending: false })
+      .limit(100);
+
+    if (error) throw error;
+    
+    return (data || []).map(v => ({
+      id: v.id,
+      name: v.name,
+      email: v.email,
+      lastVisit: v.last_visit,
+      sessionStart: v.session_start,
+      durationMinutes: v.duration_minutes,
+      pageViews: v.page_views,
+      visitedProperties: v.visited_properties || [],
+      interests: v.interests || [],
+      browser: v.browser
+    }));
+  } catch (err) {
+    console.warn('Failed to fetch global visitors:', err);
+    return getVisitors();
   }
 };
 
@@ -146,6 +199,6 @@ export const addInterest = (interest: string) => {
   if (visitor) {
     visitor.name = name;
     visitor.email = email;
-    localStorage.setItem(ANALYTICS_KEY, JSON.stringify(visitors));
+    persistVisitors(visitors);
   }
 };
