@@ -415,13 +415,18 @@ const AdminDashboard: React.FC = () => {
       <main className="flex-1 ml-72 p-10 min-h-screen">
         <header className="flex justify-between items-center mb-10">
           <div>
-            <h1 className="text-3xl font-black text-primary uppercase tracking-tighter mb-1">
-              {tab === 'inventory' ? 'Estate Inventory' : 
-               tab === 'leads' ? 'Investment Pipeline' : 
-               tab === 'blogs' ? 'Blog Management' : 
-               tab === 'videos' ? 'Trending Videos' : 
-               tab === 'analytics' ? 'Visitor Activity' : 'Portal Settings'}
-            </h1>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-3xl font-black text-primary uppercase tracking-tighter">
+                {tab === 'inventory' ? 'Estate Inventory' : 
+                 tab === 'leads' ? 'Investment Pipeline' : 
+                 tab === 'blogs' ? 'Blog Management' : 
+                 tab === 'videos' ? 'Trending Videos' : 
+                 tab === 'analytics' ? 'Visitor Activity' : 'Portal Settings'}
+              </h1>
+              <span className="px-3 py-1 bg-secondary/20 text-secondary rounded-full text-[9px] font-black uppercase tracking-widest border border-secondary/20 shadow-sm animate-pulse">
+                v1.2.0 - Deep Repair
+              </span>
+            </div>
             <p className="text-text-muted text-sm">Live control — changes reflect immediately on the public site.</p>
           </div>
         </header>
