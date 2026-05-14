@@ -223,12 +223,12 @@ export const useProperties = () => {
   }, [isSupabaseConfigured, enrichProperties, getMergedLocalProperties]);
 
   const updateProperty = useCallback(async (id: string, propertyData: Partial<Property>) => {
-    // 1. GET FULL OBJECT FOR UPSERT (Must have all required fields for new inserts)
+    // 1. GET FULL OBJECT FOR UPSERT
     const existing = properties.find(p => p.id === id);
     const fullObject = normalizeProperty({ ...(existing || {}), ...propertyData, id });
     const payload = computeNumericValues(fullObject);
 
-    // 2. INSTANT LOCAL REFLECTION (Broadcasting to other tabs)
+    // 2. INSTANT LOCAL REFLECTION
     const nextProperties = properties.map(p => p.id === id ? payload : p);
     setProperties(nextProperties);
     saveLocalProperties(nextProperties);
@@ -237,62 +237,61 @@ export const useProperties = () => {
       return { success: true, mocked: true };
     }
 
-    // 3. AGGRESSIVE CLOUD UPSERT
-    try {
-      const { data, error } = await supabase
-        .from('properties')
-        .upsert([payload], { onConflict: 'id' })
-        .select();
+    // 3. AGGRESSIVE CLOUD UPSERT WITH RETRY
+    let currentPayload = { ...payload };
+    let lastError: any = null;
+    let maxRetries = 5;
 
-      if (error) throw error;
-      
-      if (data && data[0]) {
-        const p = computeNumericValues(normalizeProperty(data[0]));
-        setProperties(prev => prev.map(item => item.id === id ? p : item));
-      }
-      return { success: true, data };
+    while (maxRetries > 0) {
+      try {
+        const { data, error } = await supabase
+          .from('properties')
+          .upsert([currentPayload], { onConflict: 'id' })
+          .select();
 
-    } catch (err: any) {
-      console.warn('Supabase upsert failed, trying schema-agnostic retry:', err.message);
-      
-      // Schema-Agnostic Fallback: Recursively strip problematic columns
-      let currentPayload = { ...payload };
-      let lastError = err;
-      let maxRetries = 5;
-
-      while (maxRetries > 0) {
-        const isMissingColumn = lastError.code === 'PGRST204' || 
-                               lastError.message?.includes('column') || 
-                               lastError.message?.includes('find');
+        if (error) throw error;
         
-        if (!isMissingColumn) break;
+        console.log(`Cloud Sync Success for ${id}`);
+        // Immediately fetch to ensure all clients see the update
+        fetchProperties();
+        return { success: true, data };
+      } catch (err: any) {
+        lastError = err;
+        console.warn(`Sync attempt failed for ${id}:`, err.message);
 
-        const match = lastError.message?.match(/column ['"](.+?)['"]/i);
-        const missing = match ? match[1] : null;
+        // Schema-Agnostic Recovery: Strip columns that don't exist in the table
+        const isMissingColumn = err.code === 'PGRST204' || 
+                               err.message?.toLowerCase().includes('column') || 
+                               err.message?.toLowerCase().includes('find');
         
-        if (missing && (currentPayload as any)[missing] !== undefined) {
-          const { [missing]: _, ...stripped } = currentPayload as any;
-          currentPayload = stripped;
+        if (isMissingColumn) {
+          const match = err.message?.match(/column ['"](.+?)['"]/i);
+          const missing = match ? match[1] : null;
           
-          const retry = await supabase.from('properties').upsert([currentPayload], { onConflict: 'id' }).select();
-          if (!retry.error) {
-            if (retry.data && retry.data[0]) {
-               const p = computeNumericValues(normalizeProperty(retry.data[0]));
-               setProperties(prev => prev.map(item => item.id === id ? p : item));
-            }
-            return { success: true, data: retry.data, stripped: true };
+          if (missing && (currentPayload as any)[missing] !== undefined) {
+            console.warn(`Stripping missing column "${missing}" and retrying...`);
+            const { [missing]: _, ...stripped } = currentPayload as any;
+            currentPayload = stripped;
+            maxRetries--;
+            continue;
           }
-          lastError = retry.error;
-          maxRetries--;
-        } else {
-          break;
         }
-      }
 
-      // If all else fails, the local broadcast above already handled the UI
-      return { success: true, mocked: true, error: lastError.message };
+        // Permission denied or other non-retryable error
+        if (err.status === 401 || err.status === 403) {
+           console.error('Permission denied for property update. Check RLS policies.');
+           break; 
+        }
+
+        // Transient error or unidentified schema issue
+        maxRetries--;
+        if (maxRetries > 0) await new Promise(r => setTimeout(r, 500));
+      }
     }
-  }, [isSupabaseConfigured, properties]);
+
+    console.error(`Final Cloud Sync Failure for ${id}:`, lastError?.message);
+    return { success: true, mocked: true, error: lastError?.message };
+  }, [isSupabaseConfigured, properties, fetchProperties]);
 
   const updateStatus = useCallback(async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
     const now = new Date().toISOString();

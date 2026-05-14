@@ -89,6 +89,14 @@ const PropertyForm: React.FC = () => {
 
    const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const isNew = !id;
+    const confirmMessage = isNew 
+      ? "Are you sure you want to initialize this new estate asset? This will make it live in the marketplace."
+      : `Are you sure you want to commit these updates to "${formData.title}"? Changes will reflect immediately on the live website.`;
+
+    if (!window.confirm(confirmMessage)) return;
+
     setLoading(true);
 
     // Auto-set timestamps based on status
@@ -115,7 +123,7 @@ const PropertyForm: React.FC = () => {
       await refresh();
       navigate('/admin/dashboard');
     } else {
-      alert('Failed to save estate records. Please try again.');
+      alert('Failed to save estate records. Please check your cloud connection and try again.');
     }
     setLoading(false);
   };

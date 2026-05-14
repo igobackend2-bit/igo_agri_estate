@@ -84,6 +84,7 @@ const estateFlow = [
 ];
 
 import { trackVisit, updateVisitDuration } from '../lib/trackingService';
+import { submitLead } from '../lib/leadsService';
 
 const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -196,11 +197,29 @@ const PropertyDetails: React.FC = () => {
 
   const whatsappUrl = `https://wa.me/${igoPhone.replace(/\D/g, '')}?text=${encodeURIComponent(enquiryText)}`;
   
-  const handleWhatsAppClick = (e: React.MouseEvent) => {
+  const handleWhatsAppClick = async (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
       setAuthMessage("Please sign in to contact our estate team via WhatsApp.");
       setShowAuthModal(true);
+      return;
+    }
+
+    // SILENT LEAD CAPTURE: Send request to admin before/while opening WhatsApp
+    // This ensures "send the request to admin" happens without "opening this page only"
+    try {
+      await submitLead({
+        type: 'contact',
+        name: user.user_metadata?.name || 'Anonymous User',
+        phone: user.user_metadata?.phone || 'Captured via WhatsApp click',
+        email: user.email || '',
+        property_id: property?.id,
+        property_title: property?.title,
+        notes: `User clicked WhatsApp button for ${property?.title}. Redirecting to WA.`,
+        intent: 'WhatsApp Inquiry'
+      });
+    } catch (err) {
+      console.warn('Silent lead capture failed, but proceeding with WhatsApp redirection.');
     }
   };
 

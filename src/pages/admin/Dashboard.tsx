@@ -113,6 +113,12 @@ const AdminDashboard: React.FC = () => {
   const clearSelection = () => setSelectedIds(new Set());
 
   const handleStatusChange = async (id: string, status: 'Available' | 'Sold' | 'Reserved') => {
+    const prop = properties.find(p => p.id === id);
+    if (status !== 'Available') {
+      const confirmed = window.confirm(`Are you sure you want to mark "${prop?.title || 'this estate'}" as ${status}? This will update the live marketplace.`);
+      if (!confirmed) return;
+    }
+
     // 1. OPTIMISTIC UPDATE: Update the UI immediately
     setProperties((prev: Property[]) => prev.map((p: Property) => p.id === id ? { ...p, status } : p));
     
@@ -995,6 +1001,21 @@ DO $$ BEGIN
     BEGIN ALTER TABLE public.properties ADD COLUMN video_url TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.properties ADD COLUMN "soldAt" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.properties ADD COLUMN "bookedAt" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "priceValue" NUMERIC; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "sizeValue" NUMERIC; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "roiValue" NUMERIC; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "soilData" JSONB; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN infrastructure JSONB; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN crops TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "setupScope" TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "customerNeeds" TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "igoSupport" TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "revenueModel" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "costRange" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "breakEven" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "projectAddress" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "projectOffice" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "reraNumber" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
 END $$;
 
 -- 4. RE-ENABLE RLS & POLICIES (Ultimate Access for Sync)
