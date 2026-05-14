@@ -993,6 +993,8 @@ DO $$ BEGIN
     BEGIN ALTER TABLE public.properties ADD COLUMN project_type TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.properties ADD COLUMN amenities TEXT[]; EXCEPTION WHEN duplicate_column THEN NULL; END;
     BEGIN ALTER TABLE public.properties ADD COLUMN video_url TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "soldAt" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
+    BEGIN ALTER TABLE public.properties ADD COLUMN "bookedAt" TEXT; EXCEPTION WHEN duplicate_column THEN NULL; END;
 END $$;
 
 -- 4. RE-ENABLE RLS & POLICIES (Ultimate Access for Sync)

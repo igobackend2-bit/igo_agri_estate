@@ -255,20 +255,42 @@ export const useProperties = () => {
     } catch (err: any) {
       console.warn('Supabase upsert failed, trying schema-agnostic retry:', err.message);
       
-      // Schema-Agnostic Fallback: Strip problematic columns
-      const isMissingColumn = err.code === 'PGRST204' || err.message?.includes('column');
-      if (isMissingColumn) {
-        const match = err.message?.match(/column ['"](.+?)['"]/i);
+      // Schema-Agnostic Fallback: Recursively strip problematic columns
+      let currentPayload = { ...payload };
+      let lastError = err;
+      let maxRetries = 5;
+
+      while (maxRetries > 0) {
+        const isMissingColumn = lastError.code === 'PGRST204' || 
+                               lastError.message?.includes('column') || 
+                               lastError.message?.includes('find');
+        
+        if (!isMissingColumn) break;
+
+        const match = lastError.message?.match(/column ['"](.+?)['"]/i);
         const missing = match ? match[1] : null;
-        if (missing && (payload as any)[missing] !== undefined) {
-          const { [missing]: _, ...stripped } = payload as any;
-          const retry = await supabase.from('properties').upsert([stripped], { onConflict: 'id' }).select();
-          if (!retry.error) return { success: true, data: retry.data };
+        
+        if (missing && (currentPayload as any)[missing] !== undefined) {
+          const { [missing]: _, ...stripped } = currentPayload as any;
+          currentPayload = stripped;
+          
+          const retry = await supabase.from('properties').upsert([currentPayload], { onConflict: 'id' }).select();
+          if (!retry.error) {
+            if (retry.data && retry.data[0]) {
+               const p = computeNumericValues(normalizeProperty(retry.data[0]));
+               setProperties(prev => prev.map(item => item.id === id ? p : item));
+            }
+            return { success: true, data: retry.data, stripped: true };
+          }
+          lastError = retry.error;
+          maxRetries--;
+        } else {
+          break;
         }
       }
 
       // If all else fails, the local broadcast above already handled the UI
-      return { success: true, mocked: true, error: err.message };
+      return { success: true, mocked: true, error: lastError.message };
     }
   }, [isSupabaseConfigured, properties]);
 
