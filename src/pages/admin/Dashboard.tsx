@@ -129,7 +129,9 @@ const AdminDashboard: React.FC = () => {
     if (result && (result as any).success && !(result as any).mocked) {
       addNotification('Cloud Synced', 'Success', `Status updated to ${status} in cloud.`, 'update');
     } else {
-      addNotification('Local Sync Only', 'System', 'Status saved locally. Cloud sync pending.', 'system');
+      const errorMsg = (result as any).error || 'Connection Timeout';
+      addNotification('Sync Failed', 'Error', `Cloud update failed: ${errorMsg}. Changes saved locally only.`, 'system');
+      console.error('Status sync error:', errorMsg);
     }
     
     setStatusUpdating(null);
