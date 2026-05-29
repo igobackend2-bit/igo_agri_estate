@@ -33,16 +33,16 @@ const Navbar: React.FC = () => {
                <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain" />
             </div>
             <div className="flex flex-col -space-y-1">
-              <span className="font-black text-2xl tracking-tight text-primary uppercase font-serif">Agricultural</span>
+              <span className="font-black text-2xl tracking-tight text-primary uppercase font-serif">Agri</span>
               <span className="text-[10px] text-[#00814a] font-black uppercase italic tracking-[0.3em] ml-0.5">Estate India</span>
             </div>
           </Link>
 
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center space-x-12">
-            <Link to="/locations" className="text-[11px] font-black uppercase tracking-widest text-primary/70 hover:text-[#00814a] transition-all hover:-translate-y-0.5">Estates</Link>
-            <Link to="/about" className="text-[11px] font-black uppercase tracking-widest text-primary/70 hover:text-[#00814a] transition-all hover:-translate-y-0.5">About</Link>
-            <Link to="/contact" className="text-[11px] font-black uppercase tracking-widest text-primary/70 hover:text-[#00814a] transition-all hover:-translate-y-0.5">Contact</Link>
+            <a href="/#estates" className="text-[11px] font-black uppercase tracking-widest text-primary/70 hover:text-[#00814a] transition-all hover:-translate-y-0.5">Estates</a>
+            <a href="/#about" className="text-[11px] font-black uppercase tracking-widest text-primary/70 hover:text-[#00814a] transition-all hover:-translate-y-0.5">About</a>
+            <a href="/#contact" className="text-[11px] font-black uppercase tracking-widest text-primary/70 hover:text-[#00814a] transition-all hover:-translate-y-0.5">Contact</a>
           </div>
 
           {/* Action Buttons */}
@@ -100,10 +100,10 @@ const Navbar: React.FC = () => {
                  exit={{ opacity: 0, y: -20 }}
                  className="absolute top-28 left-6 right-6 glass rounded-[40px] p-10 shadow-2xl border border-white/60 pointer-events-auto"
                >
-               <div className="flex flex-col space-y-6">
-                 <Link to="/locations" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-primary uppercase tracking-tighter">Estates</Link>
-                 <Link to="/about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-primary uppercase tracking-tighter">About</Link>
-                 <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-primary uppercase tracking-tighter">Contact</Link>
+                <div className="flex flex-col space-y-6">
+                 <a href="/#estates" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-primary uppercase tracking-tighter">Estates</a>
+                 <a href="/#about" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-primary uppercase tracking-tighter">About</a>
+                 <a href="/#contact" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-black text-primary uppercase tracking-tighter">Contact</a>
                    <div className="pt-6 border-t border-black/5 flex flex-col space-y-4">
                      <Link to="/post-property" onClick={() => setIsMobileMenuOpen(false)} className="bg-[#3d444d] text-white py-5 rounded-lg text-center font-black uppercase tracking-widest">
                        Post Property

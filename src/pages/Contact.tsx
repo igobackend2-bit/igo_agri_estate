@@ -31,7 +31,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div className="pt-32 pb-20">
+    <section id="contact" className="py-20 bg-background border-t border-black/5">
       <div className="container-pro">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -169,7 +169,7 @@ const Contact: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

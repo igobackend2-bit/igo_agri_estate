@@ -75,7 +75,7 @@ const Hero: React.FC = () => {
 
             <div className="mb-8">
               <h1 className="text-5xl md:text-7xl font-black text-white uppercase tracking-tight leading-none drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]">
-                Agricultural Estate <span className="text-secondary italic font-serif drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)]">India</span>
+                Agri Estate <span className="text-secondary italic font-serif drop-shadow-[0_5px_5px_rgba(0,0,0,0.5)]">India</span>
               </h1>
               <p className="mt-5 text-white/90 text-lg md:text-xl font-medium max-w-3xl mx-auto drop-shadow-md">
                 Buy, sell, rent, or lease agricultural estates with clear land details, buyer enquiries, and seller listing support.
@@ -159,6 +159,42 @@ const Hero: React.FC = () => {
           </div>
         </div>
       </section>
+      
+      {/* TURNKEY PROJECTS - YOUR LAND, OUR EXPERTISE */}
+      <div className="bg-primary py-24 overflow-hidden relative border-b border-black/5">
+        <div className="absolute top-0 right-0 w-full h-full bg-topo opacity-5 pointer-events-none"></div>
+        <div className="container-pro relative z-10 text-center mb-14">
+          <p className="text-[10px] font-black text-secondary uppercase tracking-[0.4em] mb-4">Your Land, Our Expertise</p>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white uppercase tracking-tighter leading-none mb-6">
+            Buy Land. Build a Vision. <br className="md:hidden" />
+            <span className="text-secondary italic font-serif">Or Just Hold.</span>
+          </h2>
+          <p className="text-white/70 text-lg max-w-3xl mx-auto font-light leading-relaxed">
+            Buy premium land from us. Have a plan? Great. No plan? Partner with us. We offer turnkey projects to make your land productive—from polyhouses to goat farming. Or simply keep the land as a high-value asset. The choice is entirely yours.
+          </p>
+        </div>
+        
+        {/* Animated Marquee */}
+        <div className="relative flex overflow-x-hidden w-full group py-4">
+          <div className="absolute left-0 top-0 w-24 md:w-48 h-full bg-gradient-to-r from-primary to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 w-24 md:w-48 h-full bg-gradient-to-l from-primary to-transparent z-10 pointer-events-none"></div>
+          
+          <div className="animate-marquee flex gap-4 md:gap-6 items-center whitespace-nowrap pl-4 md:pl-6">
+            {[
+              'Polyhouse Projects', 'Hydroponic Projects', 'Joint Venture Projects', 
+              'Vertical Farming', 'Open Cultivation', 'Rooftop Projects', 
+              'Floriculture Projects', 'Goat Farming', 'Horticulture Projects', 
+              'Landscaping Projects', 'Polyhouse Projects', 'Hydroponic Projects', 
+              'Joint Venture Projects', 'Vertical Farming', 'Open Cultivation', 'Rooftop Projects'
+            ].map((project, idx) => (
+              <div key={idx} className="bg-white/10 backdrop-blur-md border border-white/20 px-6 md:px-8 py-3 md:py-4 rounded-full flex items-center justify-center hover:bg-secondary hover:text-primary hover:border-secondary transition-all text-white font-bold text-xs md:text-sm uppercase tracking-widest cursor-default group/pill">
+                <span className="w-2 h-2 rounded-full bg-secondary group-hover/pill:bg-primary mr-3 shadow-[0_0_10px_rgba(212,175,55,0.5)] transition-colors"></span>
+                {project}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
       
       {/* BUY & SELL PROPERTIES Headline */}
       <div className="bg-white py-24 text-center border-b border-black/5">

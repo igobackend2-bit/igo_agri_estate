@@ -90,14 +90,17 @@ const Home: React.FC = () => {
   );
 
   return (
-    <main className="bg-background">
+    <main id="home" className="bg-background">
       <Hero />
         <div className="container-pro relative z-20 -mt-24">
           <StatsSection />
         </div>
 
+        {/* About Section */}
+        <About />
+
         {/* Location Quick Links */}
-        <section className="py-16 bg-background">
+        <section id="estates" className="py-16 bg-background">
           <div className="container-pro">
             <div className="flex items-center justify-between mb-10">
               <div>
@@ -478,6 +481,9 @@ const Home: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* Contact Section */}
+      <Contact />
     </main>
   );
 };
@@ -509,8 +515,6 @@ function App() {
               <Route path="/locations" element={<Listings />} />
               <Route path="/listings" element={<Listings />} />
               <Route path="/properties/:id" element={<PropertyDetails />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
               <Route path="/post-requirement" element={<PostRequirement />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
@@ -550,7 +554,7 @@ function App() {
                       <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain" />
                     </div>
                     <div className="flex flex-col -space-y-1">
-                      <span className="font-black text-2xl tracking-tight text-white uppercase">Agricultural</span>
+                      <span className="font-black text-2xl tracking-tight text-white uppercase">Agri</span>
                       <span className="text-[11px] text-secondary font-black uppercase italic tracking-[0.4em] ml-0.5">Estate India</span>
                     </div>
                   </Link>

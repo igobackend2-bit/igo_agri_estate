@@ -4,7 +4,7 @@ import { ShieldCheck, Target, Users, Landmark } from 'lucide-react';
 
 const About: React.FC = () => {
   return (
-    <div className="pt-32 pb-20">
+    <section id="about" className="py-20 bg-background">
       <div className="container-pro">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -61,7 +61,7 @@ const About: React.FC = () => {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 
