@@ -1,24 +1,12 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 type Language = 'en' | 'hi' | 'ta' | 'te' | 'kn' | 'mr';
-type Translations = Record<string, Record<Language, string>>;
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
   languages: { code: Language; name: string }[];
 }
-
-const translations: Translations = {
-  'nav.buy_land': { en: 'Buy Land', hi: 'Zamin Kharid', ta: 'Nilai Viththu', te: 'Bhoomi Krayam', kn: 'Bhoomi Khesari', mr: 'Zamin Ghene' },
-  'nav.seller_hub': { en: 'Seller Hub', hi: 'Vikreta Kendr', ta: 'Vikrethar Kural', te: 'Vikretalu Kendram', kn: 'Vikretara Kendra', mr: 'Vikrethe Kendra' },
-  'nav.about': { en: 'About', hi: 'Hamar Baare', ta: 'Paarbu', te: 'Grama', kn: 'Baare', mr: 'Nivad' },
-  'nav.contact': { en: 'Contact', hi: 'Sampark', ta: 'Thodarku', te: 'Samparka', kn: 'Samparka', mr: 'Sampark' },
-  'nav.post_property': { en: 'Post Property', hi: 'Sampatti Dahij Karein', ta: 'Sampaththai Post Sei', te: 'Property Post Cheyyi', kn: 'Property Postresi', mr: 'Moolya Dakhol' },
-  'nav.login': { en: 'Login/Register', hi: 'Pravesh/Daftar', ta: 'Seivathu/Register', te: 'Login/Register', kn: 'Login/Register', mr: 'Login/Register' },
-  'hero.welcome': { en: 'Welcome to IGO Agri Estates', hi: 'IGO Krishi Estates Mein Aapka Swagat Hai', ta: 'IGO Krishi Estates Varum', te: 'IGO Krishi Estates Meediki Swagatham', kn: 'IGO Krishi Estatesge Swaagatha', mr: 'IGO Shetkar estates Madhe Aagaman' },
-};
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -29,17 +17,34 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     setLanguageState(lang);
     localStorage.setItem('igo-lang', lang);
     document.documentElement.lang = lang;
+    
+    // Set Google Translate cookie
+    if (lang === 'en') {
+      document.cookie = "googtrans=/en/en; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      document.cookie = `googtrans=/en/en; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${window.location.hostname}; path=/;`;
+    } else {
+      document.cookie = `googtrans=/en/${lang}; path=/;`;
+      document.cookie = `googtrans=/en/${lang}; domain=${window.location.hostname}; path=/;`;
+    }
+    
+    window.location.reload();
   };
 
-  // Load saved language
-  React.useEffect(() => {
-    const saved = localStorage.getItem('igo-lang') as Language;
-    if (saved) setLanguageState(saved);
+  useEffect(() => {
+    // Read from cookie first if exists
+    const match = document.cookie.match(/googtrans=\/en\/([a-z]{2})/);
+    let currentLang = 'en' as Language;
+    
+    if (match && match[1]) {
+      currentLang = match[1] as Language;
+    } else {
+      const saved = localStorage.getItem('igo-lang') as Language;
+      if (saved) currentLang = saved;
+    }
+    
+    setLanguageState(currentLang);
+    document.documentElement.lang = currentLang;
   }, []);
-
-  const t = (key: string): string => {
-    return translations[key]?.[language] || key;
-  };
 
   const languages: { code: Language; name: string }[] = [
     { code: 'en', name: 'English' },
@@ -51,7 +56,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   ];
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, languages }}>
+    <LanguageContext.Provider value={{ language, setLanguage, languages }}>
       {children}
     </LanguageContext.Provider>
   );
