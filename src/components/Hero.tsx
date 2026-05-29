@@ -45,11 +45,15 @@ const Hero: React.FC = () => {
       <section className="relative min-h-[96vh] flex flex-col justify-center overflow-hidden pb-20">
         {/* Landscape Background */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/images/hero-bg.png" 
-            alt="Agricultural Landscape" 
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
             className="w-full h-full object-cover"
-          />
+          >
+            <source src="/hero section videos.mp4" type="video/mp4" />
+          </video>
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/60"></div>
         </div>
         
