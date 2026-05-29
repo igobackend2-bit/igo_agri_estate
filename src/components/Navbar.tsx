@@ -29,8 +29,8 @@ const Navbar: React.FC = () => {
         <div className="container-pro w-full flex items-center justify-between">
           {/* Logo Section */}
           <Link to="/" className="flex items-center space-x-4 group shrink-0">
-            <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center p-2 shadow-md transition-transform group-hover:scale-105 border border-black/5 overflow-hidden">
-               <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain" />
+            <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md transition-transform group-hover:scale-105 border border-black/5 overflow-hidden">
+               <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain scale-125 mix-blend-multiply" />
             </div>
             <div className="flex flex-col -space-y-1">
               <span className="font-black text-2xl tracking-tight text-primary uppercase font-serif">Agri</span>
