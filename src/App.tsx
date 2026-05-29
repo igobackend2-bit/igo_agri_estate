@@ -217,13 +217,13 @@ const Home: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {[
-              { title: 'Protected Cultivation', desc: 'Shade net and polyhouse vegetable models for high-value recurring harvests.', img: '/images/properties/polyhouse.png', icon: <Sprout />, filter: 'Protected', location: 'Kanchipuram' },
-              { title: 'Horticulture Orchards', desc: 'Fruit plantation estates with drip irrigation, staged harvest, and managed sales potential.', img: '/images/properties/mango-orchard.png', icon: <TrendingUp />, filter: 'Horticulture', location: 'Maduranthagam' },
-              { title: 'Agroforestry Farms', desc: 'Timber, spice, and intercrop models for long-term land value and farm income.', img: '/images/properties/teak-estate.png', icon: <Zap />, filter: 'Open Field', location: 'Mahabalipuram' }
+              { title: 'Protected Cultivation', desc: 'Shade net and polyhouse vegetable models for high-value recurring harvests.', img: '/images/properties/polyhouse.png', icon: <Sprout />, filter: 'Protected', location: 'Kanchipuram', id: 'polyhouse-project' },
+              { title: 'Horticulture Orchards', desc: 'Fruit plantation estates with drip irrigation, staged harvest, and managed sales potential.', img: '/images/properties/mango-orchard.png', icon: <TrendingUp />, filter: 'Horticulture', location: 'Maduranthagam', id: 'horticulture-project' },
+              { title: 'Agroforestry Farms', desc: 'Timber, spice, and intercrop models for long-term land value and farm income.', img: '/images/properties/teak-estate.png', icon: <Zap />, filter: 'Open Field', location: 'Mahabalipuram', id: 'open-cultivation-project' }
             ].map((cat, i) => (
               <Link
                 key={i}
-                to={`/listings?category=${encodeURIComponent(cat.filter)}&location=${encodeURIComponent(cat.location.toLowerCase())}`}
+                to={`/properties/${cat.id}`}
                 className="group relative h-[600px] rounded-[48px] overflow-hidden cursor-pointer shadow-2xl bg-black block"
               >
                 <motion.div whileHover={{ y: -15 }} className="w-full h-full">
@@ -236,7 +236,7 @@ const Home: React.FC = () => {
                     <h3 className="text-4xl font-bold text-white mb-4 leading-tight uppercase tracking-tighter">{cat.title}</h3>
                     <p className="text-white/60 text-sm leading-relaxed mb-8 opacity-0 group-hover:opacity-100 transition-all duration-700 transform translate-y-4 group-hover:translate-y-0">{cat.desc}</p>
                     <div className="flex items-center text-white font-bold text-[10px] uppercase tracking-[0.2em] group/btn">
-                      View in {cat.location} <ArrowRight size={18} className="ml-3 group-hover/btn:translate-x-3 transition-transform" />
+                      View Details <ArrowRight size={18} className="ml-3 group-hover/btn:translate-x-3 transition-transform" />
                     </div>
                   </div>
                 </motion.div>
