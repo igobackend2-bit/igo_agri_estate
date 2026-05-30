@@ -19,7 +19,10 @@ const Contact: React.FC = () => {
     setIsSubmitting(true);
     try {
       await submitLead({
-        ...formData,
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        notes: `Subject: ${formData.subject}\n\n${formData.message}`,
         type: 'contact'
       });
       setIsSuccess(true);
@@ -124,6 +127,18 @@ const Contact: React.FC = () => {
                       className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all" 
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Phone Number</label>
+                  <input
+                    required
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                    placeholder="+91 XXXXX XXXXX"
+                    className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all"
+                  />
                 </div>
 
                 <div className="space-y-2">

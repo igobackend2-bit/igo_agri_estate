@@ -68,6 +68,21 @@ const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children
   return <>{children}</>;
 };
 
+const NotFound: React.FC = () => (
+  <div className="min-h-screen bg-background flex items-center justify-center p-6">
+    <div className="text-center max-w-lg">
+      <div className="text-[120px] font-black text-primary/10 leading-none mb-4">404</div>
+      <h1 className="text-4xl font-black text-primary uppercase tracking-tighter mb-4">Page Not Found</h1>
+      <p className="text-text-muted mb-10 text-lg font-light leading-relaxed">
+        The page you're looking for doesn't exist or has been moved.
+      </p>
+      <Link to="/" className="btn-gold px-10 py-4 rounded-[24px] inline-block font-black uppercase tracking-widest text-xs">
+        Back to Home
+      </Link>
+    </div>
+  </div>
+);
+
 const Home: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -537,6 +552,7 @@ function App() {
               <Route path="/services/legal" element={<LegalServices />} />
               <Route path="/services/soil" element={<SoilIntelligence />} />
               <Route path="/policy" element={<Policy />} />
+              <Route path="*" element={<NotFound />} />
               </Routes>
            </AnimatePresence>
 
