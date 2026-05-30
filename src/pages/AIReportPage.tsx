@@ -1,4 +1,5 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, ShieldCheck, Search, Info } from 'lucide-react';
 import AIInvestmentReport from '../components/property/AIInvestmentReport';
@@ -25,6 +26,12 @@ const AIReportPage: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
+      <SEO
+        title="AI Agricultural Land Valuation Report — Instant Price Analysis"
+        description="Get an AI-powered valuation report for any agricultural estate in Tamil Nadu. Instant price analysis based on soil data, comparable sales, crop potential, and location factors."
+        canonical="/ai-report"
+        keywords="AI land valuation India, agricultural property price report, farm land value estimate, agri estate valuation Tamil Nadu, instant land price analysis"
+      />
       <div className="container max-w-6xl">
         <div className="text-center mb-16">
           <motion.span 

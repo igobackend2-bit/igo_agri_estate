@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TrendingUp, MapPin, Maximize, Sprout, ArrowRight, Sparkles, ShieldCheck, PieChart } from 'lucide-react';
 
@@ -44,6 +45,21 @@ const ValuationSimulator: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
+      <SEO
+        title="Agricultural Land Investment Calculator — ROI & Crop Returns"
+        description="Calculate your agricultural land investment returns. Estimate crop income, break-even period, EMI, and estate ROI for teak, mango, polyhouse, and horticulture estates in India."
+        canonical="/valuation"
+        keywords="agricultural land ROI calculator, farm investment returns India, crop income calculator, estate break-even, farmland EMI calculator, agri investment simulator"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'IGO Agricultural Land Investment Calculator',
+          applicationCategory: 'FinanceApplication',
+          url: 'https://igoagriestate.com/valuation',
+          description: 'Calculate ROI, crop income, and break-even for agricultural land investments in India',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' }
+        }}
+      />
       <div className="container max-w-6xl">
         <div className="text-center mb-16">
           <motion.span 

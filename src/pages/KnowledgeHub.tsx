@@ -1,4 +1,5 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { BookOpen, ShieldCheck, Landmark, Droplets, Leaf, FileText, HelpCircle, ChevronRight } from 'lucide-react';
 
@@ -12,6 +13,30 @@ const KnowledgeHub: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
+      <SEO
+        title="Agri Investment Knowledge Hub — Learn Before You Buy"
+        description="Master agricultural land investment in India. Legal checklists, soil science guides, crop ROI calculators, FAQ on land laws in Tamil Nadu, Karnataka & Maharashtra. Free investor resources."
+        canonical="/knowledge-hub"
+        keywords="agri land investment guide India, farmland legal checklist, agricultural land FAQ, crop ROI guide, soil type farming India, land investment Tamil Nadu"
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: [
+              { '@type': 'Question', name: 'Can non-farmers buy agricultural land in India?', acceptedAnswer: { '@type': 'Answer', text: 'Rules vary by state. In Karnataka, the Land Reforms Act was amended to allow non-farmers. In Tamil Nadu and Maharashtra, specific conditions apply. IGO\'s legal team guides buyers through state-specific eligibility.' } },
+              { '@type': 'Question', name: 'What is the typical ROI on agricultural land in Tamil Nadu?', acceptedAnswer: { '@type': 'Answer', text: 'Managed estates typically yield 12–22% annually depending on crop type, water availability, and estate management. Teak and mango estates offer long-term appreciation alongside crop income.' } },
+              { '@type': 'Question', name: 'How does IGO verify land titles?', acceptedAnswer: { '@type': 'Answer', text: 'IGO conducts a 30-year encumbrance check, survey settlement verification, tax receipt review, and water/electricity access assessment before any estate is listed.' } },
+            ]
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'EducationalOrganization',
+            name: 'IGO Agri Investment Knowledge Hub',
+            url: 'https://igoagriestate.com/knowledge-hub',
+            description: 'Free agricultural investment education and legal guidance for land buyers in India'
+          }
+        ]}
+      />
       <div className="container">
         <div className="text-center mb-16">
           <span className="text-secondary font-bold uppercase tracking-widest text-sm mb-2 block">Educational Resource</span>

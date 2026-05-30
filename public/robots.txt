@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# Block admin pages from indexing
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/dashboard
+Disallow: /admin/new
+Disallow: /admin/edit/
+Disallow: /dashboard
+Disallow: /profile
+Disallow: /post-property
+Disallow: /seller-dashboard
+
+# Allow important public pages
+Allow: /
+Allow: /locations
+Allow: /listings
+Allow: /properties/
+Allow: /about
+Allow: /contact
+Allow: /blogs
+Allow: /videos
+Allow: /knowledge-hub
+Allow: /valuation
+Allow: /ai-report
+Allow: /tax-optimizer
+Allow: /marketplace
+Allow: /services/
+Allow: /policy
+
+# Sitemap
+Sitemap: https://igoagriestate.com/sitemap.xml

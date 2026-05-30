@@ -1,12 +1,20 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Target, Users, Landmark } from 'lucide-react';
 
 const About: React.FC = () => {
   return (
     <section id="about" className="py-20 bg-background">
+      <SEO
+        title="About IGO Agri Estates — 15+ Years of Agricultural Land Excellence"
+        description="IGO Agri Estates is India's premier institutional marketplace for managed farmland. 15+ years of expertise, 5000+ acres managed, clear title verification, and scientific crop planning across Tamil Nadu, Karnataka & Maharashtra."
+        canonical="/about"
+        keywords="IGO Agri Estates about, agricultural land company India, farmland investment company Tamil Nadu, agri estate company, managed farmland India"
+        ogImage="https://igoagriestate.com/images/team-expert-indian.png"
+      />
       <div className="container-pro">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto text-center mb-20"
@@ -40,7 +48,7 @@ const About: React.FC = () => {
           <div className="rounded-[40px] overflow-hidden shadow-2xl h-[500px]">
              <img 
                src="/images/team-expert-indian.png" 
-               alt="About IGO" 
+               alt="IGO Agri Estates expert team — agricultural land investment specialists in Tamil Nadu, India"
                className="w-full h-full object-cover"
              />
           </div>

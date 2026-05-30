@@ -4,6 +4,7 @@ import {
 } from 'lucide-react';
 import { Routes, Route, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
 import React from 'react';
+import SEO from './components/SEO';
 import type { Property } from './types';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -106,6 +107,31 @@ const Home: React.FC = () => {
 
   return (
     <main id="home" className="bg-background">
+      <SEO
+        title="IGO Agri Estates | Buy & Sell Agricultural Land in Tamil Nadu, India"
+        description="IGO Agri Estates — India's premium platform to buy, sell, and invest in verified agricultural land. Explore teak plantations, mango orchards, polyhouse farms, and horticulture estates in Tamil Nadu, Karnataka & Maharashtra. Clear titles. Managed farming support."
+        canonical="/"
+        keywords="agricultural land for sale Tamil Nadu, farmland investment India, buy agri estate, teak plantation, mango orchard, polyhouse farm, horticulture estate, Mahabalipuram farmland, Kanchipuram agri land, IGO agri estates"
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            '@id': 'https://igoagriestate.com/#organization',
+            name: 'IGO Agri Estates',
+            url: 'https://igoagriestate.com',
+            logo: 'https://igoagriestate.com/images/logo.png',
+            contactPoint: { '@type': 'ContactPoint', telephone: '+91-7397789803', contactType: 'customer service' },
+            sameAs: ['https://www.facebook.com/share/173LkV9obs/', 'https://www.instagram.com/igofarmlandestates/']
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            url: 'https://igoagriestate.com',
+            name: 'IGO Agri Estates',
+            potentialAction: { '@type': 'SearchAction', target: 'https://igoagriestate.com/listings?q={search_term_string}', 'query-input': 'required name=search_term_string' }
+          }
+        ]}
+      />
       <Hero />
         <div className="container-pro relative z-20 -mt-24">
           <StatsSection />

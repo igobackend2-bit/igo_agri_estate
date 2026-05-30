@@ -1,10 +1,31 @@
 import React from 'react';
+import SEO from '../../components/SEO';
 import { motion } from 'framer-motion';
 import { Sprout, Droplet, Sun, Microscope, TrendingUp } from 'lucide-react';
 
 const SoilIntelligence: React.FC = () => {
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background">
+      <SEO
+        title="Soil Intelligence & Agronomic Analysis for Agricultural Land"
+        description="IGO Agri Estates maps NPK levels, water table viability, and crop suitability for every estate. Scientific soil analysis ensures you know exactly what your land can grow and earn."
+        canonical="/services/soil"
+        keywords="soil analysis agricultural land India, NPK test farm, water table agri land, crop suitability map, soil intelligence Tamil Nadu, agronomic analysis farm India"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Service',
+          name: 'IGO Soil Intelligence & Agronomic Analysis',
+          url: 'https://igoagriestate.com/services/soil',
+          description: 'Scientific soil and water analysis for agricultural land investment decisions in India',
+          provider: {
+            '@type': 'Organization',
+            name: 'IGO Agri Estates',
+            url: 'https://igoagriestate.com'
+          },
+          serviceType: 'Soil Analysis',
+          areaServed: ['Tamil Nadu', 'Karnataka', 'Maharashtra']
+        }}
+      />
       <div className="container-pro">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

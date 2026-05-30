@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import SEO from '../components/SEO';
 import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -306,6 +307,35 @@ const PropertyDetails: React.FC = () => {
 
   return (
     <div className="pt-32 pb-24 bg-background min-h-screen">
+      <SEO
+        title={`${property.title} — ${property.location} | Agricultural Estate for Sale`}
+        description={`${property.title} in ${property.location}. ${property.size} estate at ${property.price}. ${property.description?.slice(0, 100) || 'Verified agricultural estate with clear title and managed farming support.'}`.slice(0, 160)}
+        canonical={`/properties/${property.id}`}
+        ogImage={property.image?.startsWith('http') ? property.image : `https://igoagriestate.com${property.image || '/images/hero-bg.png'}`}
+        ogType="article"
+        keywords={`${property.title}, agricultural land ${property.location}, buy farm ${property.location}, ${property.type || 'agri estate'} Tamil Nadu`}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'RealEstateListing',
+          name: property.title,
+          description: property.description || `${property.title} — verified agricultural estate in ${property.location}`,
+          url: `https://igoagriestate.com/properties/${property.id}`,
+          image: property.image?.startsWith('http') ? property.image : `https://igoagriestate.com${property.image}`,
+          offers: {
+            '@type': 'Offer',
+            price: property.price,
+            priceCurrency: 'INR',
+            availability: property.status === 'Available' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+            seller: { '@type': 'Organization', name: 'IGO Agri Estates', url: 'https://igoagriestate.com' }
+          },
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: property.location,
+            addressRegion: 'Tamil Nadu',
+            addressCountry: 'IN'
+          }
+        }}
+      />
       <div className="container">
           <button
             onClick={() => navigate('/locations')}

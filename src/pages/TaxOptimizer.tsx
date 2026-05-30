@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Landmark, ArrowRightLeft, Calculator, ShieldCheck, TrendingUp, Info, AlertTriangle, Sparkles } from 'lucide-react';
 
@@ -24,6 +25,21 @@ const TaxOptimizer: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
+      <SEO
+        title="Agricultural Land Tax Optimizer — Capital Gains & Section 54B"
+        description="Optimize your agricultural land tax liability in India. Simulate capital gains exemptions under Section 54B, calculate deferred tax, and plan your land reinvestment strategy."
+        canonical="/tax-optimizer"
+        keywords="agricultural land tax India, Section 54B exemption, capital gains agri land, farm land tax calculator, land sale tax India, agri investment tax planning"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'IGO Agricultural Land Tax Optimizer',
+          applicationCategory: 'FinanceApplication',
+          url: 'https://igoagriestate.com/tax-optimizer',
+          description: 'Calculate capital gains tax exemptions for agricultural land sales in India under Section 54B',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' }
+        }}
+      />
       <div className="container max-w-5xl">
         <div className="text-center mb-16">
           <div className="inline-flex items-center space-x-2 px-4 py-2 bg-clay/10 text-clay rounded-full text-[10px] font-bold uppercase tracking-widest mb-6">

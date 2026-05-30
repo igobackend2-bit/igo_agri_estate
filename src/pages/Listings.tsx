@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Maximize, TrendingUp, Home, ChevronRight, Heart, BarChart2, X, Droplets, Sprout, Building, Factory, Leaf, Trees } from 'lucide-react';
@@ -92,6 +93,26 @@ const Listings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background pt-32 pb-20">
+      <SEO
+        title="Browse Agricultural Land & Estates for Sale in Tamil Nadu"
+        description="Explore verified agricultural estates for sale across Tamil Nadu, Karnataka & Maharashtra. Filter by location, crop type, size, and price. Teak plantations, polyhouse farms, mango orchards, and more."
+        canonical="/locations"
+        keywords="agricultural land for sale Tamil Nadu, farmland India, buy estate Mahabalipuram, Kanchipuram agri land, horticulture farm sale, plantation land India"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'ItemList',
+          name: 'Agricultural Estates for Sale — IGO Agri Estates',
+          description: 'Verified agricultural land listings across Tamil Nadu, Karnataka and Maharashtra',
+          url: 'https://igoagriestate.com/locations',
+          numberOfItems: 15,
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Mahabalipuram Teak Estate', url: 'https://igoagriestate.com/properties/mahabalipuram-teak-estate' },
+            { '@type': 'ListItem', position: 2, name: 'Mahabalipuram Mango Orchard', url: 'https://igoagriestate.com/properties/mahabalipuram-mango-orchard' },
+            { '@type': 'ListItem', position: 3, name: 'Chennai Vertical Farm', url: 'https://igoagriestate.com/properties/chennai-vertical-farm' },
+            { '@type': 'ListItem', position: 4, name: 'Kanchipuram Herbal Garden', url: 'https://igoagriestate.com/properties/kanchipuram-herbal-garden' },
+          ]
+        }}
+      />
       {/* Hero Section - Location Selector */}
       <div className="relative bg-gradient-to-b from-primary/5 to-background py-20 border-b border-black/5">
         <div className="container-pro">

@@ -1,10 +1,17 @@
 import React from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 
 const Policy: React.FC = () => {
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background">
+      <SEO
+        title="Legal, Privacy & Agri-Policy"
+        description="Read IGO Agri Estates' privacy policy, terms of service, and agricultural investment disclaimer. We are committed to transparency in every transaction."
+        canonical="/policy"
+        noIndex={false}
+      />
       <div className="container-pro max-w-4xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center text-primary mb-8">

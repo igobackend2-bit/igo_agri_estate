@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { ArrowUpRight, ArrowDownRight, TrendingUp, Search, SlidersHorizontal, BarChart3, Activity, ShieldCheck, Wallet, Maximize2, ChevronRight } from 'lucide-react';
 import CandlestickChart from '../components/charts/CandlestickChart';
@@ -52,6 +53,12 @@ const Marketplace: React.FC = () => {
 
   return (
     <div className="pt-48 pb-32 bg-background min-h-screen relative overflow-hidden">
+      <SEO
+        title="Fractional Agri Estate Exchange — Trade Agricultural Land Shares"
+        description="Buy and sell fractional shares of verified agricultural estates on India's first agri-land exchange. Live order book, real-time pricing, and transparent transactions for farm investors."
+        canonical="/marketplace"
+        keywords="fractional agricultural land India, agri estate exchange, farm land shares, fractional farming investment, agri real estate trading India"
+      />
       <div className="absolute top-0 right-0 w-full h-full bg-topo opacity-10 pointer-events-none"></div>
       
       <div className="container-pro relative z-10">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Calendar, User, ArrowRight, Newspaper, Search } from 'lucide-react';
 import { getLocalBlogs, subscribeLocalSync, BLOG_SYNC_EVENT } from '../lib/localSync';
@@ -18,6 +19,24 @@ const BlogsPage: React.FC = () => {
 
   return (
     <div className="pt-32 pb-32 bg-background min-h-screen">
+      <SEO
+        title="Agri Investment Blogs & Market Insights"
+        description="Read expert articles on agricultural land investment, farmland returns, Bio-CNG, state land laws, and agri-estate strategies in India. Stay informed with IGO Agri Estates."
+        canonical="/blogs"
+        keywords="agri investment blog India, farmland market insights, agricultural land laws, Bio-CNG investment, agri estate India, farm investment tips"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'Blog',
+          name: 'IGO Agri Estates — Market Insights Blog',
+          url: 'https://igoagriestate.com/blogs',
+          description: 'Expert articles on agricultural land investment in India',
+          publisher: {
+            '@type': 'Organization',
+            name: 'IGO Agri Estates',
+            logo: { '@type': 'ImageObject', url: 'https://igoagriestate.com/images/logo.png' }
+          }
+        }}
+      />
       <div className="container-pro">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div className="max-w-2xl">

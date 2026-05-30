@@ -1,10 +1,30 @@
 import React from 'react';
+import SEO from '../../components/SEO';
 import { motion } from 'framer-motion';
 import { ShieldCheck, FileCheck, Scale, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const LegalServices: React.FC = () => {
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background">
+      <SEO
+        title="Agricultural Land Legal Services — Title Verification & Due Diligence"
+        description="IGO Agri Estates provides comprehensive legal due diligence for agricultural land purchases. 30-year encumbrance checks, title chain verification, survey, tax, and registration support across Tamil Nadu, Karnataka & Maharashtra."
+        canonical="/services/legal"
+        keywords="agricultural land legal services India, title verification Tamil Nadu, land due diligence India, encumbrance check agri land, farm land legal check, agri estate title search"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'LegalService',
+          name: 'IGO Agri Estates Legal Due Diligence',
+          url: 'https://igoagriestate.com/services/legal',
+          description: 'Comprehensive legal verification and title due diligence for agricultural land in India',
+          provider: {
+            '@type': 'Organization',
+            name: 'IGO Agri Estates',
+            url: 'https://igoagriestate.com'
+          },
+          areaServed: ['Tamil Nadu', 'Karnataka', 'Maharashtra']
+        }}
+      />
       <div className="container-pro">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

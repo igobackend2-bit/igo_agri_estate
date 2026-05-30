@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Send, MapPin, LandPlot, Phone, Mail, User } from 'lucide-react';
 import { submitLead } from '../lib/leadsService';
@@ -56,6 +57,12 @@ const PostRequirement: React.FC = () => {
 
   return (
     <div className="pt-32 pb-20">
+      <SEO
+        title="Post Your Agricultural Land Requirement — Find Your Estate"
+        description="Tell IGO Agri Estates exactly what you need. Post your agricultural land buying requirement — budget, location, crop type, size — and our concierge team will find matching estates for you."
+        canonical="/post-requirement"
+        keywords="post land requirement India, buy agricultural land request, farm requirement submission, agri estate concierge, land buying requirement Tamil Nadu"
+      />
       <div className="container-pro">
         <div className="grid lg:grid-cols-12 gap-20 items-start">
           <div className="lg:col-span-5 space-y-10">
