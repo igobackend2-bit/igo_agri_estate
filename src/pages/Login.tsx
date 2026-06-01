@@ -398,6 +398,7 @@ const Login: React.FC = () => {
         </div>
         <p className="text-[10px] font-black uppercase tracking-widest text-white/40">IGO Quantum Security Protocol v4.0</p>
       </div>
+    </div>
     </>
   );
 };

@@ -67,3 +67,10 @@ const About: React.FC = () => {
               <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default About;

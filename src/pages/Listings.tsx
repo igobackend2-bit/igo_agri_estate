@@ -388,4 +388,13 @@ const EstateCard: React.FC<EstateCardProps> = ({ estate, onFavorite, onCompare }
 
         <Link
           to={`/properties/${estate.id}`}
-          className="mt-auto block w-full bg-primary text-white text-center py-4 rounded-full font-black text-xs uppercase tracking-wid
+          className="mt-auto block w-full bg-primary text-white text-center py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-secondary hover:text-primary transition-all"
+        >
+          View Estate
+        </Link>
+      </div>
+    </motion.div>
+  );
+};
+
+export default Listings;
