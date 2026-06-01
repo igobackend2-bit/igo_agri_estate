@@ -7,10 +7,10 @@ const SoilIntelligence: React.FC = () => {
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background">
       <SEO
-        title="Soil Intelligence & Agronomic Analysis for Agricultural Land"
-        description="IGO Agri Estates maps NPK levels, water table viability, and crop suitability for every estate. Scientific soil analysis ensures you know exactly what your land can grow and earn."
+        title="Soil Intelligence & Agronomic Analysis for Agricultural Land India"
+        description="IGO Agri Estates maps NPK levels, water table viability, and crop suitability across India. Scientific soil analysis for farmland in Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana — know exactly what your land can grow and earn."
         canonical="/services/soil"
-        keywords="soil analysis agricultural land India, NPK test farm, water table agri land, crop suitability map, soil intelligence Tamil Nadu, agronomic analysis farm India"
+        keywords="soil analysis agricultural land India, NPK test farm India, water table agri land, crop suitability map India, soil intelligence Karnataka, agronomic analysis farm Hyderabad, soil test before buying land India, best soil for farmland India, managed farmland soil report"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'Service',

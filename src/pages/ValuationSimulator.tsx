@@ -46,10 +46,10 @@ const ValuationSimulator: React.FC = () => {
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <SEO
-        title="Agricultural Land Investment Calculator — ROI & Crop Returns"
-        description="Calculate your agricultural land investment returns. Estimate crop income, break-even period, EMI, and estate ROI for teak, mango, polyhouse, and horticulture estates in India."
+        title="Agricultural Land Investment Calculator — ROI, Crop Returns & EMI India"
+        description="Calculate your managed agricultural land investment returns in India. Estimate crop income, break-even period, EMI, and estate ROI for teak, mango, polyhouse, and horticulture estates near Bangalore, Hyderabad, Pune, Chennai & across India."
         canonical="/valuation"
-        keywords="agricultural land ROI calculator, farm investment returns India, crop income calculator, estate break-even, farmland EMI calculator, agri investment simulator"
+        keywords="agricultural land ROI calculator India, managed farmland returns calculator, farm investment returns India, 1 acre farmland ROI India, crop income calculator, farmland EMI calculator, agri investment simulator, farm land value calculator Bangalore, farmland return on investment India 2026"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'SoftwareApplication',

@@ -7,10 +7,10 @@ const LegalServices: React.FC = () => {
   return (
     <div className="pt-32 pb-24 min-h-screen bg-background">
       <SEO
-        title="Agricultural Land Legal Services — Title Verification & Due Diligence"
-        description="IGO Agri Estates provides comprehensive legal due diligence for agricultural land purchases. 30-year encumbrance checks, title chain verification, survey, tax, and registration support across Tamil Nadu, Karnataka & Maharashtra."
+        title="Agricultural Land Legal Services India — Title Verification & Due Diligence"
+        description="IGO Agri Estates provides comprehensive legal due diligence for agricultural land purchases across India. 30-year encumbrance checks, title chain verification, survey, tax, and registration support in Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
         canonical="/services/legal"
-        keywords="agricultural land legal services India, title verification Tamil Nadu, land due diligence India, encumbrance check agri land, farm land legal check, agri estate title search"
+        keywords="agricultural land legal services India, title verification farm land India, land due diligence India, encumbrance check agri land, farm land legal check Karnataka, agri estate title search Andhra Pradesh, how to verify agricultural land title India, land document check Hyderabad, farm land registration Tamil Nadu"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'LegalService',

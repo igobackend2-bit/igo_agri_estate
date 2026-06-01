@@ -58,10 +58,10 @@ const PostRequirement: React.FC = () => {
   return (
     <div className="pt-32 pb-20">
       <SEO
-        title="Post Your Agricultural Land Requirement — Find Your Estate"
-        description="Tell IGO Agri Estates exactly what you need. Post your agricultural land buying requirement — budget, location, crop type, size — and our concierge team will find matching estates for you."
+        title="Post Your Farm Land Requirement — Find Agricultural Estate Across India"
+        description="Tell IGO Agri Estates exactly what you need. Post your agricultural land requirement — budget, state, crop type, size — and our concierge team sources matching estates across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh, Telangana & beyond."
         canonical="/post-requirement"
-        keywords="post land requirement India, buy agricultural land request, farm requirement submission, agri estate concierge, land buying requirement Tamil Nadu"
+        keywords="post land requirement India, buy agricultural land India, farm land requirement Bangalore, agri land requirement Hyderabad, managed farmland inquiry, buy farmland near Pune, find farm land India, agricultural land concierge India"
       />
       <div className="container-pro">
         <div className="grid lg:grid-cols-12 gap-20 items-start">

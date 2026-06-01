@@ -19,10 +19,10 @@ const VideosPage: React.FC = () => {
   return (
     <div className="pt-32 pb-32 bg-[#F8FAFC] min-h-screen">
       <SEO
-        title="Agri Estate Videos — Drone Tours & Site Visits"
-        description="Watch drone audits, site visits, and virtual estate tours of premium agricultural land in Tamil Nadu. See teak plantations, mango orchards, and polyhouse farms before you invest."
+        title="Agri Estate Videos — Drone Tours & Virtual Farm Site Visits India"
+        description="Watch drone audits, virtual site visits, and estate tours of premium agricultural land across India — Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. See teak plantations, mango orchards, and polyhouse farms before you invest."
         canonical="/videos"
-        keywords="agricultural estate drone tour, farm site visit video, agri land Tamil Nadu video, polyhouse tour, plantation drone audit India"
+        keywords="agricultural estate drone tour India, managed farmland video tour, farm site visit video India, agri land Karnataka video, polyhouse tour, plantation drone audit, farmland near Bangalore video, Hyderabad farm tour, managed farm investment video"
         ogImage="https://www.igoagriestate.com/images/properties/teak-estate.png"
       />
       <div className="container-pro">

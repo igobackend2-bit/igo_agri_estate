@@ -27,10 +27,10 @@ const AIReportPage: React.FC = () => {
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <SEO
-        title="AI Agricultural Land Valuation Report — Instant Price Analysis"
-        description="Get an AI-powered valuation report for any agricultural estate in Tamil Nadu. Instant price analysis based on soil data, comparable sales, crop potential, and location factors."
+        title="AI Agricultural Land Valuation Report — Instant Price Analysis India"
+        description="Get an AI-powered valuation report for any agricultural estate across India. Instant price analysis based on soil data, comparable sales, crop potential, and location. Covers Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh, Telangana & more."
         canonical="/ai-report"
-        keywords="AI land valuation India, agricultural property price report, farm land value estimate, agri estate valuation Tamil Nadu, instant land price analysis"
+        keywords="AI land valuation India, agricultural property price report, farm land value estimate India, agri estate valuation Bangalore, land price per acre India, 1 acre farmland price India, farm land price calculator, agricultural land valuation Hyderabad, managed farmland price India"
       />
       <div className="container max-w-6xl">
         <div className="text-center mb-16">

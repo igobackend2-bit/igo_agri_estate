@@ -54,10 +54,10 @@ const Marketplace: React.FC = () => {
   return (
     <div className="pt-48 pb-32 bg-background min-h-screen relative overflow-hidden">
       <SEO
-        title="Fractional Agri Estate Exchange — Trade Agricultural Land Shares"
-        description="Buy and sell fractional shares of verified agricultural estates on India's first agri-land exchange. Live order book, real-time pricing, and transparent transactions for farm investors."
+        title="Fractional Agri Estate Exchange — Trade Agricultural Land Shares India"
+        description="Buy and sell fractional shares of verified managed agricultural estates on India's first agri-land exchange. Live order book, real-time pricing, and transparent transactions for farm investors across Bangalore, Hyderabad, Pune, Chennai & all India."
         canonical="/marketplace"
-        keywords="fractional agricultural land India, agri estate exchange, farm land shares, fractional farming investment, agri real estate trading India"
+        keywords="fractional agricultural land India, agri estate exchange, farm land shares India, fractional managed farmland, agri real estate trading India, fractional farm investment Bangalore, agri investment platform India, buy farm shares online India"
       />
       <div className="absolute top-0 right-0 w-full h-full bg-topo opacity-10 pointer-events-none"></div>
       

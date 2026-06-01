@@ -14,10 +14,10 @@ const KnowledgeHub: React.FC = () => {
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <SEO
-        title="Agri Investment Knowledge Hub — Learn Before You Buy"
-        description="Master agricultural land investment in India. Legal checklists, soil science guides, crop ROI calculators, FAQ on land laws in Tamil Nadu, Karnataka & Maharashtra. Free investor resources."
+        title="Agri Investment Knowledge Hub — Learn Before You Buy Farmland India"
+        description="Master agricultural land investment across India. Legal checklists, soil science guides, crop ROI calculators, FAQ on land laws in Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. Free investor resources for managed farmland buyers."
         canonical="/knowledge-hub"
-        keywords="agri land investment guide India, farmland legal checklist, agricultural land FAQ, crop ROI guide, soil type farming India, land investment Tamil Nadu"
+        keywords="agri land investment guide India, managed farmland guide, farmland legal checklist India, agricultural land FAQ, how to buy farmland India, crop ROI guide, NRI farmland investment India, farm as a service India, land investment Bangalore, farmland investment Hyderabad, agri land laws India 2026"
         schema={[
           {
             '@context': 'https://schema.org',

@@ -108,10 +108,10 @@ const Home: React.FC = () => {
   return (
     <main id="home" className="bg-background">
       <SEO
-        title="IGO Agri Estates | Buy & Sell Agricultural Land in India"
-        description="IGO Agri Estates — India's premium platform to buy, sell, and invest in verified agricultural land. Teak plantations, mango orchards, polyhouse farms, and horticulture estates across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. Clear titles. Managed farming support."
+        title="IGO Agri Estates | Buy & Sell Managed Agricultural Land in India"
+        description="IGO Agri Estates — India's premium platform to buy, sell, and invest in verified managed agricultural land. Teak plantations, mango orchards, polyhouse farms, and horticulture estates across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. Clear titles. Farm-as-a-service support."
         canonical="/"
-        keywords="agricultural land for sale India, farmland investment India, buy agri estate, teak plantation India, mango orchard farm, polyhouse farm India, horticulture estate, Mahabalipuram farmland, Kanchipuram agri land, IGO agri estates, agricultural land Tamil Nadu, farmland Karnataka, agri land Maharashtra, farm investment Andhra Pradesh, agri investment Telangana, managed farming India, buy farmland online India"
+        keywords="agricultural land for sale India, managed farmland India, farmland investment India, buy agri estate, teak plantation India, mango orchard farm, polyhouse farm India, horticulture estate, managed farmland near Bangalore, farmland near Hyderabad, agricultural land near Pune, farm land near Chennai, managed farm investment Coimbatore, Mahabalipuram farmland, Kanchipuram agri land, IGO agri estates, agricultural land Tamil Nadu, farmland Karnataka, agri land Maharashtra, farm investment Andhra Pradesh, agri investment Telangana, NRI farmland investment India, farm as a service India, 1 acre farm land price India, buy farmland online India"
         schema={[
           {
             '@context': 'https://schema.org',

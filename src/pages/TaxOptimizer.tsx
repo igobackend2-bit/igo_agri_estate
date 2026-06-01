@@ -26,10 +26,10 @@ const TaxOptimizer: React.FC = () => {
   return (
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <SEO
-        title="Agricultural Land Tax Optimizer — Capital Gains & Section 54B"
-        description="Optimize your agricultural land tax liability in India. Simulate capital gains exemptions under Section 54B, calculate deferred tax, and plan your land reinvestment strategy."
+        title="Agricultural Land Tax Calculator India — Capital Gains & Section 54B Exemption"
+        description="Optimize your agricultural land tax in India. Simulate capital gains exemptions under Section 54B, calculate LTCG tax on farmland sale, and plan your reinvestment strategy across Tamil Nadu, Karnataka, Maharashtra & all states."
         canonical="/tax-optimizer"
-        keywords="agricultural land tax India, Section 54B exemption, capital gains agri land, farm land tax calculator, land sale tax India, agri investment tax planning"
+        keywords="agricultural land tax India, Section 54B exemption India, capital gains agri land India, LTCG tax farm land, farm land tax calculator India, land sale tax India, agri investment tax planning, is agricultural income tax free India, capital gains exemption on farmland sale"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'SoftwareApplication',
