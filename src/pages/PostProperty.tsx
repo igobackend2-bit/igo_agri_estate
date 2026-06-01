@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import SEO from '../components/SEO';
 import { Upload, MapPin, Maximize, Landmark, CheckCircle2, ArrowRight, ShieldCheck, Sparkles, Sprout, Droplets, Map, Calculator, Eye, TrendingUp, Lightbulb, X } from 'lucide-react';
 import { useProperties } from '../hooks/useProperties';
 import { useNavigate } from 'react-router-dom';
@@ -125,6 +126,14 @@ const PostProperty: React.FC = () => {
   };
 
   return (
+    <>
+      <SEO
+        title="List Your Agricultural Land | Post Property on IGO Agri Estates"
+        description="List your farmland, plantation, or agricultural estate on IGO Agri Estates — India's premier agri-land marketplace. Reach verified buyers across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
+        canonical="/post-property"
+        keywords="list agricultural land India, post farm property, sell farmland India, agricultural land listing platform"
+        noIndex={false}
+      />
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <div className="container-pro max-w-5xl">
         <div className="text-center mb-16">
@@ -507,6 +516,7 @@ const PostProperty: React.FC = () => {
         </AnimatePresence>
       </div>
     </div>
+    </>
   );
 };
 

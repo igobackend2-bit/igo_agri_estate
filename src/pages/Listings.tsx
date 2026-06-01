@@ -94,22 +94,22 @@ const Listings: React.FC = () => {
   return (
     <div className="min-h-screen bg-background pt-32 pb-20">
       <SEO
-        title="Browse Agricultural Land & Estates for Sale in Tamil Nadu"
-        description="Explore verified agricultural estates for sale across Tamil Nadu, Karnataka & Maharashtra. Filter by location, crop type, size, and price. Teak plantations, polyhouse farms, mango orchards, and more."
+        title="Buy Agricultural Land & Farms for Sale Across India"
+        description="Explore verified agricultural estates for sale across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. Filter by location, crop type, size, and price. Teak plantations, polyhouse farms, mango orchards, and more."
         canonical="/locations"
-        keywords="agricultural land for sale Tamil Nadu, farmland India, buy estate Mahabalipuram, Kanchipuram agri land, horticulture farm sale, plantation land India"
+        keywords="agricultural land for sale India, farmland for sale Tamil Nadu, Karnataka farm land, Maharashtra agri estate, Andhra Pradesh agricultural land, Telangana farmland, buy estate Mahabalipuram, Kanchipuram agri land, horticulture farm sale, plantation land India, polyhouse farm sale, mango orchard India"
         schema={{
           '@context': 'https://schema.org',
           '@type': 'ItemList',
           name: 'Agricultural Estates for Sale — IGO Agri Estates',
           description: 'Verified agricultural land listings across Tamil Nadu, Karnataka and Maharashtra',
-          url: 'https://igoagriestate.com/locations',
+          url: 'https://www.igoagriestate.com/locations',
           numberOfItems: 15,
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Mahabalipuram Teak Estate', url: 'https://igoagriestate.com/properties/mahabalipuram-teak-estate' },
-            { '@type': 'ListItem', position: 2, name: 'Mahabalipuram Mango Orchard', url: 'https://igoagriestate.com/properties/mahabalipuram-mango-orchard' },
-            { '@type': 'ListItem', position: 3, name: 'Chennai Vertical Farm', url: 'https://igoagriestate.com/properties/chennai-vertical-farm' },
-            { '@type': 'ListItem', position: 4, name: 'Kanchipuram Herbal Garden', url: 'https://igoagriestate.com/properties/kanchipuram-herbal-garden' },
+            { '@type': 'ListItem', position: 1, name: 'Mahabalipuram Teak Estate', url: 'https://www.igoagriestate.com/properties/mahabalipuram-teak-estate' },
+            { '@type': 'ListItem', position: 2, name: 'Mahabalipuram Mango Orchard', url: 'https://www.igoagriestate.com/properties/mahabalipuram-mango-orchard' },
+            { '@type': 'ListItem', position: 3, name: 'Chennai Vertical Farm', url: 'https://www.igoagriestate.com/properties/chennai-vertical-farm' },
+            { '@type': 'ListItem', position: 4, name: 'Kanchipuram Herbal Garden', url: 'https://www.igoagriestate.com/properties/kanchipuram-herbal-garden' },
           ]
         }}
       />
@@ -388,13 +388,4 @@ const EstateCard: React.FC<EstateCardProps> = ({ estate, onFavorite, onCompare }
 
         <Link
           to={`/properties/${estate.id}`}
-          className="mt-auto block w-full bg-primary text-white text-center py-4 rounded-full font-black text-xs uppercase tracking-widest hover:bg-primary-light transition-all"
-        >
-          View Full Details
-        </Link>
-      </div>
-    </motion.div>
-  );
-};
-
-export default Listings;
+          className="mt-auto block w-full bg-primary text-white text-center py-4 rounded-full font-black text-xs uppercase tracking-wid

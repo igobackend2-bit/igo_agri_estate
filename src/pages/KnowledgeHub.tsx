@@ -32,7 +32,7 @@ const KnowledgeHub: React.FC = () => {
             '@context': 'https://schema.org',
             '@type': 'EducationalOrganization',
             name: 'IGO Agri Investment Knowledge Hub',
-            url: 'https://igoagriestate.com/knowledge-hub',
+            url: 'https://www.igoagriestate.com/knowledge-hub',
             description: 'Free agricultural investment education and legal guidance for land buyers in India'
           }
         ]}

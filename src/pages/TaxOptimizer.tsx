@@ -35,7 +35,7 @@ const TaxOptimizer: React.FC = () => {
           '@type': 'SoftwareApplication',
           name: 'IGO Agricultural Land Tax Optimizer',
           applicationCategory: 'FinanceApplication',
-          url: 'https://igoagriestate.com/tax-optimizer',
+          url: 'https://www.igoagriestate.com/tax-optimizer',
           description: 'Calculate capital gains tax exemptions for agricultural land sales in India under Section 54B',
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' }
         }}

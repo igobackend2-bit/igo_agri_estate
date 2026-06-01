@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Send, MessageSquare } from 'lucide-react';
 import { submitLead } from '../lib/leadsService';
-
+import SEO from '../components/SEO';
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -13,7 +13,6 @@ const Contact: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -32,8 +31,35 @@ const Contact: React.FC = () => {
       setIsSubmitting(false);
     }
   };
-
   return (
+    <>
+      <SEO
+        title="Contact IGO Agri Estates | Talk to Our Farm Investment Advisors"
+        description="Get in touch with IGO Agri Estates — India's trusted agricultural land advisors. Call +91-7397789803, email us, or visit our Chennai office. We serve buyers and investors across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
+        canonical="/contact"
+        keywords="contact IGO agri estates, agricultural land advisor India, farm investment consultant Tamil Nadu, agri estate inquiry, buy farmland India contact"
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'ContactPage',
+          '@id': 'https://www.igoagriestate.com/contact',
+          name: 'Contact IGO Agri Estates',
+          url: 'https://www.igoagriestate.com/contact',
+          mainEntity: {
+            '@type': 'Organization',
+            name: 'IGO Agri Estates',
+            telephone: '+91-7397789803',
+            email: 'bd2@igogroups.com',
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: 'No 17, Kovalan Street, 2nd Main Road, Uthandi Kanathur',
+              addressLocality: 'Chennai',
+              addressRegion: 'Tamil Nadu',
+              postalCode: '600119',
+              addressCountry: 'IN'
+            }
+          }
+        }}
+      />
     <section id="contact" className="py-20 bg-background border-t border-black/5">
       <div className="container-pro">
         <motion.div 
@@ -49,7 +75,6 @@ const Contact: React.FC = () => {
             Have questions about a specific listing or our managed services? Our experts are here to help you navigate the landscape of agricultural investments.
           </p>
         </motion.div>
-
         <div className="grid lg:grid-cols-12 gap-20">
           <div className="lg:col-span-4 space-y-8">
             <div className="glass p-10 rounded-[40px] border-black/5">
@@ -67,7 +92,6 @@ const Contact: React.FC = () => {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start space-x-6">
                   <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-secondary shrink-0">
                     <Phone size={20} />
@@ -79,7 +103,6 @@ const Contact: React.FC = () => {
                     <p className="text-xs text-text-muted leading-relaxed">+91 7397789805</p>
                   </div>
                 </div>
-
                 <div className="flex items-start space-x-6">
                   <div className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center text-secondary shrink-0">
                     <Mail size={20} />
@@ -93,7 +116,6 @@ const Contact: React.FC = () => {
               </div>
             </div>
           </div>
-
           <div className="lg:col-span-8">
             {isSuccess ? (
               <div className="bg-emerald-50 p-16 rounded-[40px] border border-emerald-100 text-center flex flex-col items-center justify-center h-full">
@@ -128,7 +150,6 @@ const Contact: React.FC = () => {
                     />
                   </div>
                 </div>
-
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Phone Number</label>
                   <input
@@ -140,7 +161,6 @@ const Contact: React.FC = () => {
                     className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all"
                   />
                 </div>
-
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Subject</label>
                   <input 
@@ -152,7 +172,6 @@ const Contact: React.FC = () => {
                     className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all" 
                   />
                 </div>
-
                 <div className="space-y-2">
                   <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Your Message</label>
                   <textarea 
@@ -164,7 +183,6 @@ const Contact: React.FC = () => {
                     className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all resize-none"
                   />
                 </div>
-
                 <button 
                   type="submit"
                   disabled={isSubmitting}
@@ -185,6 +203,7 @@ const Contact: React.FC = () => {
         </div>
       </div>
     </section>
+    </>
   );
 };
 

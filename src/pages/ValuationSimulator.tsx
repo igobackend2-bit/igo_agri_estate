@@ -55,7 +55,7 @@ const ValuationSimulator: React.FC = () => {
           '@type': 'SoftwareApplication',
           name: 'IGO Agricultural Land Investment Calculator',
           applicationCategory: 'FinanceApplication',
-          url: 'https://igoagriestate.com/valuation',
+          url: 'https://www.igoagriestate.com/valuation',
           description: 'Calculate ROI, crop income, and break-even for agricultural land investments in India',
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'INR' }
         }}

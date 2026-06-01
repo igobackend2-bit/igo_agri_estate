@@ -9,7 +9,8 @@ Disallow: /admin/new
 Disallow: /admin/edit/
 Disallow: /dashboard
 Disallow: /profile
-Disallow: /post-property
+Disallow: /login
+Disallow: /signup
 Disallow: /seller-dashboard
 
 # Allow important public pages
@@ -30,4 +31,4 @@ Allow: /services/
 Allow: /policy
 
 # Sitemap
-Sitemap: https://igoagriestate.com/sitemap.xml
+Sitemap: https://www.igoagriestate.com/sitemap.xml

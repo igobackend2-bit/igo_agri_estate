@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Play, Calendar, User, ArrowRight, TrendingUp } from 'lucide-react';
 import { getLocalBlogs, getLocalVideos, subscribeLocalSync, BLOG_SYNC_EVENT, VIDEO_SYNC_EVENT } from '../lib/localSync';
+import SEO from '../components/SEO';
 
 const Blog: React.FC = () => {
   const [posts, setPosts] = useState(getLocalBlogs());
@@ -17,6 +18,13 @@ const Blog: React.FC = () => {
   }, []);
 
   return (
+    <>
+      <SEO
+        title="Agri-Insights Blog | Agricultural Land Investment News India"
+        description="Expert articles on agricultural land investment, farmland returns, Bio-CNG, state land laws, polyhouse farming, and agri-estate strategies across India. Stay informed with IGO Agri Estates."
+        canonical="/blog"
+        keywords="agricultural land investment blog India, farmland news, agri estate articles, farm investment tips, polyhouse farming guide, teak plantation returns, Bio-CNG farm India"
+      />
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <div className="container">
         <div className="text-center mb-16">
@@ -132,6 +140,7 @@ const Blog: React.FC = () => {
         </section>
       </div>
     </div>
+    </>
   );
 };
 

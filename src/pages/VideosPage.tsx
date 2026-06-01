@@ -23,7 +23,7 @@ const VideosPage: React.FC = () => {
         description="Watch drone audits, site visits, and virtual estate tours of premium agricultural land in Tamil Nadu. See teak plantations, mango orchards, and polyhouse farms before you invest."
         canonical="/videos"
         keywords="agricultural estate drone tour, farm site visit video, agri land Tamil Nadu video, polyhouse tour, plantation drone audit India"
-        ogImage="https://igoagriestate.com/images/properties/teak-estate.png"
+        ogImage="https://www.igoagriestate.com/images/properties/teak-estate.png"
       />
       <div className="container-pro">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">

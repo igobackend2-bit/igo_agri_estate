@@ -28,12 +28,12 @@ const BlogsPage: React.FC = () => {
           '@context': 'https://schema.org',
           '@type': 'Blog',
           name: 'IGO Agri Estates — Market Insights Blog',
-          url: 'https://igoagriestate.com/blogs',
+          url: 'https://www.igoagriestate.com/blogs',
           description: 'Expert articles on agricultural land investment in India',
           publisher: {
             '@type': 'Organization',
             name: 'IGO Agri Estates',
-            logo: { '@type': 'ImageObject', url: 'https://igoagriestate.com/images/logo.png' }
+            logo: { '@type': 'ImageObject', url: 'https://www.igoagriestate.com/images/logo.png' }
           }
         }}
       />

@@ -15,12 +15,12 @@ const SoilIntelligence: React.FC = () => {
           '@context': 'https://schema.org',
           '@type': 'Service',
           name: 'IGO Soil Intelligence & Agronomic Analysis',
-          url: 'https://igoagriestate.com/services/soil',
+          url: 'https://www.igoagriestate.com/services/soil',
           description: 'Scientific soil and water analysis for agricultural land investment decisions in India',
           provider: {
             '@type': 'Organization',
             name: 'IGO Agri Estates',
-            url: 'https://igoagriestate.com'
+            url: 'https://www.igoagriestate.com'
           },
           serviceType: 'Soil Analysis',
           areaServed: ['Tamil Nadu', 'Karnataka', 'Maharashtra']

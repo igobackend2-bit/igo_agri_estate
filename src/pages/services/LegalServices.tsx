@@ -15,12 +15,12 @@ const LegalServices: React.FC = () => {
           '@context': 'https://schema.org',
           '@type': 'LegalService',
           name: 'IGO Agri Estates Legal Due Diligence',
-          url: 'https://igoagriestate.com/services/legal',
+          url: 'https://www.igoagriestate.com/services/legal',
           description: 'Comprehensive legal verification and title due diligence for agricultural land in India',
           provider: {
             '@type': 'Organization',
             name: 'IGO Agri Estates',
-            url: 'https://igoagriestate.com'
+            url: 'https://www.igoagriestate.com'
           },
           areaServed: ['Tamil Nadu', 'Karnataka', 'Maharashtra']
         }}

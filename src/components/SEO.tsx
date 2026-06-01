@@ -12,7 +12,7 @@ interface SEOProps {
 }
 
 const SITE_NAME = 'IGO Agri Estates';
-const BASE_URL = 'https://igoagriestate.com';
+const BASE_URL = 'https://www.igoagriestate.com';
 const DEFAULT_IMAGE = `${BASE_URL}/images/hero-bg.png`;
 
 const SEO: React.FC<SEOProps> = ({

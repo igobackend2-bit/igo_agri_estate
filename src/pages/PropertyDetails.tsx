@@ -308,33 +308,43 @@ const PropertyDetails: React.FC = () => {
   return (
     <div className="pt-32 pb-24 bg-background min-h-screen">
       <SEO
-        title={`${property.title} — ${property.location} | Agricultural Estate for Sale`}
-        description={`${property.title} in ${property.location}. ${property.size} estate at ${property.price}. ${property.description?.slice(0, 100) || 'Verified agricultural estate with clear title and managed farming support.'}`.slice(0, 160)}
+        title={`${property.title} — ${property.location} | Agricultural Estate for Sale in India`}
+        description={`${property.title} in ${property.location}. ${property.size} estate at ${property.price}. ROI: ${property.roi || '12-18%'}. ${property.description?.slice(0, 80) || 'Verified agricultural estate with clear title and managed farming support.'}`.slice(0, 160)}
         canonical={`/properties/${property.id}`}
-        ogImage={property.image?.startsWith('http') ? property.image : `https://igoagriestate.com${property.image || '/images/hero-bg.png'}`}
+        ogImage={property.image?.startsWith('http') ? property.image : `https://www.igoagriestate.com${property.image || '/images/hero-bg.png'}`}
         ogType="article"
-        keywords={`${property.title}, agricultural land ${property.location}, buy farm ${property.location}, ${property.type || 'agri estate'} Tamil Nadu`}
-        schema={{
-          '@context': 'https://schema.org',
-          '@type': 'RealEstateListing',
-          name: property.title,
-          description: property.description || `${property.title} — verified agricultural estate in ${property.location}`,
-          url: `https://igoagriestate.com/properties/${property.id}`,
-          image: property.image?.startsWith('http') ? property.image : `https://igoagriestate.com${property.image}`,
-          offers: {
-            '@type': 'Offer',
-            price: property.price,
-            priceCurrency: 'INR',
-            availability: property.status === 'Available' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
-            seller: { '@type': 'Organization', name: 'IGO Agri Estates', url: 'https://igoagriestate.com' }
+        keywords={`${property.title}, agricultural land ${property.location}, buy farm ${property.location}, ${property.type || 'agri estate'} India, farmland for sale India, ${property.location} agricultural land`}
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'RealEstateListing',
+            name: property.title,
+            description: property.description || `${property.title} — verified agricultural estate in ${property.location}`,
+            url: `https://www.igoagriestate.com/properties/${property.id}`,
+            image: property.image?.startsWith('http') ? property.image : `https://www.igoagriestate.com${property.image}`,
+            offers: {
+              '@type': 'Offer',
+              price: property.price,
+              priceCurrency: 'INR',
+              availability: property.status === 'Available' ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
+              seller: { '@type': 'Organization', name: 'IGO Agri Estates', url: 'https://www.igoagriestate.com' }
+            },
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: property.location,
+              addressCountry: 'IN'
+            }
           },
-          address: {
-            '@type': 'PostalAddress',
-            addressLocality: property.location,
-            addressRegion: 'Tamil Nadu',
-            addressCountry: 'IN'
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.igoagriestate.com/' },
+              { '@type': 'ListItem', position: 2, name: 'Estates', item: 'https://www.igoagriestate.com/locations' },
+              { '@type': 'ListItem', position: 3, name: property.title, item: `https://www.igoagriestate.com/properties/${property.id}` }
+            ]
           }
-        }}
+        ]}
       />
       <div className="container">
           <button

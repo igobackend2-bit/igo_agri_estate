@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { Mail, Lock, User, ArrowRight, ShieldCheck, Building2, TrendingUp, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
@@ -133,6 +134,13 @@ const SignUp: React.FC = () => {
   }
 
   return (
+    <>
+      <SEO
+        title="Sign Up | IGO Agri Estates"
+        description="Create your IGO Agri Estates account and start investing in verified agricultural land across India. Register as an investor or seller today."
+        canonical="/signup"
+        noIndex={true}
+      />
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-20">
       {/* Background Layer */}
       <div className="fixed inset-0 z-0">
@@ -304,6 +312,7 @@ const SignUp: React.FC = () => {
         </p>
       </motion.div>
     </div>
+    </>
   );
 };
 

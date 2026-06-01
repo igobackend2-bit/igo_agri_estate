@@ -7,11 +7,11 @@ const About: React.FC = () => {
   return (
     <section id="about" className="py-20 bg-background">
       <SEO
-        title="About IGO Agri Estates — 15+ Years of Agricultural Land Excellence"
-        description="IGO Agri Estates is India's premier institutional marketplace for managed farmland. 15+ years of expertise, 5000+ acres managed, clear title verification, and scientific crop planning across Tamil Nadu, Karnataka & Maharashtra."
+        title="About IGO Agri Estates — India's Premier Agricultural Land Platform"
+        description="IGO Agri Estates is India's premier institutional marketplace for managed farmland. 15+ years of expertise, 5000+ acres managed, clear title verification, and scientific crop planning across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
         canonical="/about"
-        keywords="IGO Agri Estates about, agricultural land company India, farmland investment company Tamil Nadu, agri estate company, managed farmland India"
-        ogImage="https://igoagriestate.com/images/team-expert-indian.png"
+        keywords="IGO Agri Estates about, agricultural land company India, farmland investment company India, agri estate company, managed farmland India, farm land developer Tamil Nadu Karnataka Maharashtra"
+        ogImage="https://www.igoagriestate.com/images/team-expert-indian.png"
       />
       <div className="container-pro">
         <motion.div
@@ -67,10 +67,3 @@ const About: React.FC = () => {
               <p className="text-sm text-text-muted leading-relaxed">{item.desc}</p>
             </div>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-};
-
-export default About;

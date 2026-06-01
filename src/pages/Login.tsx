@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import SEO from '../components/SEO';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, ArrowRight, ShieldCheck, RefreshCcw, Lock, Eye, EyeOff, UserPlus, CheckCircle2 } from 'lucide-react';
 import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
@@ -190,6 +191,13 @@ const Login: React.FC = () => {
   };
 
   return (
+    <>
+      <SEO
+        title="Login | IGO Agri Estates"
+        description="Sign in to your IGO Agri Estates account to manage your farmland investments, track properties, and access exclusive agricultural land deals across India."
+        canonical="/login"
+        noIndex={true}
+      />
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
       {/* Background Layer */}
       <div className="fixed inset-0 z-0">
@@ -390,7 +398,7 @@ const Login: React.FC = () => {
         </div>
         <p className="text-[10px] font-black uppercase tracking-widest text-white/40">IGO Quantum Security Protocol v4.0</p>
       </div>
-    </div>
+    </>
   );
 };
 

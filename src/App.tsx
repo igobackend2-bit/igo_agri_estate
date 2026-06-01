@@ -108,27 +108,27 @@ const Home: React.FC = () => {
   return (
     <main id="home" className="bg-background">
       <SEO
-        title="IGO Agri Estates | Buy & Sell Agricultural Land in Tamil Nadu, India"
-        description="IGO Agri Estates — India's premium platform to buy, sell, and invest in verified agricultural land. Explore teak plantations, mango orchards, polyhouse farms, and horticulture estates in Tamil Nadu, Karnataka & Maharashtra. Clear titles. Managed farming support."
+        title="IGO Agri Estates | Buy & Sell Agricultural Land in India"
+        description="IGO Agri Estates — India's premium platform to buy, sell, and invest in verified agricultural land. Teak plantations, mango orchards, polyhouse farms, and horticulture estates across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. Clear titles. Managed farming support."
         canonical="/"
-        keywords="agricultural land for sale Tamil Nadu, farmland investment India, buy agri estate, teak plantation, mango orchard, polyhouse farm, horticulture estate, Mahabalipuram farmland, Kanchipuram agri land, IGO agri estates"
+        keywords="agricultural land for sale India, farmland investment India, buy agri estate, teak plantation India, mango orchard farm, polyhouse farm India, horticulture estate, Mahabalipuram farmland, Kanchipuram agri land, IGO agri estates, agricultural land Tamil Nadu, farmland Karnataka, agri land Maharashtra, farm investment Andhra Pradesh, agri investment Telangana, managed farming India, buy farmland online India"
         schema={[
           {
             '@context': 'https://schema.org',
             '@type': 'Organization',
-            '@id': 'https://igoagriestate.com/#organization',
+            '@id': 'https://www.igoagriestate.com/#organization',
             name: 'IGO Agri Estates',
-            url: 'https://igoagriestate.com',
-            logo: 'https://igoagriestate.com/images/logo.png',
+            url: 'https://www.igoagriestate.com',
+            logo: 'https://www.igoagriestate.com/images/logo.png',
             contactPoint: { '@type': 'ContactPoint', telephone: '+91-7397789803', contactType: 'customer service' },
             sameAs: ['https://www.facebook.com/share/173LkV9obs/', 'https://www.instagram.com/igofarmlandestates/']
           },
           {
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            url: 'https://igoagriestate.com',
+            url: 'https://www.igoagriestate.com',
             name: 'IGO Agri Estates',
-            potentialAction: { '@type': 'SearchAction', target: 'https://igoagriestate.com/listings?q={search_term_string}', 'query-input': 'required name=search_term_string' }
+            potentialAction: { '@type': 'SearchAction', target: 'https://www.igoagriestate.com/listings?q={search_term_string}', 'query-input': 'required name=search_term_string' }
           }
         ]}
       />
