@@ -21,8 +21,8 @@ export const brandsData = [
   { id: 'b-20', logo: '/images/Brands/16.jpg', category: 'FINANCE', title: 'IGO Farm Loans & Subsidy', description: 'Facilitating loans, government subsidies and grants for farmers across India.' },
   { id: 'b-21', logo: '/images/Brands/21.jpg', category: 'AGRI INPUT', title: 'IGO Crop Care', description: 'Organic pest control and sustainable crop-protection inputs for healthier, higher-yield farming.' },
   { id: 'b-22', logo: '/images/Brands/2.jpg', category: 'TECHNOLOGY', title: 'IGO Farm Automation', description: 'IoT, drones and automated systems delivering precision agriculture across India.' },
-  { id: 'b-23', logo: '/images/Brands/9.jpg', category: 'RENEWABLE ENERGY', title: 'IGO Green Energy', description: 'Renewable energy solutions including Bio-CNG and solar integration for farms.' },
-  { id: 'b-24', logo: '/images/Brands/23.jpg', category: 'TECH FARMING', title: 'IGO Tech Farming Scientist', description: 'Research and education foundation advancing agri-science for the next generation of tech farming.' },
+  { id: 'b-23', logo: '/images/Brands/23.jpg', category: 'RENEWABLE ENERGY', title: 'IGO Green Energy', description: 'Renewable energy solutions including Bio-CNG and solar integration for farms.' },
+  { id: 'b-24', logo: '/images/Brands/9.jpg', category: 'TECH FARMING', title: 'IGO Tech Farming Scientist', description: 'Research and education foundation advancing agri-science for the next generation of tech farming.' },
   { id: 'b-25', logo: '/images/Brands/13.jpg', category: 'EDUCATION', title: 'IGO Academy', description: 'Training and education programs empowering the next generation of modern farmers.' },
   { id: 'b-26', logo: '/images/logo.png', category: 'PHILANTHROPY', title: 'IGO Foundation', description: 'Philanthropic initiatives focused on rural development and farmer welfare.' }
 ];
