@@ -84,6 +84,8 @@ const NotFound: React.FC = () => (
   </div>
 );
 
+import BrandsMarquee from './components/home/BrandsMarquee';
+
 const Home: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -584,6 +586,9 @@ function App() {
 
           {settings.enableAI && <AIAssistant />}
           {settings.enableChat && <LiveChatWidget />}
+
+          {/* 26 Verticals Brands Marquee - Global above footer */}
+          <BrandsMarquee />
 
           {/* Institutional Footer */}
           <footer className="bg-primary text-white pt-32 pb-16 border-t border-white/5 relative overflow-hidden">
