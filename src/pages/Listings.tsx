@@ -120,11 +120,19 @@ const Listings: React.FC = () => {
 
   const handleLocationChange = (loc: string) => {
     setSelectedLocation(loc);
+    setSelectedCategory('all'); // Clear category filter to prevent hidden filtering
+    
+    // Create new params keeping the existing ones but updating/removing location and category
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('category');
+    
     if (loc === 'all') {
-      setSearchParams({});
+      newParams.delete('location');
     } else {
-      setSearchParams({ location: loc });
+      newParams.set('location', loc);
     }
+    
+    setSearchParams(newParams);
   };
 
   return (
