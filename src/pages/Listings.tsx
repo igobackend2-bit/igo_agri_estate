@@ -22,6 +22,23 @@ const LOCATION_MATCH_KEYWORDS: Record<string, string[]> = {
   chennai_suburban: ['chromepet', 'thoraipakam'],
 };
 
+// Keywords used to match a category filter (from the homepage category tiles / quick-search tags)
+// against each estate's `type`/`title`/`description`. The site has two estate datasets with
+// different naming ("Open Field Agri Estate" vs "Paddy & Vegetable Field", "Teak Plantation Estate"
+// vs "Nursery Agri Estate", etc.), so a single literal keyword misses one dataset and shows
+// "No Estates Found" until the other dataset loads in. Listing every real-world synonym here means
+// the correct estates show up immediately, regardless of which dataset is currently active.
+const CATEGORY_MATCH_KEYWORDS: Record<string, string[]> = {
+  'open field': ['open field', 'paddy', 'vegetable field', 'sugarcane', 'open cultivation', 'field farming'],
+  'horticulture': ['horticulture', 'mango', 'orchard', 'fruit'],
+  'nursery': ['nursery', 'plantation', 'teak', 'agroforestry', 'sapling', 'floriculture'],
+  'livestock': ['livestock', 'goat', 'dairy', 'cattle', 'poultry', 'animal'],
+  'protected': ['protected', 'polyhouse', 'greenhouse', 'net house', 'shade net'],
+  'hydroponic': ['hydroponic', 'soilless', 'vertical farming', 'urban agri'],
+  'mushroom': ['mushroom'],
+  'microgreens': ['microgreens'],
+};
+
 const Listings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedLocation, setSelectedLocation] = useState(searchParams.get('location') || 'all');
@@ -31,7 +48,7 @@ const Listings: React.FC = () => {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const [showMap, setShowMap] = useState(false);
-  const { publicProperties } = useProperties();
+  const { publicProperties, loading: propertiesLoading } = useProperties();
 
   // Combine database properties (filtered) with static estates, prioritize DB
   const allProperties = useMemo(() => {
@@ -55,10 +72,11 @@ const Listings: React.FC = () => {
 
     // Filter by category
     if (selectedCategory !== 'all') {
-      estates = estates.filter(estate => 
-        estate.type?.toLowerCase().includes(selectedCategory.toLowerCase()) ||
-        estate.description?.toLowerCase().includes(selectedCategory.toLowerCase())
-      );
+      const categoryKeywords = CATEGORY_MATCH_KEYWORDS[selectedCategory.toLowerCase()] || [selectedCategory.toLowerCase()];
+      estates = estates.filter(estate => {
+        const haystack = `${estate.type || ''} ${estate.title || ''} ${estate.description || ''}`.toLowerCase();
+        return categoryKeywords.some(keyword => haystack.includes(keyword));
+      });
     }
 
     // Filter by search query
@@ -210,7 +228,14 @@ const Listings: React.FC = () => {
 
       {/* Results */}
       <div className="container-pro mt-16">
-        {displayEstates.length === 0 ? (
+        {displayEstates.length === 0 && propertiesLoading ? (
+          <div className="py-32 text-center">
+            <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+              <Search size={40} className="text-primary/20" />
+            </div>
+            <h3 className="text-xl font-bold text-primary/60">Loading estates...</h3>
+          </div>
+        ) : displayEstates.length === 0 ? (
           <div className="py-32 text-center">
             <div className="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-8">
               <Search size={40} className="text-primary/20" />
