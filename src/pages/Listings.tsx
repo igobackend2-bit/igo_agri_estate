@@ -50,11 +50,16 @@ const Listings: React.FC = () => {
   const [showMap, setShowMap] = useState(false);
   const { publicProperties, loading: propertiesLoading } = useProperties();
 
-  // Combine database properties (filtered) with static estates, prioritize DB
+  // Combine database properties with the curated static location estates.
+  // The DB/fallback dataset (publicProperties) only carries generic locations like
+  // "Chennai, Tamil Nadu" — it has no Mahabalipuram/Maduranthagam/Kanchipuram/Chennai City/
+  // Chennai Suburban specific entries. Previously this list REPLACED staticEstates once loaded,
+  // which silently wiped out every location tab's estates and showed "No Estates Found".
+  // Merging (deduped by id) keeps the location-specific estates available at all times.
   const allProperties = useMemo(() => {
-    // Start with database properties (already filtered for auto-expiry)
-    const properties = publicProperties.length > 0 ? publicProperties : staticEstates;
-    return properties;
+    const dbIds = new Set(publicProperties.map(p => p.id));
+    const staticOnly = staticEstates.filter(p => !dbIds.has(p.id));
+    return [...publicProperties, ...staticOnly];
   }, [publicProperties]);
 
   // Get estates based on selection
