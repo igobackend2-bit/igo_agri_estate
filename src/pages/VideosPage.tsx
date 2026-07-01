@@ -24,6 +24,24 @@ const VideosPage: React.FC = () => {
         canonical="/videos"
         keywords="agricultural estate drone tour India, managed farmland video tour, farm site visit video India, agri land Karnataka video, polyhouse tour, plantation drone audit, farmland near Bangalore video, Hyderabad farm tour, managed farm investment video"
         ogImage="https://www.igoagriestate.com/images/properties/teak-estate.png"
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: 'Agri Estate Videos',
+            url: 'https://www.igoagriestate.com/videos',
+            description: 'Drone audits, virtual site visits, and estate tours of premium agricultural land across India.',
+            isPartOf: { '@id': 'https://www.igoagriestate.com/#website' }
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.igoagriestate.com/' },
+              { '@type': 'ListItem', position: 2, name: 'Videos', item: 'https://www.igoagriestate.com/videos' }
+            ]
+          }
+        ]}
       />
       <div className="container-pro">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
@@ -78,13 +96,14 @@ const VideosPage: React.FC = () => {
               whileHover={{ y: -10 }}
               className="relative aspect-video rounded-[48px] overflow-hidden group cursor-pointer shadow-2xl text-left border border-white/40"
             >
-              <img 
-                src={vid.thumb} 
-                alt={vid.title} 
+              <img
+                src={vid.thumb}
+                alt={vid.title}
+                loading="lazy"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/images/properties/polyhouse.png';
                 }}
-                className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-[2s]" 
+                className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-[2s]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
               

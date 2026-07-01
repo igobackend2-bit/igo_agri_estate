@@ -58,6 +58,24 @@ const Marketplace: React.FC = () => {
         description="Buy and sell fractional shares of verified managed agricultural estates on India's first agri-land exchange. Live order book, real-time pricing, and transparent transactions for farm investors across Bangalore, Hyderabad, Pune, Chennai & all India."
         canonical="/marketplace"
         keywords="fractional agricultural land India, agri estate exchange, farm land shares India, fractional managed farmland, agri real estate trading India, fractional farm investment Bangalore, agri investment platform India, buy farm shares online India"
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'CollectionPage',
+            name: 'Fractional Agri Estate Exchange',
+            url: 'https://www.igoagriestate.com/marketplace',
+            description: "Buy and sell fractional shares of verified managed agricultural estates on India's agri-land exchange.",
+            isPartOf: { '@id': 'https://www.igoagriestate.com/#website' }
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.igoagriestate.com/' },
+              { '@type': 'ListItem', position: 2, name: 'Marketplace', item: 'https://www.igoagriestate.com/marketplace' }
+            ]
+          }
+        ]}
       />
       <div className="absolute top-0 right-0 w-full h-full bg-topo opacity-10 pointer-events-none"></div>
       

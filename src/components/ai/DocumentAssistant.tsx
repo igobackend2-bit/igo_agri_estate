@@ -103,7 +103,7 @@ const DocumentAssistant: React.FC<DocumentAssistantProps> = ({ propertyTitle = "
                   <p className="text-white/60 text-sm">Buyer document guidance</p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+              <button onClick={onClose} aria-label="Close dialog" className="p-2 hover:bg-white/10 rounded-full transition-colors">
                 <X size={24} />
               </button>
             </div>
@@ -179,18 +179,22 @@ const DocumentAssistant: React.FC<DocumentAssistantProps> = ({ propertyTitle = "
               {/* Chat Input */}
               <div className="p-6 bg-white border-t border-black/5">
                 <div className="flex items-center space-x-4 bg-gray-50 border border-black/5 p-2 rounded-3xl">
-                  <input 
-                    type="text" 
+                  <label htmlFor="doc-assistant-input" className="sr-only">Ask a question</label>
+                  <input
+                    id="doc-assistant-input"
+                    type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     placeholder="E.g., Draft a 5-year lease with 10% revenue share..."
+                    aria-label="Ask a question"
                     className="flex-1 bg-transparent px-4 outline-none text-sm"
                     disabled={isGenerating || draftReady}
                   />
-                  <button 
+                  <button
                     onClick={handleSend}
                     disabled={!input.trim() || isGenerating || draftReady}
+                    aria-label="Send message"
                     className="w-10 h-10 bg-primary text-white rounded-2xl flex items-center justify-center hover:bg-primary-light disabled:opacity-50 transition-colors"
                   >
                     <Send size={18} className="ml-1" />

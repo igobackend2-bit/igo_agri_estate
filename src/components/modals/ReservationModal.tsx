@@ -38,7 +38,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ property, isOpen, o
                 <h3 className="text-3xl font-bold">Reserve Estate</h3>
                 <p className="text-text-muted mt-1">Property: {property.title}</p>
               </div>
-              <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <button onClick={onClose} aria-label="Close dialog" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <X size={24} />
               </button>
             </div>
@@ -103,11 +103,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({ property, isOpen, o
                   <div className="space-y-4">
                     <div className="relative">
                       <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" size={20} />
-                      <input type="text" placeholder="Card Number" className="w-full bg-gray-50 border border-black/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-primary/20 outline-none" />
+                      <label htmlFor="reservation-card-number" className="sr-only">Card Number</label>
+                      <input id="reservation-card-number" type="text" placeholder="Card Number" aria-label="Card Number" className="w-full bg-gray-50 border border-black/5 rounded-2xl py-4 pl-12 pr-6 focus:ring-2 focus:ring-primary/20 outline-none" />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                      <input type="text" placeholder="MM/YY" className="w-full bg-gray-50 border border-black/5 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary/20 outline-none" />
-                      <input type="text" placeholder="CVV" className="w-full bg-gray-50 border border-black/5 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary/20 outline-none" />
+                      <div>
+                        <label htmlFor="reservation-expiry" className="sr-only">Expiry Date (MM/YY)</label>
+                        <input id="reservation-expiry" type="text" placeholder="MM/YY" aria-label="Expiry Date" className="w-full bg-gray-50 border border-black/5 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary/20 outline-none" />
+                      </div>
+                      <div>
+                        <label htmlFor="reservation-cvv" className="sr-only">CVV</label>
+                        <input id="reservation-cvv" type="text" placeholder="CVV" aria-label="CVV" className="w-full bg-gray-50 border border-black/5 rounded-2xl py-4 px-6 focus:ring-2 focus:ring-primary/20 outline-none" />
+                      </div>
                     </div>
                   </div>
 

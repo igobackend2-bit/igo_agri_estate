@@ -24,6 +24,24 @@ const Blog: React.FC = () => {
         description="Expert articles on agricultural land investment, farmland returns, Bio-CNG, state land laws, polyhouse farming, and agri-estate strategies across India. Stay informed with IGO Agri Estates."
         canonical="/blog"
         keywords="agricultural land investment blog India, farmland news, agri estate articles, farm investment tips, polyhouse farming guide, teak plantation returns, Bio-CNG farm India"
+        schema={[
+          {
+            '@context': 'https://schema.org',
+            '@type': 'Blog',
+            name: 'Agri-Insights Blog',
+            url: 'https://www.igoagriestate.com/blog',
+            description: 'Expert articles on agricultural land investment, farmland returns, Bio-CNG, state land laws, and agri-estate strategies across India.',
+            publisher: { '@id': 'https://www.igoagriestate.com/#organization' }
+          },
+          {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.igoagriestate.com/' },
+              { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://www.igoagriestate.com/blog' }
+            ]
+          }
+        ]}
       />
     <div className="pt-32 pb-20 bg-background min-h-screen">
       <div className="container">
@@ -116,7 +134,7 @@ const Blog: React.FC = () => {
                 className="flex flex-col md:flex-row gap-8 group cursor-pointer"
               >
                 <div className="w-full md:w-1/2 aspect-square rounded-[32px] overflow-hidden shadow-lg">
-                  <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  <img src={post.image} alt={post.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 </div>
                 <div className="w-full md:w-1/2 flex flex-col justify-center">
                   <span className="text-secondary font-bold text-xs uppercase tracking-widest mb-3">{post.category}</span>

@@ -30,6 +30,7 @@ const AuthRequiredModal: React.FC<AuthRequiredModalProps> = ({
           >
             <button
               onClick={onClose}
+              aria-label="Close dialog"
               className="absolute top-8 right-8 text-text-muted hover:text-primary transition-colors p-2 hover:bg-gray-100 rounded-full"
             >
               <X size={24} />

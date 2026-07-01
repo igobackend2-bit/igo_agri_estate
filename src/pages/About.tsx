@@ -3,16 +3,43 @@ import SEO from '../components/SEO';
 import { motion } from 'framer-motion';
 import { ShieldCheck, Target, Users, Landmark } from 'lucide-react';
 
-const About: React.FC = () => {
+interface AboutProps {
+  /** false when this component is embedded as a section inside another page (e.g. the homepage),
+   * so it doesn't emit a duplicate <h1>/SEO tags for that page. Defaults to true (standalone /about route). */
+  standalone?: boolean;
+}
+
+const About: React.FC<AboutProps> = ({ standalone = true }) => {
+  const Heading = standalone ? 'h1' : 'h2';
   return (
     <section id="about" className="py-20 bg-background">
-      <SEO
-        title="About IGO Agri Estates — India's Premier Agricultural Land Platform"
-        description="IGO Agri Estates is India's premier institutional marketplace for managed farmland. 15+ years of expertise, 5000+ acres managed, clear title verification, and scientific crop planning across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
-        canonical="/about"
-        keywords="IGO Agri Estates about, agricultural land company India, farmland investment company India, agri estate company, managed farmland India, farm land developer Tamil Nadu Karnataka Maharashtra"
-        ogImage="https://www.igoagriestate.com/images/team-expert-indian.png"
-      />
+      {standalone && (
+        <SEO
+          title="About IGO Agri Estates — India's Premier Agricultural Land Platform"
+          description="IGO Agri Estates is India's premier institutional marketplace for managed farmland. 15+ years of expertise, 5000+ acres managed, clear title verification, and scientific crop planning across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
+          canonical="/about"
+          keywords="IGO Agri Estates about, agricultural land company India, farmland investment company India, agri estate company, managed farmland India, farm land developer Tamil Nadu Karnataka Maharashtra"
+          ogImage="https://www.igoagriestate.com/images/team-expert-indian.png"
+          schema={[
+            {
+              '@context': 'https://schema.org',
+              '@type': 'AboutPage',
+              name: "About IGO Agri Estates",
+              url: 'https://www.igoagriestate.com/about',
+              mainEntity: { '@id': 'https://www.igoagriestate.com/#organization' },
+              description: "IGO Agri Estates is India's premier institutional marketplace for managed farmland, offering 15+ years of expertise, clear title verification, and scientific crop planning."
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.igoagriestate.com/' },
+                { '@type': 'ListItem', position: 2, name: 'About', item: 'https://www.igoagriestate.com/about' }
+              ]
+            }
+          ]}
+        />
+      )}
       <div className="container-pro">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -20,9 +47,9 @@ const About: React.FC = () => {
           className="max-w-4xl mx-auto text-center mb-20"
         >
           <p className="text-[10px] font-black text-[#00814a] uppercase tracking-[0.5em] mb-6">Our Legacy</p>
-          <h1 className="text-6xl font-black text-primary uppercase tracking-tighter leading-none mb-8">
+          <Heading className="text-6xl font-black text-primary uppercase tracking-tighter leading-none mb-8">
             The Institution <br />of <span className="text-secondary italic font-serif">Agricultural Land</span>
-          </h1>
+          </Heading>
           <p className="text-xl text-text-muted font-light leading-relaxed">
             IGO Agriestates is India's premier institutional marketplace for managed farmland and agricultural real estate. We bridge the gap between traditional land ownership and modern investment excellence.
           </p>

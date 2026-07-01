@@ -139,6 +139,7 @@ const SignUp: React.FC = () => {
         title="Sign Up | IGO Agri Estates"
         description="Create your IGO Agri Estates account and start investing in verified agricultural land across India. Register as an investor or seller today."
         canonical="/signup"
+        keywords="IGO Agri Estates sign up, register farmland investor, create agricultural land account India"
         noIndex={true}
       />
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden py-20">

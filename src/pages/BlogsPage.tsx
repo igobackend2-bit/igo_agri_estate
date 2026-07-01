@@ -88,7 +88,7 @@ const BlogsPage: React.FC = () => {
               className="bg-white rounded-[40px] overflow-hidden border border-black/5 shadow-xl group cursor-pointer flex flex-col"
             >
               <div className="aspect-[4/3] overflow-hidden relative">
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
+                <img src={post.image} alt={post.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s]" />
                 <div className="absolute top-6 left-6">
                   <span className="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest text-primary border border-black/5">
                     {post.category}

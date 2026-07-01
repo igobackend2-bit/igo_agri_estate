@@ -32,7 +32,9 @@ const PropertyCinematicHeader: React.FC<CinematicHeaderProps> = ({ image, title 
         playsInline
         onLoadedData={() => setIsVideoLoaded(true)}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${isVideoLoaded ? 'opacity-100' : 'opacity-0'}`}
-      />
+      >
+        <track kind="captions" />
+      </video>
 
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <div className="absolute bottom-6 left-6 flex space-x-4">
@@ -50,21 +52,23 @@ const PropertyCinematicHeader: React.FC<CinematicHeaderProps> = ({ image, title 
               }
             }}
             className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+            aria-label={isPlaying ? 'Pause video' : 'Play video'}
           >
             {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-1" />}
           </button>
-          <button 
+          <button
             onClick={(e) => {
               e.preventDefault();
               setIsMuted(!isMuted);
             }}
             className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition-all"
+            aria-label={isMuted ? 'Unmute video' : 'Mute video'}
           >
             {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
           </button>
         </div>
         <div className="absolute bottom-6 right-6">
-          <button className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
+          <button className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white hover:text-black transition-all" aria-label="Fullscreen">
             <Maximize2 size={20} />
           </button>
         </div>

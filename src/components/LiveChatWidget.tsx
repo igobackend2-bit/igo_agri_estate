@@ -54,6 +54,8 @@ const LiveChatWidget: React.FC = () => {
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Close chat' : 'Open chat'}
+        aria-expanded={isOpen}
         className={`fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 ${
           isOpen ? 'bg-red-500 text-white rotate-90' : 'bg-secondary text-primary'
         }`}
@@ -130,16 +132,20 @@ const LiveChatWidget: React.FC = () => {
 
             {/* Input */}
             <form onSubmit={handleSubmit} className="p-4 border-t border-black/5 bg-white flex gap-3">
+              <label htmlFor="livechat-message-input" className="sr-only">Type your message</label>
               <input
+                id="livechat-message-input"
                 type="text"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Type your message..."
+                aria-label="Type your message"
                 className="flex-1 bg-gray-50 rounded-full px-5 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-secondary/20"
               />
               <button
                 type="submit"
                 disabled={!message.trim()}
+                aria-label="Send message"
                 className="w-12 h-12 bg-secondary text-primary rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary hover:text-white transition-all"
               >
                 <Send size={18} />

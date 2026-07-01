@@ -89,6 +89,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           <img
             src={safeImage}
             alt={safeTitle}
+            loading="lazy"
             className={`w-full h-full object-cover transition-transform duration-1000 ${!isSold ? 'group-hover:scale-110' : ''}`}
           />
 
@@ -125,6 +126,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               {onFavorite && (
                 <button
                   onClick={(e) => { e.preventDefault(); onFavorite(id); }}
+                  aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                  aria-pressed={isFavorited}
                   className={`w-10 h-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all ${
                     isFavorited ? 'bg-red-500 text-white' : 'bg-white/80 text-primary hover:bg-white'
                   }`}
@@ -135,6 +138,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               {onCompare && (
                 <button
                   onClick={(e) => { e.preventDefault(); onCompare(id); }}
+                  aria-label={isComparing ? 'Remove from comparison' : 'Add to comparison'}
+                  aria-pressed={isComparing}
                   className={`w-10 h-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all ${
                     isComparing ? 'bg-secondary text-primary' : 'bg-white/80 text-primary hover:bg-white'
                   }`}

@@ -10,6 +10,18 @@ import type { Property } from '../types';
 
 type EstateWithUI = Property & { isFavorited: boolean; isComparing: boolean };
 
+// Keywords used to match a location tab's id against each estate's free-text `location` field.
+// Plain substring matching on the raw id breaks for ids like "chennai_suburban" (the underscore
+// never appears in "Chromepet, Chennai" / "Thoraipakam, Chennai"), and "chennai" alone would also
+// wrongly match those suburban estates. Explicit keywords keep each tab scoped to the right estates.
+const LOCATION_MATCH_KEYWORDS: Record<string, string[]> = {
+  mahabalipuram: ['mahabalipuram'],
+  maduranthagam: ['maduranthagam'],
+  chennai: ['chennai city'],
+  kanchipuram: ['kanchipuram'],
+  chennai_suburban: ['chromepet', 'thoraipakam'],
+};
+
 const Listings: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedLocation, setSelectedLocation] = useState(searchParams.get('location') || 'all');
@@ -35,8 +47,9 @@ const Listings: React.FC = () => {
     if (selectedLocation === 'all') {
       estates = allProperties;
     } else {
-      estates = allProperties.filter(p => 
-        p.location?.toLowerCase().includes(selectedLocation.toLowerCase())
+      const keywords = LOCATION_MATCH_KEYWORDS[selectedLocation] || [selectedLocation.replace(/_/g, ' ').toLowerCase()];
+      estates = allProperties.filter(p =>
+        keywords.some(keyword => p.location?.toLowerCase().includes(keyword))
       );
     }
 
@@ -306,7 +319,7 @@ const EstateCard: React.FC<EstateCardProps> = ({ estate, onFavorite, onCompare }
     >
       {/* Image */}
       <div className="relative aspect-[16/11] overflow-hidden bg-primary/5">
-        <img src={estate.image} alt={estate.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+        <img src={estate.image} alt={estate.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
         <div className="absolute top-6 left-6 flex items-center gap-2">
           <span className="bg-green-500 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest">
             {estate.status}
@@ -317,6 +330,8 @@ const EstateCard: React.FC<EstateCardProps> = ({ estate, onFavorite, onCompare }
         <div className="absolute top-6 right-6 flex flex-col gap-2">
           <button
             onClick={onFavorite}
+            aria-label={estate.isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+            aria-pressed={estate.isFavorited}
             className={`w-10 h-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all ${
               estate.isFavorited ? 'bg-red-500 text-white' : 'bg-white/90 text-primary hover:bg-white'
             }`}
@@ -325,6 +340,8 @@ const EstateCard: React.FC<EstateCardProps> = ({ estate, onFavorite, onCompare }
           </button>
           <button
             onClick={onCompare}
+            aria-label={estate.isComparing ? 'Remove from comparison' : 'Add to comparison'}
+            aria-pressed={estate.isComparing}
             className={`w-10 h-10 rounded-full backdrop-blur-md flex items-center justify-center transition-all ${
               estate.isComparing ? 'bg-secondary text-primary' : 'bg-white/90 text-primary'
             }`}
@@ -368,7 +385,7 @@ const EstateCard: React.FC<EstateCardProps> = ({ estate, onFavorite, onCompare }
           <div>
             <p className="text-[9px] uppercase text-text-muted mb-1">ROI</p>
             <p className="font-bold text-primary flex items-center gap-1">
-              <TrendingUp size={14} className="text-secondary" />{estate.roiValue ? `${estate.roiValue}%` : estate.roi.split('%')[0] + '%'}
+              <TrendingUp size={14} className="text-secondary" />{estate.roiValue ? `${estate.roiValue}%` : (estate.roi ? estate.roi.split('%')[0] + '%' : 'NA')}
             </p>
           </div>
           <div>

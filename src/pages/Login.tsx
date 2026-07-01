@@ -196,6 +196,7 @@ const Login: React.FC = () => {
         title="Login | IGO Agri Estates"
         description="Sign in to your IGO Agri Estates account to manage your farmland investments, track properties, and access exclusive agricultural land deals across India."
         canonical="/login"
+        keywords="IGO Agri Estates login, farmland investor account, agricultural land portal sign in"
         noIndex={true}
       />
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">

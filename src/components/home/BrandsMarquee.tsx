@@ -8,7 +8,7 @@ const BrandsMarquee = () => {
       <div className="container-pro">
         <div className="text-center mb-20 relative">
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-            <img src="/images/igo-group-map.png" alt="IGO Background" className="max-w-[700px] w-full opacity-[0.25] object-contain mix-blend-multiply" />
+            <img src="/images/igo-group-map.png" alt="IGO Background" loading="lazy" className="max-w-[700px] w-full opacity-[0.25] object-contain mix-blend-multiply" />
           </div>
           
           <div className="relative z-10">
@@ -50,7 +50,7 @@ const BrandsMarquee = () => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full -z-10 group-hover/card:bg-secondary/10 transition-colors"></div>
                 <div>
                   <div className="h-32 flex items-center justify-center mb-6 bg-black/[0.02] rounded-2xl group-hover/card:bg-white group-hover/card:shadow-lg transition-all p-2 border border-transparent group-hover/card:border-black/5">
-                    <img src={brand.logo} alt={brand.title} className="max-h-[100px] max-w-full object-contain mix-blend-multiply scale-110" />
+                    <img src={brand.logo} alt={brand.title} loading="lazy" className="max-h-[100px] max-w-full object-contain mix-blend-multiply scale-110" />
                   </div>
                   <span className="text-secondary font-black uppercase tracking-[0.2em] text-[10px] block mb-3">{brand.category}</span>
                   <h3 className="text-xl font-black text-primary mb-3">{brand.title}</h3>
@@ -70,7 +70,7 @@ const BrandsMarquee = () => {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full -z-10 group-hover/card:bg-secondary/10 transition-colors"></div>
                 <div>
                   <div className="h-32 flex items-center justify-center mb-6 bg-black/[0.02] rounded-2xl group-hover/card:bg-white group-hover/card:shadow-lg transition-all p-2 border border-transparent group-hover/card:border-black/5">
-                    <img src={brand.logo} alt={brand.title} className="max-h-[100px] max-w-full object-contain mix-blend-multiply scale-110" />
+                    <img src={brand.logo} alt={brand.title} loading="lazy" className="max-h-[100px] max-w-full object-contain mix-blend-multiply scale-110" />
                   </div>
                   <span className="text-secondary font-black uppercase tracking-[0.2em] text-[10px] block mb-3">{brand.category}</span>
                   <h3 className="text-xl font-black text-primary mb-3">{brand.title}</h3>

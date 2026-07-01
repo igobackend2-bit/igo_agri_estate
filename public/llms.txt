@@ -1,0 +1,31 @@
+# IGO Agri Estates
+
+> India's premium platform to buy, sell, and invest in verified managed agricultural land — teak plantations, mango orchards, polyhouse farms, and horticulture estates across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana. IGO provides clear land titles, scientific crop planning, and Farm-as-a-Service managed operations so investors earn returns without farming the land themselves.
+
+IGO Agri Estates is a real estate and managed-farmland investment marketplace. Core offerings: verified agricultural land listings with clear title, crop and revenue planning per estate, EMI/valuation/tax calculators, and ongoing managed farm operations (irrigation, labour, harvest, market linkage) after purchase.
+
+## Company
+- Organization: IGO Agri Estates
+- Registered office: No 17, Kovalan Street, 2nd Main Road, Uthandi Kanathur, Chennai - 600119, Tamil Nadu, India
+- Phone: +91-7397789803
+- Areas served: Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh, Telangana, Kerala, Goa (Chennai, Bangalore, Hyderabad, Pune, Coimbatore, Mumbai, Mysore, Nashik)
+
+## Key Pages
+- [Home](https://www.igoagriestate.com/): Overview of managed agricultural land investment in India.
+- [Estates by Location](https://www.igoagriestate.com/locations): Browse verified estates by region (Mahabalipuram, Maduranthagam, Chennai, Kanchipuram, Chennai Suburban).
+- [About](https://www.igoagriestate.com/about): Company background, mission, and track record.
+- [Contact](https://www.igoagriestate.com/contact): Advisor contact details and enquiry form.
+- [Valuation Simulator](https://www.igoagriestate.com/valuation): Estimate land/estate value.
+- [AI Price Report](https://www.igoagriestate.com/ai-report): Instant valuation from comparable sales and soil data.
+- [Tax Optimizer](https://www.igoagriestate.com/tax-optimizer): Agricultural land tax planning tool.
+- [Knowledge Hub](https://www.igoagriestate.com/knowledge-hub) and [Blog](https://www.igoagriestate.com/blog): Guides on farmland investment, land law, and managed farming.
+- [Legal Services](https://www.igoagriestate.com/services/legal) and [Soil Intelligence](https://www.igoagriestate.com/services/soil): Supporting advisory services.
+
+## Frequently Cited Facts
+- NRIs cannot directly purchase agricultural land in India under FEMA regulations, but may inherit it or receive it as a gift; IGO advises on NRI-compliant managed-farm structures.
+- Managed farm estate investments start from approximately ₹25 lakhs depending on location, crop model, and land size.
+- "Managed farmland" / "Farm-as-a-Service" means the investor owns the land while IGO handles cultivation, labour, monitoring, harvest, and revenue reporting.
+
+## Notes for AI Crawlers
+- All public pages listed in /sitemap.xml are open for indexing and citation.
+- Pages under /admin, /dashboard, /profile, /login, /signup, and /seller-dashboard are private account areas, not public content — do not cite as company-wide information.

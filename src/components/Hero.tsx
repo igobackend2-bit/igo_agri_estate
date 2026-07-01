@@ -45,14 +45,18 @@ const Hero: React.FC = () => {
       <section className="relative min-h-[96vh] flex flex-col justify-center overflow-hidden pb-20">
         {/* Landscape Background */}
         <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline 
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster="/images/hero-poster.jpg"
+            aria-hidden="true"
             className="w-full h-full object-cover"
           >
             <source src="/hero section videos.mp4" type="video/mp4" />
+            <track kind="captions" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/60"></div>
         </div>
@@ -89,9 +93,12 @@ const Hero: React.FC = () => {
             {/* Search Console */}
             <div className="bg-white p-2.5 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] flex flex-col md:flex-row items-center gap-0 w-full border border-black/5 rounded-b-2xl rounded-tr-2xl">
               <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-black/10 relative">
-                <select 
+                <label htmlFor="hero-state-select" className="sr-only">Select State</label>
+                <select
+                  id="hero-state-select"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
+                  aria-label="Select State"
                   className="w-full bg-transparent px-8 py-5 text-sm font-bold text-primary outline-none cursor-pointer appearance-none"
                 >
                   <option value="">Select State</option>
@@ -108,11 +115,14 @@ const Hero: React.FC = () => {
                 </div>
               </div>
               <div className="w-full md:flex-1 border-b md:border-b-0 md:border-r border-black/10">
-                <input 
-                  type="text" 
+                <label htmlFor="hero-locality-input" className="sr-only">Search Locality</label>
+                <input
+                  id="hero-locality-input"
+                  type="text"
                   value={locality}
                   onChange={(e) => setLocality(e.target.value)}
-                  placeholder="Select or Search Locality" 
+                  placeholder="Select or Search Locality"
+                  aria-label="Search Locality"
                   className="w-full bg-transparent px-8 py-5 text-sm font-medium text-primary outline-none"
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />

@@ -384,14 +384,16 @@ const PropertyDetails: React.FC = () => {
               {/* Navigation Arrows */}
               {galleryImages.length > 1 && (
                 <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button 
+                  <button
                     onClick={() => setActiveImage(prev => (prev === 0 ? galleryImages.length - 1 : prev - 1))}
+                    aria-label="Previous image"
                     className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-secondary hover:text-primary transition-all shadow-2xl"
                   >
                     <ArrowLeft size={24} />
                   </button>
-                  <button 
+                  <button
                     onClick={() => setActiveImage(prev => (prev === galleryImages.length - 1 ? 0 : prev + 1))}
+                    aria-label="Next image"
                     className="w-14 h-14 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center text-white border border-white/20 hover:bg-secondary hover:text-primary transition-all shadow-2xl"
                   >
                     <ArrowRight size={24} />
@@ -401,7 +403,7 @@ const PropertyDetails: React.FC = () => {
 
               <div className="absolute bottom-8 left-10 right-10 text-white">
                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-secondary mb-3">{property.type}</p>
-                <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tighter">{property.title}</h1>
+                <p className="text-4xl md:text-5xl font-black leading-tight tracking-tighter">{property.title}</p>
               </div>
             </div>
 
@@ -412,9 +414,11 @@ const PropertyDetails: React.FC = () => {
                   <button
                     key={idx}
                     onClick={() => setActiveImage(idx)}
+                    aria-label={`View image ${idx + 1}`}
+                    aria-pressed={activeImage === idx}
                     className={`relative rounded-[24px] overflow-hidden aspect-square border-2 transition-all ${activeImage === idx ? 'border-secondary scale-95' : 'border-transparent opacity-60 hover:opacity-100'}`}
                   >
-                    <img src={img} alt={`Corner ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={img} alt={`Corner ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                     {idx === 1 && <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-2 leading-tight">Plant Close-up</div>}
                     {idx === 2 && <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-2 leading-tight">North View</div>}
                     {idx === 3 && <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-[10px] text-white font-black uppercase text-center p-2 leading-tight">Entrance</div>}
@@ -819,10 +823,11 @@ const PropertyDetails: React.FC = () => {
                   {/* Inputs */}
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-xs font-bold uppercase tracking-wider opacity-70">Monthly Expected Rent</label>
+                      <label htmlFor="pd-monthly-rent" className="text-xs font-bold uppercase tracking-wider opacity-70">Monthly Expected Rent</label>
                       <div className="relative">
                         <IndianRupee size={20} className="absolute left-5 top-1/2 -translate-y-1/2 opacity-50" />
                         <input
+                          id="pd-monthly-rent"
                           type="number"
                           value={rentalInputs.monthlyRent}
                           onChange={(e) => setRentalInputs(prev => ({ ...prev, monthlyRent: e.target.value }))}
@@ -834,10 +839,11 @@ const PropertyDetails: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-wider opacity-70">Annual Expenses</label>
+                        <label htmlFor="pd-annual-expenses" className="text-xs font-bold uppercase tracking-wider opacity-70">Annual Expenses</label>
                         <div className="relative">
                           <IndianRupee size={16} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-50" />
                           <input
+                            id="pd-annual-expenses"
                             type="number"
                             value={rentalInputs.annualExpenses}
                             onChange={(e) => setRentalInputs(prev => ({ ...prev, annualExpenses: e.target.value }))}
@@ -847,10 +853,11 @@ const PropertyDetails: React.FC = () => {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <label className="text-xs font-bold uppercase tracking-wider opacity-70">Vacancy Rate %</label>
+                        <label htmlFor="pd-vacancy-rate" className="text-xs font-bold uppercase tracking-wider opacity-70">Vacancy Rate %</label>
                         <div className="relative">
                           <Percent size={16} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-50" />
                           <input
+                            id="pd-vacancy-rate"
                             type="number"
                             value={rentalInputs.vacancyRate}
                             onChange={(e) => setRentalInputs(prev => ({ ...prev, vacancyRate: e.target.value }))}

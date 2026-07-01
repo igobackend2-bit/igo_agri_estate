@@ -12,35 +12,36 @@ import AIAssistant from './components/ai/AIAssistant';
 import { AnimatePresence } from 'framer-motion';
 import StatsSection from './components/home/StatsSection';
 import PropertyCard from './components/PropertyCard';
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import Profile from './pages/Profile';
-import Listings from './pages/Listings';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import PostRequirement from './pages/PostRequirement';
-import PropertyDetails from './pages/PropertyDetails';
-import ValuationSimulator from './pages/ValuationSimulator';
-import TaxOptimizer from './pages/TaxOptimizer';
-import Marketplace from './pages/Marketplace';
-import PostProperty from './pages/PostProperty';
-import Blog from './pages/Blog';
-import KnowledgeHub from './pages/KnowledgeHub';
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminLogin from './pages/admin/AdminLogin';
-import PropertyForm from './pages/admin/PropertyForm';
-import InvestorDashboard from './pages/dashboard/InvestorDashboard';
-import SellerDashboard from './pages/SellerDashboard';
-import AIReportPage from './pages/AIReportPage';
-import BlogsPage from './pages/BlogsPage';
-import VideosPage from './pages/VideosPage';
+import { Suspense, lazy } from 'react';
+const Login = lazy(() => import('./pages/Login'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Listings = lazy(() => import('./pages/Listings'));
+const PostRequirement = lazy(() => import('./pages/PostRequirement'));
+const PropertyDetails = lazy(() => import('./pages/PropertyDetails'));
+const ValuationSimulator = lazy(() => import('./pages/ValuationSimulator'));
+const TaxOptimizer = lazy(() => import('./pages/TaxOptimizer'));
+const Marketplace = lazy(() => import('./pages/Marketplace'));
+const PostProperty = lazy(() => import('./pages/PostProperty'));
+const Blog = lazy(() => import('./pages/Blog'));
+const KnowledgeHub = lazy(() => import('./pages/KnowledgeHub'));
+const AdminDashboard = lazy(() => import('./pages/admin/Dashboard'));
+const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
+const PropertyForm = lazy(() => import('./pages/admin/PropertyForm'));
+const InvestorDashboard = lazy(() => import('./pages/dashboard/InvestorDashboard'));
+const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
+const AIReportPage = lazy(() => import('./pages/AIReportPage'));
+const BlogsPage = lazy(() => import('./pages/BlogsPage'));
+const VideosPage = lazy(() => import('./pages/VideosPage'));
 import { motion } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 // import GlobalBackground from './components/3d/GlobalBackground';
-import LegalServices from './pages/services/LegalServices';
-import SoilIntelligence from './pages/services/SoilIntelligence';
-import Policy from './pages/Policy';
+const LegalServices = lazy(() => import('./pages/services/LegalServices'));
+const SoilIntelligence = lazy(() => import('./pages/services/SoilIntelligence'));
+const Policy = lazy(() => import('./pages/Policy'));
 import { locations } from './data/locationEstates';
 import { submitLead } from './lib/leadsService';
 import LiveChatWidget from './components/LiveChatWidget';
@@ -68,6 +69,12 @@ const AdminProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children
   if (!isAuthenticated) return <Navigate to="/admin" replace />;
   return <>{children}</>;
 };
+
+const RouteLoader: React.FC = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+  </div>
+);
 
 const NotFound: React.FC = () => (
   <div className="min-h-screen bg-background flex items-center justify-center p-6">
@@ -140,7 +147,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* About Section */}
-        <About />
+        <About standalone={false} />
 
         {/* Location Quick Links */}
         <section id="estates" className="py-16 bg-background">
@@ -270,7 +277,7 @@ const Home: React.FC = () => {
                 className="group relative h-[600px] rounded-[48px] overflow-hidden cursor-pointer shadow-2xl bg-black block"
               >
                 <motion.div whileHover={{ y: -15 }} className="w-full h-full">
-                  <img src={cat.img} alt={cat.title} className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110 opacity-70" />
+                  <img src={cat.img} alt={cat.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110 opacity-70" />
                   <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/20 to-transparent"></div>
                   <div className="absolute bottom-12 left-10 right-10">
                     <div className="w-14 h-14 bg-white/10 backdrop-blur-xl rounded-2xl flex items-center justify-center text-white mb-8 border border-white/20 group-hover:bg-secondary group-hover:border-secondary transition-all">
@@ -333,7 +340,7 @@ const Home: React.FC = () => {
                     className="flex items-center space-x-6 p-4 rounded-[32px] hover:bg-primary/5 transition-all cursor-pointer group"
                   >
                     <div className="w-24 h-24 rounded-[24px] overflow-hidden shadow-lg border border-black/5 flex-shrink-0">
-                      <img src={city.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform" alt={city.name} />
+                      <img src={city.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform" alt={city.name} loading="lazy" />
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-primary mb-1 tracking-tight">{city.name}</h4>
@@ -526,7 +533,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Contact Section */}
-      <Contact />
+      <Contact standalone={false} />
     </main>
   );
 };
@@ -553,12 +560,15 @@ function App() {
         <div className="min-h-screen relative font-sans selection:bg-secondary/30">
           <Navbar />
            <AnimatePresence mode="wait">
+            <Suspense fallback={<RouteLoader />}>
               <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/locations" element={<Listings />} />
               <Route path="/listings" element={<Listings />} />
               <Route path="/properties/:id" element={<PropertyDetails />} />
               <Route path="/post-requirement" element={<PostRequirement />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profile" element={<Profile />} />
@@ -582,6 +592,7 @@ function App() {
               <Route path="/policy" element={<Policy />} />
               <Route path="*" element={<NotFound />} />
               </Routes>
+            </Suspense>
            </AnimatePresence>
 
           {settings.enableAI && <AIAssistant />}

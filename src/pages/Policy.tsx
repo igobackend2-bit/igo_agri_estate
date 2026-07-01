@@ -10,7 +10,16 @@ const Policy: React.FC = () => {
         title="Legal, Privacy & Agri-Policy"
         description="Read IGO Agri Estates' privacy policy, terms of service, and agricultural investment disclaimer. We are committed to transparency in every transaction."
         canonical="/policy"
+        keywords="IGO Agri Estates privacy policy, agricultural investment terms, farmland transaction disclaimer, agri estate legal policy India"
         noIndex={false}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'WebPage',
+          name: 'Legal, Privacy & Agri-Policy',
+          url: 'https://www.igoagriestate.com/policy',
+          isPartOf: { '@id': 'https://www.igoagriestate.com/#website' },
+          about: { '@id': 'https://www.igoagriestate.com/#organization' }
+        }}
       />
       <div className="container-pro max-w-4xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

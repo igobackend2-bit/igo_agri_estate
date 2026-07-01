@@ -30,5 +30,27 @@ Allow: /marketplace
 Allow: /services/
 Allow: /policy
 
+# AI / GEO crawlers — explicitly allowed for citation in answer engines
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
 # Sitemap
 Sitemap: https://www.igoagriestate.com/sitemap.xml

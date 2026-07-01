@@ -29,7 +29,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, estateName, onConfirm
             exit={{ scale: 0.9, opacity: 0 }}
             className="relative bg-white rounded-[40px] p-10 max-w-md w-full shadow-2xl z-10"
           >
-            <button onClick={onCancel} className="absolute top-6 right-6 p-2 rounded-xl hover:bg-gray-100 transition-colors">
+            <button onClick={onCancel} aria-label="Close dialog" className="absolute top-6 right-6 p-2 rounded-xl hover:bg-gray-100 transition-colors">
               <X size={20} />
             </button>
             <div className="w-16 h-16 bg-red-50 rounded-[24px] flex items-center justify-center mx-auto mb-6">
@@ -42,10 +42,11 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ isOpen, estateName, onConfirm
             <div className="bg-red-50 border border-red-100 rounded-2xl p-4 mb-6">
               <p className="text-xs font-bold text-red-600 text-center">{estateName}</p>
             </div>
-            <label className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">
+            <label htmlFor="delete-confirm-input" className="block text-[10px] font-black text-text-muted uppercase tracking-widest mb-2">
               Type <span className="text-red-500 font-black">delete</span> to confirm
             </label>
             <input
+              id="delete-confirm-input"
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}

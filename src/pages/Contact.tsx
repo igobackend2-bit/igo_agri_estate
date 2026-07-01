@@ -3,7 +3,14 @@ import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Send, MessageSquare } from 'lucide-react';
 import { submitLead } from '../lib/leadsService';
 import SEO from '../components/SEO';
-const Contact: React.FC = () => {
+interface ContactProps {
+  /** false when this component is embedded as a section inside another page (e.g. the homepage),
+   * so it doesn't emit a duplicate <h1>/SEO tags for that page. Defaults to true (standalone /contact route). */
+  standalone?: boolean;
+}
+
+const Contact: React.FC<ContactProps> = ({ standalone = true }) => {
+  const Heading = standalone ? 'h1' : 'h2';
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -33,33 +40,35 @@ const Contact: React.FC = () => {
   };
   return (
     <>
-      <SEO
-        title="Contact IGO Agri Estates | Talk to Our Farm Investment Advisors"
-        description="Get in touch with IGO Agri Estates — India's trusted agricultural land advisors. Call +91-7397789803, email us, or visit our Chennai office. We serve buyers and investors across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
-        canonical="/contact"
-        keywords="contact IGO agri estates, agricultural land advisor India, farm investment consultant Tamil Nadu, agri estate inquiry, buy farmland India contact"
-        schema={{
-          '@context': 'https://schema.org',
-          '@type': 'ContactPage',
-          '@id': 'https://www.igoagriestate.com/contact',
-          name: 'Contact IGO Agri Estates',
-          url: 'https://www.igoagriestate.com/contact',
-          mainEntity: {
-            '@type': 'Organization',
-            name: 'IGO Agri Estates',
-            telephone: '+91-7397789803',
-            email: 'bd2@igogroups.com',
-            address: {
-              '@type': 'PostalAddress',
-              streetAddress: 'No 17, Kovalan Street, 2nd Main Road, Uthandi Kanathur',
-              addressLocality: 'Chennai',
-              addressRegion: 'Tamil Nadu',
-              postalCode: '600119',
-              addressCountry: 'IN'
+      {standalone && (
+        <SEO
+          title="Contact IGO Agri Estates | Talk to Our Farm Investment Advisors"
+          description="Get in touch with IGO Agri Estates — India's trusted agricultural land advisors. Call +91-7397789803, email us, or visit our Chennai office. We serve buyers and investors across Tamil Nadu, Karnataka, Maharashtra, Andhra Pradesh & Telangana."
+          canonical="/contact"
+          keywords="contact IGO agri estates, agricultural land advisor India, farm investment consultant Tamil Nadu, agri estate inquiry, buy farmland India contact"
+          schema={{
+            '@context': 'https://schema.org',
+            '@type': 'ContactPage',
+            '@id': 'https://www.igoagriestate.com/contact',
+            name: 'Contact IGO Agri Estates',
+            url: 'https://www.igoagriestate.com/contact',
+            mainEntity: {
+              '@type': 'Organization',
+              name: 'IGO Agri Estates',
+              telephone: '+91-7397789803',
+              email: 'bd2@igogroups.com',
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: 'No 17, Kovalan Street, 2nd Main Road, Uthandi Kanathur',
+                addressLocality: 'Chennai',
+                addressRegion: 'Tamil Nadu',
+                postalCode: '600119',
+                addressCountry: 'IN'
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      )}
     <section id="contact" className="py-20 bg-background border-t border-black/5">
       <div className="container-pro">
         <motion.div 
@@ -68,9 +77,9 @@ const Contact: React.FC = () => {
           className="max-w-4xl mx-auto text-center mb-20"
         >
           <p className="text-[10px] font-black text-[#00814a] uppercase tracking-[0.5em] mb-6">Connect With Us</p>
-          <h1 className="text-6xl font-black text-primary uppercase tracking-tighter leading-none mb-8">
+          <Heading className="text-6xl font-black text-primary uppercase tracking-tighter leading-none mb-8">
             The Institutional <br /><span className="text-secondary italic font-serif">Support Desk</span>
-          </h1>
+          </Heading>
           <p className="text-xl text-text-muted font-light leading-relaxed">
             Have questions about a specific listing or our managed services? Our experts are here to help you navigate the landscape of agricultural investments.
           </p>
@@ -130,29 +139,32 @@ const Contact: React.FC = () => {
               <form onSubmit={handleSubmit} className="bg-white p-12 rounded-[40px] shadow-[0_48px_96px_-24px_rgba(0,0,0,0.1)] border border-black/5 space-y-8">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Your Name</label>
-                    <input 
+                    <label htmlFor="contact-name" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Your Name</label>
+                    <input
+                      id="contact-name"
                       required
-                      type="text" 
+                      type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all" 
+                      className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Email Address</label>
-                    <input 
+                    <label htmlFor="contact-email" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Email Address</label>
+                    <input
+                      id="contact-email"
                       required
-                      type="email" 
+                      type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all" 
+                      className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Phone Number</label>
+                  <label htmlFor="contact-phone" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Phone Number</label>
                   <input
+                    id="contact-phone"
                     required
                     type="tel"
                     value={formData.phone}
@@ -162,19 +174,21 @@ const Contact: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Subject</label>
-                  <input 
+                  <label htmlFor="contact-subject" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Subject</label>
+                  <input
+                    id="contact-subject"
                     required
-                    type="text" 
+                    type="text"
                     value={formData.subject}
                     onChange={(e) => setFormData({...formData, subject: e.target.value})}
                     placeholder="e.g. Inquiry about Sandalwood Estates"
-                    className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all" 
+                    className="w-full bg-gray-50 border-none px-6 py-4 rounded-xl text-sm focus:ring-2 focus:ring-[#00814a] transition-all"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Your Message</label>
-                  <textarea 
+                  <label htmlFor="contact-message" className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Your Message</label>
+                  <textarea
+                    id="contact-message"
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({...formData, message: e.target.value})}

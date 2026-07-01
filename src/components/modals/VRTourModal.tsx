@@ -48,8 +48,9 @@ const VRTourModal: React.FC<VRTourModalProps> = ({ isOpen, onClose, propertyName
                   <h2 className="text-4xl text-white font-bold">{propertyName}</h2>
                   <p className="text-white/60 text-sm mt-1">North-West Sector View</p>
                 </div>
-                <button 
+                <button
                   onClick={onClose}
+                  aria-label="Close VR tour"
                   className="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all"
                 >
                   <X size={24} />
