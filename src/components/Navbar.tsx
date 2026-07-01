@@ -28,7 +28,11 @@ const Navbar: React.FC = () => {
       >
         <div className="container-pro w-full flex items-center justify-between">
           {/* Logo Section */}
-          <Link to="/" className="flex items-center space-x-4 group shrink-0">
+          <Link 
+            to="/" 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex items-center space-x-4 group shrink-0"
+          >
             <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center shadow-md transition-transform group-hover:scale-105 border border-black/5 overflow-hidden">
                <img src="/images/logo.png" alt="IGO Logo" className="w-full h-full object-contain scale-125 mix-blend-multiply" />
             </div>
