@@ -673,6 +673,17 @@ const PropertyDetails: React.FC = () => {
                   <p className="font-semibold text-primary leading-relaxed">{property.projectOffice}</p>
                 </div>
               </div>
+              {property.latitude != null && property.longitude != null && (
+                <a
+                  href={`https://www.google.com/maps?q=${property.latitude},${property.longitude}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-secondary hover:text-primary transition-colors"
+                >
+                  <MapPin size={16} />
+                  View Estate Location on Map ({property.latitude.toFixed(4)}, {property.longitude.toFixed(4)})
+                </a>
+              )}
             </section>
 
             {/* PROFITABILITY & IGO PROJECT EXPLANATION */}

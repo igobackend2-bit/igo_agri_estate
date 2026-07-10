@@ -50,6 +50,8 @@ export interface Property {
   reraNumber?: string;
   totalUnits?: number;
   availableUnits?: number;
+  latitude?: number;
+  longitude?: number;
   faqs?: { question: string; answer: string }[];
   images?: string[];
   brochureUrl?: string;
